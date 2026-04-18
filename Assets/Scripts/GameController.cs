@@ -1,18 +1,18 @@
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameController : MonoBehaviour
 {
-    public static GameManager gameManager;
+    public static GameController gameController;
     public GameObject player;
 
     void Awake()
     {
-        if (gameManager == null)
+        if (gameController == null)
         {
-            gameManager = this;
+            gameController = this;
             DontDestroyOnLoad(gameObject);
         }
-        else if (gameManager != this)
+        else if (gameController != this)
         {
             Destroy(gameObject);
         }

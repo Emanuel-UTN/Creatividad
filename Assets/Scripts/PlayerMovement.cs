@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        GameManager.gameManager.player = gameObject;
+        GameController.gameController.player = gameObject;
     }
 
     void Update()
