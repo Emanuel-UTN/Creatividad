@@ -11,7 +11,7 @@ public class PlayerStaminaUI : MonoBehaviour
     void Start()
     {
         if (playerController == null)
-            playerController = FindFirstObjectByType<PlayerController>();
+            playerController = FindAnyObjectByType<PlayerController>();
 
         if (staminaSlider != null)
         {
