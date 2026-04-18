@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Suelo")]
     public Transform groundCheck;
     public float groundDistance = 0.3f;
-    public LayerMask groundMask;    
+    public LayerMask groundMask;
 
     [Header("Camara")]
     public Transform cameraPivot; // objeto pivot (hijo del player, a la altura de la cabeza)
@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
 
     private CharacterController controller;
     private PlayerInput playerInput;
+    private PlayerController playerController;
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction jumpAction;
@@ -37,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
+        playerController = GetComponent<PlayerController>();
 
         moveAction = playerInput.actions["Move"];
         lookAction = playerInput.actions["Look"];
@@ -49,7 +51,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        GameController.gameController.player = gameObject;
+        if (GameController.gameController != null)
+            GameController.gameController.player = gameObject;
     }
 
     void Update()
@@ -81,8 +84,16 @@ public class PlayerMovement : MonoBehaviour
         if (move.sqrMagnitude > 1f)
             move.Normalize();
 
+        bool isMoving = move.sqrMagnitude > 0.0001f;
+        bool sprintRequested = sprintAction != null && sprintAction.IsPressed();
+        bool shouldTrySprint = sprintRequested && isMoving;
+
+        bool isSprinting = shouldTrySprint;
+        if (playerController != null)
+            isSprinting = playerController.ResolveSprint(shouldTrySprint, dt);
+
         float currentSpeed = speed;
-        if (sprintAction != null && sprintAction.IsPressed())
+        if (isSprinting)
             currentSpeed *= sprintMultiplier;
 
         Vector3 motion = move * currentSpeed + Vector3.up * verticalVelocity;
