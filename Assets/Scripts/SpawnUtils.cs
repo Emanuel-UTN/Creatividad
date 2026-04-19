@@ -26,6 +26,13 @@ public class SpawnUtils : MonoBehaviour
     public float wallInset = 0.6f;
     public float groundClearance = 0.02f;
 
+    [Header("Flashlight Battery")]
+    public bool spawnFlashlightBatteries = true;
+    public GameObject flashlightBatteryPrefab;
+    public int minFlashlightBatterySpawns = 4;
+    public int maxFlashlightBatterySpawns = 7;
+    public float batteryChargeAmount = 30f;
+
     private Transform spawnedRoot;
     private readonly List<MazeCell> eligibleCellsBuffer = new List<MazeCell>();
     private readonly List<Vector3> wallDirectionsBuffer = new List<Vector3>(4);
@@ -63,6 +70,8 @@ public class SpawnUtils : MonoBehaviour
                 AlignSpawnToGround(spawnedObject, cell.transform.position.y + groundClearance);
             }
         }
+
+        SpawnFlashlightBatteryPickups(eligibleCellsBuffer, cellSize);
     }
 
     private void EnsureSpawnRoot()
@@ -164,6 +173,74 @@ public class SpawnUtils : MonoBehaviour
             return;
 
         spawnedObject.transform.position += Vector3.up * deltaY;
+    }
+
+    private void SpawnFlashlightBatteryPickups(List<MazeCell> eligibleCells, float cellSize)
+    {
+        if (!spawnFlashlightBatteries || eligibleCells == null || eligibleCells.Count == 0)
+            return;
+
+        int minAmount = Mathf.Max(0, Mathf.Min(minFlashlightBatterySpawns, maxFlashlightBatterySpawns));
+        int maxAmount = Mathf.Max(minAmount, Mathf.Max(minFlashlightBatterySpawns, maxFlashlightBatterySpawns));
+        int spawnCount = Random.Range(minAmount, maxAmount + 1);
+
+        for (int i = 0; i < spawnCount; i++)
+        {
+            if (!TryGetRandomWallCell(eligibleCells, out MazeCell cell, out Vector3 wallDirection))
+                continue;
+
+            Vector3 spawnPosition = GetSpawnPosition(cell, wallDirection, cellSize);
+            Quaternion rotation = Quaternion.identity;
+            GameObject pickupObject = CreateFlashlightBatteryPickup();
+            pickupObject.transform.SetParent(spawnedRoot, false);
+            pickupObject.transform.SetPositionAndRotation(spawnPosition, rotation);
+            AlignSpawnToGround(pickupObject, cell.transform.position.y + groundClearance);
+        }
+    }
+
+    private GameObject CreateFlashlightBatteryPickup()
+    {
+        if (flashlightBatteryPrefab != null)
+        {
+            GameObject prefabInstance = Instantiate(flashlightBatteryPrefab);
+            FlashlightBatteryPickup prefabPickup = prefabInstance.GetComponent<FlashlightBatteryPickup>();
+            if (prefabPickup != null)
+                prefabPickup.SetBatteryAmount(batteryChargeAmount);
+
+            return prefabInstance;
+        }
+
+        GameObject root = new GameObject("FlashlightBatteryPickup");
+        FlashlightBatteryPickup pickup = root.AddComponent<FlashlightBatteryPickup>();
+        pickup.SetBatteryAmount(batteryChargeAmount);
+
+        SphereCollider trigger = root.GetComponent<SphereCollider>();
+        trigger.center = new Vector3(0f, 0.45f, 0f);
+        trigger.radius = 0.45f;
+
+        GameObject body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        body.name = "Body";
+        body.transform.SetParent(root.transform, false);
+        body.transform.localPosition = new Vector3(0f, 0.4f, 0f);
+        body.transform.localScale = new Vector3(0.35f, 0.35f, 0.35f);
+        Destroy(body.GetComponent<Collider>());
+
+        GameObject cap = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cap.name = "Cap";
+        cap.transform.SetParent(root.transform, false);
+        cap.transform.localPosition = new Vector3(0f, 0.82f, 0f);
+        cap.transform.localScale = new Vector3(0.22f, 0.12f, 0.22f);
+        Destroy(cap.GetComponent<Collider>());
+
+        Renderer bodyRenderer = body.GetComponent<Renderer>();
+        if (bodyRenderer != null)
+            bodyRenderer.material.color = new Color(0.18f, 0.18f, 0.2f, 1f);
+
+        Renderer capRenderer = cap.GetComponent<Renderer>();
+        if (capRenderer != null)
+            capRenderer.material.color = new Color(0.95f, 0.88f, 0.28f, 1f);
+
+        return root;
     }
 
     private bool TryGetSpawnBounds(GameObject spawnedObject, out Bounds bounds)

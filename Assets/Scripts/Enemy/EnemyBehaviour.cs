@@ -54,6 +54,7 @@ public class EnemyBehaviour : MonoBehaviour
     private EnemyState state;
     private bool sawPlayerLastFrame;
     private float baseWalkSpeed;
+    private float stunTimer;
 
     void Awake()
     {
@@ -97,6 +98,17 @@ public class EnemyBehaviour : MonoBehaviour
 
         if (player == null)
             TryAssignPlayer();
+
+        if (stunTimer > 0f)
+        {
+            stunTimer -= deltaTime;
+            movement.speed = 0f;
+            movement.moveToTarget = false;
+            movement.rotateTowardsTarget = false;
+            UpdateStaminaDebugCache(false);
+            RefreshCellPosition();
+            return;
+        }
 
         bool seesPlayer = CanSeePlayer();
         UpdateDetectionState(seesPlayer);
@@ -356,5 +368,16 @@ public class EnemyBehaviour : MonoBehaviour
         string stateLabel = state == EnemyState.Chase ? "CHASE" : "PATROL";
         string message = $"Enemy: {stateLabel} | Running: {debugRunningWithStamina}\nStamina: {debugCurrentStamina:0.0}/{debugMaxStamina:0.0} ({debugNormalizedStamina:P0})";
         GUI.Label(rect, message);
+    }
+
+    public void ApplyFlashlightStun(float duration)
+    {
+        if (duration <= 0f)
+            return;
+
+        stunTimer = Mathf.Max(stunTimer, duration);
+        movement.speed = 0f;
+        movement.moveToTarget = false;
+        movement.rotateTowardsTarget = false;
     }
 }
