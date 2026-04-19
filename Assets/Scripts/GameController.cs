@@ -1,5 +1,7 @@
 using UnityEngine;
 
+[RequireComponent(typeof(MazeGenerator))]
+[RequireComponent(typeof(SpawnUtils))]
 public class GameController : MonoBehaviour
 {
     public static GameController gameController;
@@ -7,7 +9,10 @@ public class GameController : MonoBehaviour
     public GameObject enemy;
 
     private MazeGenerator mazeGenerator;
+    private SpawnUtils spawnUtils;
     private MazeCell[,] grid;
+
+    public float CellSize => mazeGenerator != null ? mazeGenerator.cellSize : 4f;
 
     void Awake()
     {
@@ -25,6 +30,9 @@ public class GameController : MonoBehaviour
     public void Initialize(MazeCell [,] grid) {
         this.grid = grid;
         mazeGenerator = GetComponent<MazeGenerator>();
+        spawnUtils = GetComponent<SpawnUtils>();
+        if (spawnUtils != null)
+            spawnUtils.Spawn();
         player = Instantiate(player, grid[0,0].transform.position, Quaternion.identity);
         enemy = Instantiate(enemy, grid[mazeGenerator.width - 1, mazeGenerator.height - 1].transform.position, Quaternion.identity);
     }

@@ -12,6 +12,8 @@ public class ChaseBehaviour : Behaviour
         Chase,
         GoToLastSeen,
         GoToNextNode,
+        GoToCupboardNode,
+        GoToCupboard,
         Search
     }
 
@@ -43,7 +45,11 @@ public class ChaseBehaviour : Behaviour
     private MazeCell lastSeenCell;
     private MazeCell previousPlayerCellAtLoss;
     private MazeCell targetNodeCell;
+    private Cupboard targetCupboard;
+    private MazeCell targetCupboardCell;
     private int pathCellIndex;
+
+    public bool IsPursuingCupboard => state == ChaseState.GoToCupboardNode || state == ChaseState.GoToCupboard;
 
     public ChaseBehaviour(
         Movement movement,
@@ -230,6 +236,52 @@ public class ChaseBehaviour : Behaviour
 
                 return true;
 
+            case ChaseState.GoToCupboardNode:
+                if (pathCells.Count == 0)
+                {
+                    state = ChaseState.GoToCupboard;
+                    return true;
+                }
+
+                Move(pathTarget, PathMoveOffset);
+
+                if (!HasReachedWithThreshold(pathTarget.position, PathReachThreshold))
+                    return true;
+
+                pathCellIndex++;
+                if (pathCellIndex < pathCells.Count)
+                {
+                    pathTarget.position = pathCells[pathCellIndex].transform.position;
+                    return true;
+                }
+
+                pathCells.Clear();
+                state = ChaseState.GoToCupboard;
+                return true;
+
+            case ChaseState.GoToCupboard:
+                if (targetCupboard == null)
+                {
+                    BeginSearch();
+                    return true;
+                }
+
+                Vector3 approachPos = targetCupboard.EnemyApproachPosition;
+                approachPos.y = enemyTransform.position.y;
+                nextNodeTarget.position = approachPos;
+                Move(nextNodeTarget, PathMoveOffset);
+
+                bool reachedApproach = HasReachedWithThreshold(nextNodeTarget.position, PathReachThreshold);
+                bool closeEnoughToEject = targetCupboard.IsEnemyCloseEnoughToEject(enemyTransform.position);
+                if (!reachedApproach && !closeEnoughToEject)
+                    return true;
+
+                targetCupboard.ForceEjectHiddenPlayer();
+                targetCupboard = null;
+                targetCupboardCell = null;
+                BeginSearch();
+                return true;
+
             case ChaseState.Search:
                 Stop(defaultMovementOffset, false);
                 stateTimer -= Time.deltaTime;
@@ -248,6 +300,30 @@ public class ChaseBehaviour : Behaviour
             default:
                 return false;
         }
+    }
+
+    public void OnPlayerHiddenInCupboard(Cupboard cupboard, Transform player)
+    {
+        if (cupboard == null)
+            return;
+
+        currentPlayer = player;
+        targetCupboard = cupboard;
+        targetCupboardCell = ResolveCell(cupboard.EnemyApproachPosition);
+
+        pathCells.Clear();
+        pathCellIndex = 0;
+
+        MazeCell enemyCell = ResolveCell(enemyTransform.position);
+        if (enemyCell != null && targetCupboardCell != null && enemyCell != targetCupboardCell && TryBuildPath(enemyCell, targetCupboardCell))
+        {
+            pathCellIndex = 0;
+            pathTarget.position = pathCells[pathCellIndex].transform.position;
+            state = ChaseState.GoToCupboardNode;
+            return;
+        }
+
+        state = ChaseState.GoToCupboard;
     }
 
     public void Dispose()
@@ -420,6 +496,18 @@ public class ChaseBehaviour : Behaviour
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(targetNodeCell.transform.position, 0.4f);
+        }
+
+        if (targetCupboardCell != null)
+        {
+            Gizmos.color = new Color(1f, 0.6f, 0f, 1f);
+            Gizmos.DrawWireSphere(targetCupboardCell.transform.position, 0.35f);
+        }
+
+        if (targetCupboard != null)
+        {
+            Gizmos.color = new Color(1f, 0.4f, 0f, 1f);
+            Gizmos.DrawWireCube(targetCupboard.CupboardPosition, Vector3.one * 0.3f);
         }
 
         if (pathCells.Count > 0)

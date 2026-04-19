@@ -22,6 +22,11 @@ public class PlayerMovement : MonoBehaviour
     public float minPitch = -80f;
     public float maxPitch = 80f;
 
+    [Header("Camara en escondite")]
+    public float hiddenYawLimit = 55f;
+    public float hiddenMinPitch = -25f;
+    public float hiddenMaxPitch = 30f;
+
     private CharacterController controller;
     private PlayerInput playerInput;
     private PlayerController playerController;
@@ -29,10 +34,13 @@ public class PlayerMovement : MonoBehaviour
     private InputAction lookAction;
     private InputAction jumpAction;
     private InputAction sprintAction;
+    private InputAction interactAction;
 
     private float verticalVelocity;
     private float pitch;
+    private float hiddenBaseYaw;
     private bool isGrounded;
+    private bool movementLocked;
 
     void Awake()
     {
@@ -44,6 +52,9 @@ public class PlayerMovement : MonoBehaviour
         lookAction = playerInput.actions["Look"];
         jumpAction = playerInput.actions["Jump"];
         sprintAction = playerInput.actions.FindAction("Sprint", false);
+        interactAction = playerInput.actions.FindAction("Accion", false);
+        if (interactAction == null)
+            interactAction = playerInput.actions.FindAction("Interact", false);
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -57,11 +68,20 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        float dt = Time.deltaTime;
+        if (interactAction != null && interactAction.WasPressedThisFrame() && playerController != null)
+            playerController.TryInteractWithCupboard();
 
         Vector2 look = lookAction.ReadValue<Vector2>();
         float mouseX = look.x * lookSensitivity;
         float mouseY = look.y * lookSensitivity;
+
+        if (movementLocked)
+        {
+            UpdateHiddenLook(mouseX, mouseY);
+            return;
+        }
+
+        float dt = Time.deltaTime;
 
         transform.Rotate(Vector3.up * mouseX);
 
@@ -98,5 +118,57 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 motion = move * currentSpeed + Vector3.up * verticalVelocity;
         controller.Move(motion * dt);
+    }
+
+    public void SetMovementLocked(bool locked)
+    {
+        if (locked && !movementLocked)
+            hiddenBaseYaw = transform.eulerAngles.y;
+
+        movementLocked = locked;
+        if (locked)
+            verticalVelocity = 0f;
+    }
+
+    public void TeleportTo(Vector3 worldPosition)
+    {
+        if (controller != null)
+        {
+            bool wasEnabled = controller.enabled;
+            controller.enabled = false;
+            transform.position = worldPosition;
+            controller.enabled = wasEnabled;
+            return;
+        }
+
+        transform.position = worldPosition;
+    }
+
+    public void SetLookDirection(Vector3 worldDirection)
+    {
+        worldDirection.y = 0f;
+        if (worldDirection.sqrMagnitude <= 0.0001f)
+            return;
+
+        transform.rotation = Quaternion.LookRotation(worldDirection.normalized, Vector3.up);
+        hiddenBaseYaw = transform.eulerAngles.y;
+        pitch = 0f;
+        if (cameraPivot != null)
+            cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+    }
+
+    private void UpdateHiddenLook(float mouseX, float mouseY)
+    {
+        float currentYaw = transform.eulerAngles.y;
+        float deltaFromBase = Mathf.DeltaAngle(hiddenBaseYaw, currentYaw);
+        float nextDelta = Mathf.Clamp(deltaFromBase + mouseX, -hiddenYawLimit, hiddenYawLimit);
+        float nextYaw = hiddenBaseYaw + nextDelta;
+
+        transform.rotation = Quaternion.Euler(0f, nextYaw, 0f);
+
+        pitch -= mouseY;
+        pitch = Mathf.Clamp(pitch, hiddenMinPitch, hiddenMaxPitch);
+        if (cameraPivot != null)
+            cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
     }
 }

@@ -29,6 +29,7 @@ public class EnemyBehaviour : MonoBehaviour
     private Movement movement;
     private MazeCell cellPosition;
     private Transform player;
+    private PlayerController playerController;
 
     private PatrolBehaviour patrolBehaviour;
     private ChaseBehaviour chaseBehaviour;
@@ -39,6 +40,7 @@ public class EnemyBehaviour : MonoBehaviour
     void Awake()
     {
         movement = GetComponent<Movement>();
+        PlayerController.OnPlayerEnteredCupboard += HandlePlayerEnteredCupboard;
 
         patrolBehaviour = new PatrolBehaviour(
             movement,
@@ -80,7 +82,8 @@ public class EnemyBehaviour : MonoBehaviour
         }
         else if (sawPlayerLastFrame)
         {
-            chaseBehaviour.OnPlayerLost(player);
+            if (!chaseBehaviour.IsPursuingCupboard)
+                chaseBehaviour.OnPlayerLost(player);
             sawPlayerLastFrame = false;
         }
 
@@ -102,6 +105,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     void OnDestroy()
     {
+        PlayerController.OnPlayerEnteredCupboard -= HandlePlayerEnteredCupboard;
         patrolBehaviour?.Dispose();
         chaseBehaviour?.Dispose();
     }
@@ -127,18 +131,26 @@ public class EnemyBehaviour : MonoBehaviour
         if (player == null)
             return false;
 
-        GetVisionOriginAndForward(out Vector3 origin, out Vector3 forward);
-        Vector3 toPlayer = player.position - origin;
+        if (playerController != null && playerController.IsHidden)
+            return false;
 
-        float distance = toPlayer.magnitude;
+        return CanSeeWorldPosition(player.position);
+    }
+
+    public bool CanSeeWorldPosition(Vector3 worldPosition)
+    {
+        GetVisionOriginAndForward(out Vector3 origin, out Vector3 forward);
+        Vector3 toTarget = worldPosition - origin;
+
+        float distance = toTarget.magnitude;
         if (distance > viewDistance || distance <= 0.001f)
             return false;
 
-        float angle = Vector3.Angle(forward, toPlayer);
+        float angle = Vector3.Angle(forward, toTarget);
         if (angle > viewAngle * 0.5f)
             return false;
 
-        if (Physics.Raycast(origin, toPlayer.normalized, out RaycastHit hit, distance, visionMask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(origin, toTarget.normalized, out RaycastHit hit, distance, visionMask, QueryTriggerInteraction.Ignore))
             return hit.transform == player || hit.transform.IsChildOf(player);
 
         return false;
@@ -155,7 +167,23 @@ public class EnemyBehaviour : MonoBehaviour
             playerObj = GameObject.FindGameObjectWithTag("Player");
 
         if (playerObj != null)
+        {
             player = playerObj.transform;
+            playerController = playerObj.GetComponent<PlayerController>();
+        }
+    }
+
+    private void HandlePlayerEnteredCupboard(Cupboard cupboard, bool enemyHadDirectVision)
+    {
+        if (cupboard == null || chaseBehaviour == null)
+            return;
+
+        if (!enemyHadDirectVision)
+            return;
+
+        state = EnemyState.Chase;
+        sawPlayerLastFrame = false;
+        chaseBehaviour.OnPlayerHiddenInCupboard(cupboard, player);
     }
 
     private void GetVisionOriginAndForward(out Vector3 origin, out Vector3 forward)

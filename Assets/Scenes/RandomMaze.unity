@@ -447,6 +447,7 @@ GameObject:
   - component: {fileID: 1890285997}
   - component: {fileID: 1890285999}
   - component: {fileID: 1890285998}
+  - component: {fileID: 1890286000}
   m_Layer: 0
   m_Name: Game Controller
   m_TagString: Untagged
@@ -506,6 +507,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameController
   player: {fileID: 5415888724272369152, guid: d084b9789b76986479f6a0f902d00af2, type: 3}
   enemy: {fileID: 781131125439351914, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+--- !u!114 &1890286000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1890285996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 154e3acc8d62b2c46b6a0ce70e12902c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnUtils
+  spawnEntries:
+  - prefab: {fileID: 5108500865681255252, guid: 5127648af9f61864a93e606422ab0d1a, type: 3}
+    minAmount: 6
+    maxAmount: 10
+  wallInset: 0.6
+  groundClearance: 0.02
 --- !u!1 &1998055591
 GameObject:
   m_ObjectHideFlags: 0
