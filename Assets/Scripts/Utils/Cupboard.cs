@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class Cupboard : MonoBehaviour
 {
     [Header("Cupboard")]
@@ -9,8 +10,21 @@ public class Cupboard : MonoBehaviour
     public float interactionRadius = 2f;
     public float interactionForwardOffset = 1.1f;
 
+    [Header("Audio")]
+    public AudioClip enterCupboardClip;
+    public AudioClip exitCupboardClip;
+    [Range(0f, 1f)] public float cupboardAudioVolume = 1f;
+
     private PlayerController nearbyPlayer;
     private PlayerController occupant;
+    private AudioSource audioSource;
+
+    private void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+    }
 
     public bool HasHiddenPlayer => occupant != null;
 
@@ -64,6 +78,7 @@ public class Cupboard : MonoBehaviour
 
         occupant = player;
         player.EnterCupboard(this, CupboardPosition, outwardLookDirection.normalized, enemyHasDirectVision);
+        PlayCupboardClip(enterCupboardClip);
         return true;
     }
 
@@ -75,6 +90,7 @@ public class Cupboard : MonoBehaviour
         Vector3 targetExit = exitPoint != null ? exitPoint.position : transform.position + transform.forward * 1.2f;
         occupant = null;
         player.ExitCupboard(this, targetExit, false);
+        PlayCupboardClip(exitCupboardClip != null ? exitCupboardClip : enterCupboardClip);
         return true;
     }
 
@@ -87,6 +103,7 @@ public class Cupboard : MonoBehaviour
         PlayerController player = occupant;
         occupant = null;
         player.ExitCupboard(this, targetExit, true);
+        PlayCupboardClip(exitCupboardClip != null ? exitCupboardClip : enterCupboardClip);
     }
 
     public bool IsEnemyCloseEnoughToEject(Vector3 enemyPosition)
@@ -169,5 +186,13 @@ public class Cupboard : MonoBehaviour
             return fallback.normalized;
 
         return Vector3.forward;
+    }
+
+    private void PlayCupboardClip(AudioClip clip)
+    {
+        if (audioSource == null || clip == null)
+            return;
+
+        audioSource.PlayOneShot(clip, Mathf.Clamp01(cupboardAudioVolume));
     }
 }

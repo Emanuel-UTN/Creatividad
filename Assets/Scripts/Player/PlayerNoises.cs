@@ -33,8 +33,7 @@ public class PlayerNoises : MonoBehaviour
     private AudioSource audioSource;
     private PlayerMovement playerMovement;
     public AudioClip[] footstepClips;
-    public AudioClip sprintFootstepClip;
-    public AudioClip cupboardInteractionClip;
+    public AudioClip[] sprintFootstepClips;
     private float footstepTimer;
     private readonly List<NoiseGizmoSample> noiseGizmoSamples = new List<NoiseGizmoSample>();
 
@@ -54,15 +53,14 @@ public class PlayerNoises : MonoBehaviour
 
     public void PlayFootstep(bool isSprinting)
     {
-        if (isSprinting && sprintFootstepClip != null)
-        {
-            audioSource.PlayOneShot(sprintFootstepClip);
-        }
+        AudioClip clip = null;
+        if (isSprinting && sprintFootstepClips != null && sprintFootstepClips.Length > 0)
+            clip = footstepClips[Random.Range(0, footstepClips.Length)];
         else if (footstepClips != null && footstepClips.Length > 0)
-        {
-            AudioClip clip = footstepClips[Random.Range(0, footstepClips.Length)];
+            clip = footstepClips[Random.Range(0, footstepClips.Length)];
+        
+        if (clip != null)
             audioSource.PlayOneShot(clip);
-        }
     }
 
     public void EmitMovementNoise(bool isSprinting)
@@ -79,12 +77,6 @@ public class PlayerNoises : MonoBehaviour
     {
         PlayFootstep(isSprinting);
         EmitMovementNoise(isSprinting);
-    }
-
-    public void PlayCupboardInteraction()
-    {
-        if (cupboardInteractionClip != null)
-            audioSource.PlayOneShot(cupboardInteractionClip);
     }
 
     private void HandleFootsteps(float dt)
