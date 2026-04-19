@@ -41,6 +41,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         movement = GetComponent<Movement>();
         PlayerController.OnPlayerEnteredCupboard += HandlePlayerEnteredCupboard;
+        PlayerNoises.OnNoiseEmitted += HandlePlayerNoise;
 
         patrolBehaviour = new PatrolBehaviour(
             movement,
@@ -106,6 +107,7 @@ public class EnemyBehaviour : MonoBehaviour
     void OnDestroy()
     {
         PlayerController.OnPlayerEnteredCupboard -= HandlePlayerEnteredCupboard;
+        PlayerNoises.OnNoiseEmitted -= HandlePlayerNoise;
         patrolBehaviour?.Dispose();
         chaseBehaviour?.Dispose();
     }
@@ -184,6 +186,33 @@ public class EnemyBehaviour : MonoBehaviour
         state = EnemyState.Chase;
         sawPlayerLastFrame = false;
         chaseBehaviour.OnPlayerHiddenInCupboard(cupboard, player);
+    }
+
+    private void HandlePlayerNoise(Transform noiseSource, Vector3 noisePosition, float hearingRange, bool isSprinting)
+    {
+        if (chaseBehaviour == null)
+            return;
+
+        if (player == null)
+            TryAssignPlayer();
+
+        if (noiseSource == null || player == null || noiseSource != player)
+            return;
+
+        if (playerController != null && playerController.IsHidden)
+            return;
+
+        if (CanSeePlayer())
+            return;
+
+        Vector3 flatDelta = noisePosition - transform.position;
+        flatDelta.y = 0f;
+        if (flatDelta.sqrMagnitude > hearingRange * hearingRange)
+            return;
+
+        state = EnemyState.Chase;
+        sawPlayerLastFrame = false;
+        chaseBehaviour.OnPlayerHeardNoise(noisePosition, player);
     }
 
     private void GetVisionOriginAndForward(out Vector3 origin, out Vector3 forward)

@@ -20,16 +20,10 @@ public class SpawnUtils : MonoBehaviour
 
     private Transform spawnedRoot;
 
-    public void Spawn()
+    public void Spawn(MazeCell[,] grid, float cellSize)
     {
-        if (GameController.gameController == null)
-            return;
-
-        MazeCell[,] grid = GameController.gameController.Grid();
         if (grid == null || grid.Length == 0)
             return;
-
-        float cellSize = GameController.gameController.CellSize;
 
         EnsureSpawnRoot();
         ClearSpawnedRoot();

@@ -41,6 +41,13 @@ public class PlayerMovement : MonoBehaviour
     private float hiddenBaseYaw;
     private bool isGrounded;
     private bool movementLocked;
+    private bool isMoving;
+    private bool isSprinting;
+
+    public bool IsGrounded => isGrounded;
+    public bool IsMoving => isMoving;
+    public bool IsSprinting => isSprinting;
+    public bool IsMovementLocked => movementLocked;
 
     void Awake()
     {
@@ -77,6 +84,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (movementLocked)
         {
+            isMoving = false;
+            isSprinting = false;
             UpdateHiddenLook(mouseX, mouseY);
             return;
         }
@@ -104,11 +113,11 @@ public class PlayerMovement : MonoBehaviour
         if (move.sqrMagnitude > 1f)
             move.Normalize();
 
-        bool isMoving = move.sqrMagnitude > 0.0001f;
+        isMoving = move.sqrMagnitude > 0.0001f;
         bool sprintRequested = sprintAction != null && sprintAction.IsPressed();
         bool shouldTrySprint = sprintRequested && isMoving;
 
-        bool isSprinting = shouldTrySprint;
+        isSprinting = shouldTrySprint;
         if (playerController != null)
             isSprinting = playerController.ResolveSprint(shouldTrySprint, dt);
 

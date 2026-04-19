@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(SpawnUtils))]
 public class MazeGenerator : MonoBehaviour
 {
     [Header("Configuración")]
@@ -27,10 +28,14 @@ public class MazeGenerator : MonoBehaviour
     public int mainRoomSize = 5;
 
     private MazeCell[,] grid;
+    private SpawnUtils spawnUtils;
 
     void Start()
     {
         GenerateMaze();
+        spawnUtils = GetComponent<SpawnUtils>();
+        if (spawnUtils != null)
+            spawnUtils.Spawn(grid, cellSize);
         GameController.gameController.Initialize(grid);
     }
 

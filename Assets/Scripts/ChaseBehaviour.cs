@@ -10,6 +10,7 @@ public class ChaseBehaviour : Behaviour
     {
         Idle,
         Chase,
+        GoToNoise,
         GoToLastSeen,
         GoToNextNode,
         GoToCupboardNode,
@@ -30,6 +31,7 @@ public class ChaseBehaviour : Behaviour
     private readonly Transform lastSeenTarget;
     private readonly Transform nextNodeTarget;
     private readonly Transform pathTarget;
+    private readonly Transform noiseTarget;
 
     private readonly List<MazeCell> pathCells = new List<MazeCell>();
 
@@ -45,6 +47,7 @@ public class ChaseBehaviour : Behaviour
     private MazeCell lastSeenCell;
     private MazeCell previousPlayerCellAtLoss;
     private MazeCell targetNodeCell;
+    private MazeCell targetNoiseCell;
     private Cupboard targetCupboard;
     private MazeCell targetCupboardCell;
     private int pathCellIndex;
@@ -80,6 +83,10 @@ public class ChaseBehaviour : Behaviour
         GameObject pathObj = new GameObject($"{enemyTransform.name}_PathTarget");
         pathTarget = pathObj.transform;
         pathTarget.position = enemyTransform.position;
+
+        GameObject noiseObj = new GameObject($"{enemyTransform.name}_NoiseTarget");
+        noiseTarget = noiseObj.transform;
+        noiseTarget.position = enemyTransform.position;
     }
 
     public void OnPlayerSeen(Transform player)
@@ -167,6 +174,33 @@ public class ChaseBehaviour : Behaviour
                 }
 
                 Move(currentPlayer, defaultMovementOffset);
+                return true;
+
+            case ChaseState.GoToNoise:
+                if (pathCells.Count > 0)
+                {
+                    Move(pathTarget, PathMoveOffset);
+
+                    if (!HasReachedWithThreshold(pathTarget.position, PathReachThreshold))
+                        return true;
+
+                    pathCellIndex++;
+                    if (pathCellIndex < pathCells.Count)
+                    {
+                        pathTarget.position = pathCells[pathCellIndex].transform.position;
+                        return true;
+                    }
+
+                    pathCells.Clear();
+                    pathCellIndex = 0;
+                }
+
+                Move(noiseTarget, PathMoveOffset);
+                if (!HasReachedWithThreshold(noiseTarget.position, PathReachThreshold))
+                    return true;
+
+                targetNoiseCell = null;
+                BeginSearch();
                 return true;
 
             case ChaseState.GoToLastSeen:
@@ -326,6 +360,27 @@ public class ChaseBehaviour : Behaviour
         state = ChaseState.GoToCupboard;
     }
 
+    public void OnPlayerHeardNoise(Vector3 noisePosition, Transform player)
+    {
+        if (player != null)
+            currentPlayer = player;
+
+        targetNoiseCell = ResolveCell(noisePosition);
+        noiseTarget.position = targetNoiseCell != null ? targetNoiseCell.transform.position : noisePosition;
+
+        pathCells.Clear();
+        pathCellIndex = 0;
+
+        MazeCell enemyCell = ResolveCell(enemyTransform.position);
+        if (enemyCell != null && targetNoiseCell != null && enemyCell != targetNoiseCell && TryBuildPath(enemyCell, targetNoiseCell))
+        {
+            pathCellIndex = 0;
+            pathTarget.position = pathCells[pathCellIndex].transform.position;
+        }
+
+        state = ChaseState.GoToNoise;
+    }
+
     public void Dispose()
     {
         if (lastSeenTarget != null)
@@ -336,6 +391,9 @@ public class ChaseBehaviour : Behaviour
 
         if (pathTarget != null)
             Object.Destroy(pathTarget.gameObject);
+
+        if (noiseTarget != null)
+            Object.Destroy(noiseTarget.gameObject);
     }
 
     private MazeCell ResolveCell(Vector3 position)
@@ -504,6 +562,12 @@ public class ChaseBehaviour : Behaviour
             Gizmos.DrawWireSphere(targetCupboardCell.transform.position, 0.35f);
         }
 
+        if (targetNoiseCell != null)
+        {
+            Gizmos.color = new Color(1f, 0.85f, 0f, 1f);
+            Gizmos.DrawWireSphere(targetNoiseCell.transform.position, 0.35f);
+        }
+
         if (targetCupboard != null)
         {
             Gizmos.color = new Color(1f, 0.4f, 0f, 1f);
@@ -537,6 +601,12 @@ public class ChaseBehaviour : Behaviour
             if (pathTarget != null && state == ChaseState.GoToNextNode)
             {
                 Gizmos.color = Color.magenta;
+                Gizmos.DrawWireCube(pathTarget.position, Vector3.one * 0.3f);
+            }
+
+            if (pathTarget != null && state == ChaseState.GoToNoise)
+            {
+                Gizmos.color = new Color(1f, 0.85f, 0f, 1f);
                 Gizmos.DrawWireCube(pathTarget.position, Vector3.one * 0.3f);
             }
         }
