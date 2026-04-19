@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,20 +27,47 @@ public class EnemyBehaviour : MonoBehaviour
     public float lookAroundSpeed = 2f;
     public float lostSightForwardAdvance = 2f;
 
+    [Header("Velocidades")]
+    public float runSpeedMultiplier = 1.7f;
+    public float minRunSpeedMultiplier = 1.5f;
+    public float relativeToPlayerSprintMultiplier = 1.05f;
+    public float chaseAdvantageOverPlayer = 1.2f;
+
+    [Header("Debug")]
+    public bool showEnemyStaminaDebug = false;
+    public Vector2 debugPanelPosition = new Vector2(20f, 80f);
+
+    [SerializeField] private float debugCurrentStamina;
+    [SerializeField] private float debugMaxStamina;
+    [SerializeField, Range(0f, 1f)] private float debugNormalizedStamina;
+    [SerializeField] private bool debugRunningWithStamina;
+    
     private Movement movement;
+    private StaminaComponent staminaComponent;
     private MazeCell cellPosition;
     private Transform player;
     private PlayerController playerController;
+    private PlayerMovement playerMovement;
 
     private PatrolBehaviour patrolBehaviour;
     private ChaseBehaviour chaseBehaviour;
 
     private EnemyState state;
     private bool sawPlayerLastFrame;
+    private float baseWalkSpeed;
 
     void Awake()
     {
         movement = GetComponent<Movement>();
+        baseWalkSpeed = movement != null ? movement.speed : 0f;
+        staminaComponent = GetComponent<StaminaComponent>();
+        if (staminaComponent == null)
+            staminaComponent = gameObject.AddComponent<StaminaComponent>();
+        if (staminaComponent.maxStamina <= 0f)
+        {
+            staminaComponent.maxStamina = 100f;
+            staminaComponent.SetStamina(staminaComponent.maxStamina);
+        }
         PlayerController.OnPlayerEnteredCupboard += HandlePlayerEnteredCupboard;
         PlayerNoises.OnNoiseEmitted += HandlePlayerNoise;
 
@@ -74,6 +102,7 @@ public class EnemyBehaviour : MonoBehaviour
             TryAssignPlayer();
 
         bool seesPlayer = CanSeePlayer();
+        bool runningWithStamina = false;
 
         if (seesPlayer)
         {
@@ -90,6 +119,30 @@ public class EnemyBehaviour : MonoBehaviour
 
         if (state == EnemyState.Chase)
         {
+            bool shouldSpendStamina = seesPlayer;
+            bool canRun = staminaComponent != null && staminaComponent.UseStamina(shouldSpendStamina, Time.deltaTime) && shouldSpendStamina;
+            if (canRun)
+            {
+                float fromPlayer = playerMovement != null ? playerMovement.sprintMultiplier : 0f;
+                float sprintMultiplier = fromPlayer > 1f ? fromPlayer : runSpeedMultiplier;
+                float enemyRunSpeed = baseWalkSpeed * Mathf.Max(minRunSpeedMultiplier, sprintMultiplier);
+
+                if (playerMovement != null)
+                {
+                    float playerRunSpeed = playerMovement.speed * Mathf.Max(1f, playerMovement.sprintMultiplier);
+                    float targetFromPlayer = playerRunSpeed * Mathf.Max(0.1f, chaseAdvantageOverPlayer);
+                    float minimumFromPlayer = playerRunSpeed * Mathf.Max(0.1f, relativeToPlayerSprintMultiplier);
+                    enemyRunSpeed = Mathf.Max(enemyRunSpeed, minimumFromPlayer);
+                    enemyRunSpeed = Mathf.Max(enemyRunSpeed, targetFromPlayer);
+                }
+
+                movement.speed = enemyRunSpeed;
+                runningWithStamina = true;
+            }
+            else
+            {
+                movement.speed = baseWalkSpeed;
+            }
             bool chaseInProgress = chaseBehaviour.Tick();
             if (!chaseInProgress)
             {
@@ -97,10 +150,16 @@ public class EnemyBehaviour : MonoBehaviour
                 patrolBehaviour.ResetToClosestPoint();
             }
         }
+        else if (staminaComponent != null)
+        {
+            staminaComponent.UseStamina(false, Time.deltaTime); // Regenera estamina fuera de persecución
+            movement.speed = baseWalkSpeed;
+        }
 
         if (state == EnemyState.Patrol)
             patrolBehaviour.Tick();
 
+        UpdateStaminaDebugCache(runningWithStamina);
         RefreshCellPosition();
     }
 
@@ -172,6 +231,7 @@ public class EnemyBehaviour : MonoBehaviour
         {
             player = playerObj.transform;
             playerController = playerObj.GetComponent<PlayerController>();
+            playerMovement = playerObj.GetComponent<PlayerMovement>();
         }
     }
 
@@ -250,5 +310,27 @@ public class EnemyBehaviour : MonoBehaviour
 
         if (chaseBehaviour != null)
             chaseBehaviour.DrawDebugGizmos();
+    }
+
+    private void UpdateStaminaDebugCache(bool runningWithStamina)
+    {
+        if (staminaComponent == null)
+            return;
+
+        debugCurrentStamina = staminaComponent.CurrentStamina;
+        debugMaxStamina = staminaComponent.MaxStamina;
+        debugNormalizedStamina = staminaComponent.StaminaNormalized;
+        debugRunningWithStamina = runningWithStamina;
+    }
+
+    private void OnGUI()
+    {
+        if (!showEnemyStaminaDebug || !Application.isPlaying)
+            return;
+
+        Rect rect = new Rect(debugPanelPosition.x, debugPanelPosition.y, 360f, 70f);
+        string stateLabel = state == EnemyState.Chase ? "CHASE" : "PATROL";
+        string message = $"Enemy: {stateLabel} | Running: {debugRunningWithStamina}\nStamina: {debugCurrentStamina:0.0}/{debugMaxStamina:0.0} ({debugNormalizedStamina:P0})";
+        GUI.Label(rect, message);
     }
 }

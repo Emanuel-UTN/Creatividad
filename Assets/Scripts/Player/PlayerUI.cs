@@ -5,6 +5,7 @@ public class PlayerStaminaUI : MonoBehaviour
 {
     [Header("Referencias")]
     private PlayerController playerController;
+    private StaminaComponent staminaComponent;
     public Slider staminaSlider;
     public Image staminaFillImage;
 
@@ -16,6 +17,8 @@ public class PlayerStaminaUI : MonoBehaviour
             staminaSlider.maxValue = 1f;
         }
         playerController = PlayerController.playerController;
+        if (playerController != null)
+            staminaComponent = playerController.GetComponent<StaminaComponent>();
     }
 
     void Update()
@@ -24,13 +27,22 @@ public class PlayerStaminaUI : MonoBehaviour
         {
             PlayerController fromScene = FindAnyObjectByType<PlayerController>();
             if (fromScene != null && fromScene.gameObject.scene.IsValid() && fromScene.gameObject.scene.isLoaded)
+            {
                 playerController = fromScene;
+                staminaComponent = playerController.GetComponent<StaminaComponent>();
+            }
 
             if (playerController == null)
                 return;
         }
 
-        float normalized = playerController.StaminaNormalized;
+        if (staminaComponent == null)
+            staminaComponent = playerController.GetComponent<StaminaComponent>();
+
+        if (staminaComponent == null)
+            return;
+
+        float normalized = staminaComponent.StaminaNormalized;
 
         if (staminaSlider != null)
             staminaSlider.value = normalized;

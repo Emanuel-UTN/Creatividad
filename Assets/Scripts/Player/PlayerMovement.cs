@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(StaminaComponent))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movimiento")]
@@ -30,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController controller;
     private PlayerInput playerInput;
     private PlayerController playerController;
+    private StaminaComponent staminaComponent;
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction jumpAction;
@@ -54,6 +56,7 @@ public class PlayerMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         playerController = GetComponent<PlayerController>();
+        staminaComponent = GetComponent<StaminaComponent>();
 
         moveAction = playerInput.actions["Move"];
         lookAction = playerInput.actions["Look"];
@@ -78,6 +81,7 @@ public class PlayerMovement : MonoBehaviour
         if (interactAction != null && interactAction.WasPressedThisFrame() && playerController != null)
             playerController.TryInteractWithCupboard();
 
+        float dt = Time.deltaTime;
         Vector2 look = lookAction.ReadValue<Vector2>();
         float mouseX = look.x * lookSensitivity;
         float mouseY = look.y * lookSensitivity;
@@ -89,8 +93,6 @@ public class PlayerMovement : MonoBehaviour
             UpdateHiddenLook(mouseX, mouseY);
             return;
         }
-
-        float dt = Time.deltaTime;
 
         transform.Rotate(Vector3.up * mouseX);
 
@@ -117,9 +119,10 @@ public class PlayerMovement : MonoBehaviour
         bool sprintRequested = sprintAction != null && sprintAction.IsPressed();
         bool shouldTrySprint = sprintRequested && isMoving;
 
-        isSprinting = shouldTrySprint;
-        if (playerController != null)
-            isSprinting = playerController.ResolveSprint(shouldTrySprint, dt);
+        bool isHidden = playerController != null && playerController.IsHidden;
+        isSprinting = staminaComponent != null
+            ? staminaComponent.ResolveSprint(shouldTrySprint, isHidden, dt)
+            : shouldTrySprint;
 
         float currentSpeed = speed;
         if (isSprinting)
