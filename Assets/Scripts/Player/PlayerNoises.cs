@@ -92,7 +92,8 @@ public class PlayerNoises : MonoBehaviour
         if (playerMovement == null
             || playerMovement.IsMovementLocked
             || !playerMovement.IsGrounded
-            || !playerMovement.IsMoving)
+            || !playerMovement.IsMoving
+            || playerMovement.IsCrouching)
         {
             footstepTimer = 0f;
             return;

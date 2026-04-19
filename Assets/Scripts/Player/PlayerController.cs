@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerController : MonoBehaviour
 {
@@ -6,6 +7,8 @@ public class PlayerController : MonoBehaviour
     public static event System.Action<Cupboard, bool> OnPlayerExitedCupboard;
 
     static public PlayerController playerController;
+
+    public Light lanter;
 
     private PlayerMovement playerMovement;
     private Cupboard nearbyCupboard;
@@ -22,6 +25,8 @@ public class PlayerController : MonoBehaviour
         
 
         playerMovement = GetComponent<PlayerMovement>();
+
+        GetComponent<PlayerInput>().actions["Lanter"].performed += ctx => ToggleLanter();
     }
 
     public void SetNearbyCupboard(Cupboard cupboard)
@@ -91,5 +96,11 @@ public class PlayerController : MonoBehaviour
             return false;
 
         return enemyBehaviour.CanSeeWorldPosition(transform.position);
+    }
+
+    public void ToggleLanter()
+    {
+        if (lanter != null)
+            lanter.enabled = !lanter.enabled;
     }
 }

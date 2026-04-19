@@ -9,6 +9,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movimiento")]
     public float speed = 6f;
     public float sprintMultiplier = 1.7f;
+    public float crouchSpeedMultiplier = 0.45f;
+    public float crouchHeightMultiplier = 0.6f;
+    public float crouchCameraDrop = 0.55f;
     public float gravity = -20f;
     public float jumpHeight = 1.5f;
 
@@ -36,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
     private InputAction lookAction;
     private InputAction jumpAction;
     private InputAction sprintAction;
+    private InputAction crouchAction;
     private InputAction interactAction;
 
     private float verticalVelocity;
@@ -45,10 +49,16 @@ public class PlayerMovement : MonoBehaviour
     private bool movementLocked;
     private bool isMoving;
     private bool isSprinting;
+    private bool isCrouching;
+
+    private float standingHeight;
+    private Vector3 standingCenter;
+    private Vector3 standingCameraLocalPosition;
 
     public bool IsGrounded => isGrounded;
     public bool IsMoving => isMoving;
     public bool IsSprinting => isSprinting;
+    public bool IsCrouching => isCrouching;
     public bool IsMovementLocked => movementLocked;
 
     void Awake()
@@ -58,10 +68,16 @@ public class PlayerMovement : MonoBehaviour
         playerController = GetComponent<PlayerController>();
         staminaComponent = GetComponent<StaminaComponent>();
 
+        standingHeight = controller.height;
+        standingCenter = controller.center;
+        if (cameraPivot != null)
+            standingCameraLocalPosition = cameraPivot.localPosition;
+
         moveAction = playerInput.actions["Move"];
         lookAction = playerInput.actions["Look"];
         jumpAction = playerInput.actions["Jump"];
         sprintAction = playerInput.actions.FindAction("Sprint", false);
+        crouchAction = playerInput.actions.FindAction("Crouch", false);
         interactAction = playerInput.actions.FindAction("Accion", false);
         if (interactAction == null)
             interactAction = playerInput.actions.FindAction("Interact", false);
@@ -90,6 +106,7 @@ public class PlayerMovement : MonoBehaviour
         {
             isMoving = false;
             isSprinting = false;
+            isCrouching = false;
             UpdateHiddenLook(mouseX, mouseY);
             return;
         }
@@ -116,8 +133,10 @@ public class PlayerMovement : MonoBehaviour
             move.Normalize();
 
         isMoving = move.sqrMagnitude > 0.0001f;
+        isCrouching = crouchAction != null && crouchAction.IsPressed();
+        UpdateCrouchPose();
         bool sprintRequested = sprintAction != null && sprintAction.IsPressed();
-        bool shouldTrySprint = sprintRequested && isMoving;
+        bool shouldTrySprint = sprintRequested && isMoving && !isCrouching;
 
         bool isHidden = playerController != null && playerController.IsHidden;
         isSprinting = staminaComponent != null
@@ -127,9 +146,35 @@ public class PlayerMovement : MonoBehaviour
         float currentSpeed = speed;
         if (isSprinting)
             currentSpeed *= sprintMultiplier;
+        else if (isCrouching)
+            currentSpeed *= Mathf.Clamp(crouchSpeedMultiplier, 0.05f, 1f);
 
         Vector3 motion = move * currentSpeed + Vector3.up * verticalVelocity;
         controller.Move(motion * dt);
+    }
+
+    private void UpdateCrouchPose()
+    {
+        if (controller == null)
+            return;
+
+        if (!isCrouching)
+        {
+            controller.height = standingHeight;
+            controller.center = standingCenter;
+            if (cameraPivot != null)
+                cameraPivot.localPosition = standingCameraLocalPosition;
+            return;
+        }
+
+        float crouchedHeight = Mathf.Max(0.5f, standingHeight * Mathf.Clamp(crouchHeightMultiplier, 0.3f, 1f));
+        float heightDelta = standingHeight - crouchedHeight;
+
+        controller.height = crouchedHeight;
+        controller.center = standingCenter - new Vector3(0f, heightDelta * 0.5f, 0f);
+
+        if (cameraPivot != null)
+            cameraPivot.localPosition = standingCameraLocalPosition + Vector3.down * Mathf.Max(0f, crouchCameraDrop);
     }
 
     public void SetMovementLocked(bool locked)
