@@ -34,6 +34,10 @@ public class ChaseBehaviour : Behaviour
     private readonly Transform noiseTarget;
 
     private readonly List<MazeCell> pathCells = new List<MazeCell>();
+    private readonly Queue<MazeCell> pathOpenSet = new Queue<MazeCell>();
+    private readonly Dictionary<MazeCell, MazeCell> pathCameFrom = new Dictionary<MazeCell, MazeCell>();
+    private readonly HashSet<MazeCell> pathVisited = new HashSet<MazeCell>();
+    private readonly List<MazeCell> reversedPathBuffer = new List<MazeCell>();
 
     private float stateTimer;
     private float searchBaseYaw;
@@ -472,18 +476,17 @@ public class ChaseBehaviour : Behaviour
             return false;
         }
 
-        Queue<MazeCell> openSet = new Queue<MazeCell>();
-        Dictionary<MazeCell, MazeCell> cameFrom = new Dictionary<MazeCell, MazeCell>();
-        HashSet<MazeCell> visited = new HashSet<MazeCell>();
+        pathOpenSet.Clear();
+        pathCameFrom.Clear();
+        pathVisited.Clear();
+        reversedPathBuffer.Clear();
 
-        openSet.Enqueue(startCell);
-        visited.Add(startCell);
+        pathOpenSet.Enqueue(startCell);
+        pathVisited.Add(startCell);
 
-        int iterations = 0;
-        while (openSet.Count > 0)
+        while (pathOpenSet.Count > 0)
         {
-            iterations++;
-            MazeCell current = openSet.Dequeue();
+            MazeCell current = pathOpenSet.Dequeue();
             if (current == goalCell)
             {
                 break;
@@ -496,33 +499,32 @@ public class ChaseBehaviour : Behaviour
             {
                 Vector2Int coords = current.neighbors[i];
                 MazeCell neighbor = GameController.gameController != null ? GameController.gameController.Cell(coords.x, coords.y) : null;
-                if (neighbor == null || visited.Contains(neighbor))
+                if (neighbor == null || pathVisited.Contains(neighbor))
                     continue;
 
-                visited.Add(neighbor);
-                cameFrom[neighbor] = current;
-                openSet.Enqueue(neighbor);
+                pathVisited.Add(neighbor);
+                pathCameFrom[neighbor] = current;
+                pathOpenSet.Enqueue(neighbor);
             }
         }
 
-        if (!cameFrom.ContainsKey(goalCell))
+        if (!pathCameFrom.ContainsKey(goalCell))
         {
             return false;
         }
 
-        List<MazeCell> reversedPath = new List<MazeCell>();
         MazeCell step = goalCell;
         while (step != startCell)
         {
-            reversedPath.Add(step);
-            if (!cameFrom.TryGetValue(step, out MazeCell previous))
+            reversedPathBuffer.Add(step);
+            if (!pathCameFrom.TryGetValue(step, out MazeCell previous))
                 return false;
 
             step = previous;
         }
 
-        for (int i = reversedPath.Count - 1; i >= 0; i--)
-            pathCells.Add(reversedPath[i]);
+        for (int i = reversedPathBuffer.Count - 1; i >= 0; i--)
+            pathCells.Add(reversedPathBuffer[i]);
 
         return pathCells.Count > 0;
     }

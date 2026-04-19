@@ -3,11 +3,16 @@ using UnityEngine.UI;
 
 public class PlayerStaminaUI : MonoBehaviour
 {
+    private const float PlayerLookupInterval = 0.5f;
+
     [Header("Referencias")]
-    private PlayerController playerController;
-    private StaminaComponent staminaComponent;
     public Slider staminaSlider;
     public Image staminaFillImage;
+
+    private PlayerController playerController;
+    private StaminaComponent staminaComponent;
+    private float nextLookupTime;
+    private float lastNormalizedValue = -1f;
 
     void Start()
     {
@@ -16,38 +21,54 @@ public class PlayerStaminaUI : MonoBehaviour
             staminaSlider.minValue = 0f;
             staminaSlider.maxValue = 1f;
         }
-        playerController = PlayerController.playerController;
-        if (playerController != null)
-            staminaComponent = playerController.GetComponent<StaminaComponent>();
+
+        TryAssignPlayerController(true);
     }
 
     void Update()
     {
-        if (playerController == null || !playerController.gameObject.scene.IsValid() || !playerController.gameObject.scene.isLoaded)
-        {
-            PlayerController fromScene = FindAnyObjectByType<PlayerController>();
-            if (fromScene != null && fromScene.gameObject.scene.IsValid() && fromScene.gameObject.scene.isLoaded)
-            {
-                playerController = fromScene;
-                staminaComponent = playerController.GetComponent<StaminaComponent>();
-            }
-
-            if (playerController == null)
-                return;
-        }
-
-        if (staminaComponent == null)
-            staminaComponent = playerController.GetComponent<StaminaComponent>();
+        if (!HasValidPlayerController())
+            TryAssignPlayerController(false);
 
         if (staminaComponent == null)
             return;
 
         float normalized = staminaComponent.StaminaNormalized;
+        if (Mathf.Approximately(normalized, lastNormalizedValue))
+            return;
+
+        lastNormalizedValue = normalized;
 
         if (staminaSlider != null)
             staminaSlider.value = normalized;
 
         if (staminaFillImage != null)
             staminaFillImage.fillAmount = normalized;
+    }
+
+    private bool HasValidPlayerController()
+    {
+        return playerController != null
+            && playerController.gameObject.scene.IsValid()
+            && playerController.gameObject.scene.isLoaded;
+    }
+
+    private void TryAssignPlayerController(bool force)
+    {
+        if (!force && Time.unscaledTime < nextLookupTime)
+            return;
+
+        nextLookupTime = Time.unscaledTime + PlayerLookupInterval;
+
+        PlayerController candidate = PlayerController.playerController;
+        if (candidate == null)
+            candidate = FindAnyObjectByType<PlayerController>();
+
+        if (candidate == null || !candidate.gameObject.scene.IsValid() || !candidate.gameObject.scene.isLoaded)
+            return;
+
+        playerController = candidate;
+        staminaComponent = playerController.GetComponent<StaminaComponent>();
+        lastNormalizedValue = -1f;
     }
 }

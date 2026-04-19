@@ -1,11 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(SpawnUtils))]
 public class MazeGenerator : MonoBehaviour
 {
+    private static readonly Vector2Int[] NeighborDirections =
+    {
+        new Vector2Int(0, 1),
+        new Vector2Int(0, -1),
+        new Vector2Int(1, 0),
+        new Vector2Int(-1, 0)
+    };
+
     [Header("Configuración")]
     public int width = 15;
     public int height = 15;
@@ -29,6 +35,7 @@ public class MazeGenerator : MonoBehaviour
 
     private MazeCell[,] grid;
     private SpawnUtils spawnUtils;
+    private readonly List<Vector2Int> neighborBuffer = new List<Vector2Int>(4);
 
     void Start()
     {
@@ -101,20 +108,17 @@ public class MazeGenerator : MonoBehaviour
 
     List<Vector2Int> GetUnvisitedNeighbors(int x, int z)
     {
-        List<Vector2Int> result = new List<Vector2Int>();
-        Vector2Int[] directions = {
-            new Vector2Int(0, 1),
-            new Vector2Int(0, -1),
-            new Vector2Int(1, 0),
-            new Vector2Int(-1, 0)
-        };
-        foreach (var dir in directions)
+        neighborBuffer.Clear();
+
+        for (int i = 0; i < NeighborDirections.Length; i++)
         {
+            Vector2Int dir = NeighborDirections[i];
             int nx = x + dir.x, nz = z + dir.y;
             if (nx >= 0 && nx < width && nz >= 0 && nz < height && !grid[nx, nz].visited)
-                result.Add(new Vector2Int(nx, nz));
+                neighborBuffer.Add(new Vector2Int(nx, nz));
         }
-        return result;
+
+        return neighborBuffer;
     }
 
     void RemoveWallBetween(Vector2Int a, Vector2Int b)
@@ -131,7 +135,7 @@ public class MazeGenerator : MonoBehaviour
 
     void GenerateRooms()
     {
-        List<Vector2Int> usedCells = new List<Vector2Int>();
+        HashSet<Vector2Int> usedCells = new HashSet<Vector2Int>();
         int roomsCreated = 0;
 
         // --- Sala principal central ---

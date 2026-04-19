@@ -11,6 +11,10 @@ public class PatrolBehaviour : Behaviour
     private readonly Dictionary<Vector2Int, int> lastVisitByCell = new Dictionary<Vector2Int, int>();
     private readonly Queue<Vector2Int> recentVisitedQueue = new Queue<Vector2Int>();
     private readonly HashSet<Vector2Int> recentVisitedSet = new HashSet<Vector2Int>();
+    private readonly List<MazeCell> freshCandidates = new List<MazeCell>();
+    private readonly List<float> freshWeights = new List<float>();
+    private readonly List<MazeCell> allCandidates = new List<MazeCell>();
+    private readonly List<float> allWeights = new List<float>();
     private const int recentVisitMemory = 4;
 
     private int patrolVisitStep;
@@ -103,10 +107,10 @@ public class PatrolBehaviour : Behaviour
         if (currentCell == null || currentCell.neighbors == null || currentCell.neighbors.Count == 0)
             return false;
 
-        List<MazeCell> freshCandidates = new List<MazeCell>();
-        List<float> freshWeights = new List<float>();
-        List<MazeCell> allCandidates = new List<MazeCell>();
-        List<float> allWeights = new List<float>();
+        freshCandidates.Clear();
+        freshWeights.Clear();
+        allCandidates.Clear();
+        allWeights.Clear();
 
         for (int i = 0; i < currentCell.neighbors.Count; i++)
         {

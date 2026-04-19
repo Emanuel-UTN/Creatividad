@@ -3,6 +3,14 @@ using System.Collections.Generic;
 
 public class SpawnUtils : MonoBehaviour
 {
+    private static readonly Vector3[] WallDirections =
+    {
+        Vector3.forward,
+        Vector3.back,
+        Vector3.right,
+        Vector3.left
+    };
+
     [System.Serializable]
     public class SpawnEntry
     {
@@ -19,6 +27,8 @@ public class SpawnUtils : MonoBehaviour
     public float groundClearance = 0.02f;
 
     private Transform spawnedRoot;
+    private readonly List<MazeCell> eligibleCellsBuffer = new List<MazeCell>();
+    private readonly List<Vector3> wallDirectionsBuffer = new List<Vector3>(4);
 
     public void Spawn(MazeCell[,] grid, float cellSize)
     {
@@ -27,6 +37,10 @@ public class SpawnUtils : MonoBehaviour
 
         EnsureSpawnRoot();
         ClearSpawnedRoot();
+        BuildEligibleWallCells(grid, eligibleCellsBuffer);
+
+        if (eligibleCellsBuffer.Count == 0)
+            return;
 
         for (int i = 0; i < spawnEntries.Count; i++)
         {
@@ -40,7 +54,7 @@ public class SpawnUtils : MonoBehaviour
 
             for (int spawnIndex = 0; spawnIndex < spawnCount; spawnIndex++)
             {
-                if (!TryGetRandomWallCell(grid, out MazeCell cell, out Vector3 wallDirection))
+                if (!TryGetRandomWallCell(eligibleCellsBuffer, out MazeCell cell, out Vector3 wallDirection))
                     continue;
 
                 Vector3 spawnPosition = GetSpawnPosition(cell, wallDirection, cellSize);
@@ -72,12 +86,10 @@ public class SpawnUtils : MonoBehaviour
         }
     }
 
-    private bool TryGetRandomWallCell(MazeCell[,] grid, out MazeCell cell, out Vector3 wallDirection)
+    private void BuildEligibleWallCells(MazeCell[,] grid, List<MazeCell> eligibleCells)
     {
-        cell = null;
-        wallDirection = Vector3.forward;
+        eligibleCells.Clear();
 
-        List<MazeCell> eligibleCells = new List<MazeCell>();
         for (int x = 0; x < grid.GetLength(0); x++)
         {
             for (int z = 0; z < grid.GetLength(1); z++)
@@ -87,17 +99,22 @@ public class SpawnUtils : MonoBehaviour
                     eligibleCells.Add(candidate);
             }
         }
+    }
+
+    private bool TryGetRandomWallCell(List<MazeCell> eligibleCells, out MazeCell cell, out Vector3 wallDirection)
+    {
+        cell = null;
+        wallDirection = Vector3.forward;
 
         if (eligibleCells.Count == 0)
             return false;
 
         cell = eligibleCells[Random.Range(0, eligibleCells.Count)];
 
-        List<Vector3> wallDirections = GetActiveWallDirections(cell);
-        if (wallDirections.Count == 0)
+        if (!TryGetActiveWallDirections(cell, wallDirectionsBuffer))
             return false;
 
-        wallDirection = wallDirections[Random.Range(0, wallDirections.Count)];
+        wallDirection = wallDirectionsBuffer[Random.Range(0, wallDirectionsBuffer.Count)];
         return true;
     }
 
@@ -109,20 +126,20 @@ public class SpawnUtils : MonoBehaviour
             || (cell.wallWest != null && cell.wallWest.activeSelf);
     }
 
-    private List<Vector3> GetActiveWallDirections(MazeCell cell)
+    private bool TryGetActiveWallDirections(MazeCell cell, List<Vector3> directions)
     {
-        List<Vector3> directions = new List<Vector3>();
+        directions.Clear();
 
         if (cell.wallNorth != null && cell.wallNorth.activeSelf)
-            directions.Add(Vector3.forward);
+            directions.Add(WallDirections[0]);
         if (cell.wallSouth != null && cell.wallSouth.activeSelf)
-            directions.Add(Vector3.back);
+            directions.Add(WallDirections[1]);
         if (cell.wallEast != null && cell.wallEast.activeSelf)
-            directions.Add(Vector3.right);
+            directions.Add(WallDirections[2]);
         if (cell.wallWest != null && cell.wallWest.activeSelf)
-            directions.Add(Vector3.left);
+            directions.Add(WallDirections[3]);
 
-        return directions;
+        return directions.Count > 0;
     }
 
     private Vector3 GetSpawnPosition(MazeCell cell, Vector3 wallDirection, float cellSize)
