@@ -182,6 +182,7 @@ GameObject:
   - component: {fileID: 1297157113392236430}
   - component: {fileID: 7193282159078869062}
   - component: {fileID: 6592191160018254181}
+  - component: {fileID: 9066317190631719063}
   - component: {fileID: 319794225188992464}
   - component: {fileID: 3309638646496581838}
   - component: {fileID: 3986102747155073728}
@@ -327,6 +328,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13d532ac4148d344cacfa4bebbadd075, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+--- !u!114 &9066317190631719063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5415888724272369152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21625744163f44923ae8b8c5e27aa977, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StaminaComponent
   maxStamina: 100
   staminaRegenRate: 12
   staminaDepletionRate: 20

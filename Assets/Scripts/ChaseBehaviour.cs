@@ -53,6 +53,13 @@ public class ChaseBehaviour : Behaviour
     private int pathCellIndex;
 
     public bool IsPursuingCupboard => state == ChaseState.GoToCupboardNode || state == ChaseState.GoToCupboard;
+    public bool ShouldRun =>
+        state == ChaseState.Chase ||
+        state == ChaseState.GoToNoise ||
+        state == ChaseState.GoToLastSeen ||
+        state == ChaseState.GoToNextNode ||
+        state == ChaseState.GoToCupboardNode ||
+        state == ChaseState.GoToCupboard;
 
     public ChaseBehaviour(
         Movement movement,

@@ -1,8 +1,7 @@
-
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Movement))]
+[RequireComponent(typeof(StaminaComponent))]
 public class EnemyBehaviour : MonoBehaviour
 {
     private enum EnemyState
@@ -61,13 +60,7 @@ public class EnemyBehaviour : MonoBehaviour
         movement = GetComponent<Movement>();
         baseWalkSpeed = movement != null ? movement.speed : 0f;
         staminaComponent = GetComponent<StaminaComponent>();
-        if (staminaComponent == null)
-            staminaComponent = gameObject.AddComponent<StaminaComponent>();
-        if (staminaComponent.maxStamina <= 0f)
-        {
-            staminaComponent.maxStamina = 100f;
-            staminaComponent.SetStamina(staminaComponent.maxStamina);
-        }
+        EnsureValidStaminaSetup();
         PlayerController.OnPlayerEnteredCupboard += HandlePlayerEnteredCupboard;
         PlayerNoises.OnNoiseEmitted += HandlePlayerNoise;
 
@@ -93,68 +86,24 @@ public class EnemyBehaviour : MonoBehaviour
     void Start()
     {
         TryAssignPlayer();
-        cellPosition = GameController.gameController.GetCellByPosition(transform.position);
+
+        if (GameController.gameController != null)
+            cellPosition = GameController.gameController.GetCellByPosition(transform.position);
     }
 
     void Update()
     {
+        float deltaTime = Time.deltaTime;
+
         if (player == null)
             TryAssignPlayer();
 
         bool seesPlayer = CanSeePlayer();
-        bool runningWithStamina = false;
+        UpdateDetectionState(seesPlayer);
 
-        if (seesPlayer)
-        {
-            state = EnemyState.Chase;
-            chaseBehaviour.OnPlayerSeen(player);
-            sawPlayerLastFrame = true;
-        }
-        else if (sawPlayerLastFrame)
-        {
-            if (!chaseBehaviour.IsPursuingCupboard)
-                chaseBehaviour.OnPlayerLost(player);
-            sawPlayerLastFrame = false;
-        }
-
-        if (state == EnemyState.Chase)
-        {
-            bool shouldSpendStamina = seesPlayer;
-            bool canRun = staminaComponent != null && staminaComponent.UseStamina(shouldSpendStamina, Time.deltaTime) && shouldSpendStamina;
-            if (canRun)
-            {
-                float fromPlayer = playerMovement != null ? playerMovement.sprintMultiplier : 0f;
-                float sprintMultiplier = fromPlayer > 1f ? fromPlayer : runSpeedMultiplier;
-                float enemyRunSpeed = baseWalkSpeed * Mathf.Max(minRunSpeedMultiplier, sprintMultiplier);
-
-                if (playerMovement != null)
-                {
-                    float playerRunSpeed = playerMovement.speed * Mathf.Max(1f, playerMovement.sprintMultiplier);
-                    float targetFromPlayer = playerRunSpeed * Mathf.Max(0.1f, chaseAdvantageOverPlayer);
-                    float minimumFromPlayer = playerRunSpeed * Mathf.Max(0.1f, relativeToPlayerSprintMultiplier);
-                    enemyRunSpeed = Mathf.Max(enemyRunSpeed, minimumFromPlayer);
-                    enemyRunSpeed = Mathf.Max(enemyRunSpeed, targetFromPlayer);
-                }
-
-                movement.speed = enemyRunSpeed;
-                runningWithStamina = true;
-            }
-            else
-            {
-                movement.speed = baseWalkSpeed;
-            }
-            bool chaseInProgress = chaseBehaviour.Tick();
-            if (!chaseInProgress)
-            {
-                state = EnemyState.Patrol;
-                patrolBehaviour.ResetToClosestPoint();
-            }
-        }
-        else if (staminaComponent != null)
-        {
-            staminaComponent.UseStamina(false, Time.deltaTime); // Regenera estamina fuera de persecución
-            movement.speed = baseWalkSpeed;
-        }
+        bool runningWithStamina = state == EnemyState.Chase
+            ? UpdateChaseMovement(deltaTime)
+            : UpdatePatrolMovement(deltaTime);
 
         if (state == EnemyState.Patrol)
             patrolBehaviour.Tick();
@@ -185,6 +134,81 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (cell != null)
             cellPosition = cell;
+    }
+
+    private void EnsureValidStaminaSetup()
+    {
+        if (staminaComponent == null)
+            return;
+
+        if (staminaComponent.maxStamina <= 0f)
+            staminaComponent.maxStamina = 100f;
+
+        staminaComponent.SetStamina(staminaComponent.MaxStamina);
+    }
+
+    private void UpdateDetectionState(bool seesPlayer)
+    {
+        if (seesPlayer)
+        {
+            state = EnemyState.Chase;
+            chaseBehaviour.OnPlayerSeen(player);
+            sawPlayerLastFrame = true;
+            return;
+        }
+
+        if (!sawPlayerLastFrame)
+            return;
+
+        if (!chaseBehaviour.IsPursuingCupboard)
+            chaseBehaviour.OnPlayerLost(player);
+
+        sawPlayerLastFrame = false;
+    }
+
+    private bool UpdateChaseMovement(float deltaTime)
+    {
+        bool wantsToRun = chaseBehaviour != null && chaseBehaviour.ShouldRun;
+        bool canRun = staminaComponent != null
+            ? staminaComponent.ResolveSprint(wantsToRun, false, deltaTime)
+            : wantsToRun;
+
+        movement.speed = canRun ? CalculateEnemyRunSpeed() : baseWalkSpeed;
+
+        bool chaseInProgress = chaseBehaviour.Tick();
+        if (chaseInProgress)
+            return canRun;
+
+        state = EnemyState.Patrol;
+        movement.speed = baseWalkSpeed;
+        patrolBehaviour.ResetToClosestPoint();
+        return false;
+    }
+
+    private bool UpdatePatrolMovement(float deltaTime)
+    {
+        staminaComponent?.Regenerate(deltaTime);
+        movement.speed = baseWalkSpeed;
+        return false;
+    }
+
+    private float CalculateEnemyRunSpeed()
+    {
+        float enemyRunSpeed = baseWalkSpeed * Mathf.Max(1f, runSpeedMultiplier, minRunSpeedMultiplier);
+        if (playerMovement == null)
+            return enemyRunSpeed;
+
+        float playerBaseSpeed = Mathf.Max(0f, playerMovement.speed);
+        enemyRunSpeed = Mathf.Max(enemyRunSpeed, playerBaseSpeed * Mathf.Max(1f, chaseAdvantageOverPlayer));
+
+        if (!playerMovement.IsSprinting)
+            return enemyRunSpeed;
+
+        float playerSprintSpeed = playerBaseSpeed * Mathf.Max(1f, playerMovement.sprintMultiplier);
+        float relativeSprintSpeed = playerSprintSpeed * Mathf.Max(1f, relativeToPlayerSprintMultiplier);
+        float advantageSprintSpeed = playerSprintSpeed * Mathf.Max(1f, chaseAdvantageOverPlayer);
+
+        return Mathf.Max(enemyRunSpeed, relativeSprintSpeed, advantageSprintSpeed);
     }
 
     private bool CanSeePlayer()
