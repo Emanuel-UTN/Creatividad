@@ -359,6 +359,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   speed: 6
   sprintMultiplier: 1.5
+  crouchSpeedMultiplier: 0.45
+  crouchHeightMultiplier: 0.6
+  crouchCameraDrop: 0.55
   gravity: -20
   jumpHeight: 1.75
   groundCheck: {fileID: 7125207446131838776}
@@ -393,9 +396,20 @@ MonoBehaviour:
   noiseGizmoDuration: 0.5
   walkNoiseColor: {r: 0.3, g: 0.8, b: 1, a: 0.9}
   sprintNoiseColor: {r: 1, g: 0.45, b: 0.2, a: 0.9}
-  footstepClips: []
-  sprintFootstepClip: {fileID: 0}
-  cupboardInteractionClip: {fileID: 0}
+  footstepClips:
+  - {fileID: 8300000, guid: 7c3e9d9f2909d8143ae3e2d3d2b27cf9, type: 3}
+  - {fileID: 8300000, guid: ee764417940f33040acc0387dfeb11bc, type: 3}
+  - {fileID: 8300000, guid: 66bbedfa7475c69499d1dac519346f74, type: 3}
+  - {fileID: 8300000, guid: e77cd034773002f4ca3354c4485cf17e, type: 3}
+  - {fileID: 8300000, guid: cd69ffd7a31297944be61ab2dbd1b300, type: 3}
+  - {fileID: 8300000, guid: c56fce9f01c2fee499c4ceb171919b9f, type: 3}
+  sprintFootstepClips:
+  - {fileID: 8300000, guid: e8237a032af2d79489170b731da5d2ca, type: 3}
+  - {fileID: 8300000, guid: cc81e781cb8457843b92d84b2cccf5b1, type: 3}
+  - {fileID: 8300000, guid: dc39ce780d1147349b7ddf57c4efcf43, type: 3}
+  - {fileID: 8300000, guid: e7c85e649079cdd4bb6f9d09e81fbac9, type: 3}
+  - {fileID: 8300000, guid: 4de5a4485b3117747acb264eba0a2a08, type: 3}
+  - {fileID: 8300000, guid: 376956f01297aab4397811e8eb074d6d, type: 3}
 --- !u!114 &3986102747155073728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -515,7 +529,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
