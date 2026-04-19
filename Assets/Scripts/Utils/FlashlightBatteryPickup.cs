@@ -46,17 +46,21 @@ public class FlashlightBatteryPickup : MonoBehaviour
         if (player == null)
             return;
 
-        if (!player.AddFlashlightBattery(batteryAmount))
-            return;
-
         wasCollected = true;
+        player.AddFlashlightBattery(batteryAmount);
         SetVisualState(false);
+        gameObject.SetActive(false);
         Destroy(gameObject);
     }
 
     public void SetBatteryAmount(float amount)
     {
         batteryAmount = Mathf.Max(1f, amount);
+    }
+
+    public void CaptureCurrentPosition()
+    {
+        initialPosition = transform.position;
     }
 
     private void SetVisualState(bool visible)

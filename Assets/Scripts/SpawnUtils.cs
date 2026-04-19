@@ -195,6 +195,10 @@ public class SpawnUtils : MonoBehaviour
             pickupObject.transform.SetParent(spawnedRoot, false);
             pickupObject.transform.SetPositionAndRotation(spawnPosition, rotation);
             AlignSpawnToGround(pickupObject, cell.transform.position.y + groundClearance);
+
+            FlashlightBatteryPickup pickup = pickupObject.GetComponent<FlashlightBatteryPickup>();
+            if (pickup != null)
+                pickup.CaptureCurrentPosition();
         }
     }
 
