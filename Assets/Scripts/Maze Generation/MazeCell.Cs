@@ -1,10 +1,13 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class MazeCell : MonoBehaviour
 {
     public bool visited = false;
     public GameObject wallNorth, wallSouth, wallEast, wallWest;
     public GameObject floor;
+    [Header("Celdas Vecinas")]
+    public List<Vector2Int> neighbors = new List<Vector2Int>();
 
     public void RemoveWall(string direction)
     {

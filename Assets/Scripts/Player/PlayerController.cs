@@ -1,8 +1,12 @@
-using UnityEngine;
+// Limita el movement con estamina
 
+using UnityEngine;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerController : MonoBehaviour
 {
+
+    static public PlayerController playerController;
+
     [Header("Stamina")]
     public float maxStamina = 100f;
     public float staminaRegenRate = 12f;
@@ -13,18 +17,18 @@ public class PlayerController : MonoBehaviour
 
     public float CurrentStamina => stamina;
     public float MaxStamina => maxStamina;
-    public float StaminaNormalized => maxStamina > 0f ? stamina / maxStamina : 0f;
+    public float StaminaNormalized => Mathf.Clamp01(maxStamina > 0f ? stamina / maxStamina : 0f);
 
     void Awake()
     {
+        if (playerController == null)
+            playerController = this;
+        else if(playerController != this)
+            Destroy(gameObject);
+        
+
         playerMovement = GetComponent<PlayerMovement>();
         stamina = Mathf.Max(0f, maxStamina);
-    }
-
-    void Start()
-    {
-        if (GameController.gameController != null)
-            GameController.gameController.player = gameObject;
     }
 
     public bool ResolveSprint(bool sprintRequestedAndMoving, float deltaTime)

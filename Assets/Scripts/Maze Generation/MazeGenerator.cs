@@ -22,11 +22,16 @@ public class MazeGenerator : MonoBehaviour
     public int numberOfRooms = 3;
     public int roomSize = 3;
 
+    [Header("Sala Principal")]
+    public bool useMainRoom = true;
+    public int mainRoomSize = 5;
+
     private MazeCell[,] grid;
 
     void Start()
     {
         GenerateMaze();
+        GameController.gameController.Initialize(grid);
     }
 
     void GenerateMaze()
@@ -114,12 +119,62 @@ public class MazeGenerator : MonoBehaviour
         if (dx == -1) { grid[a.x, a.y].RemoveWall("West");  grid[b.x, b.y].RemoveWall("East"); }
         if (dz == 1)  { grid[a.x, a.y].RemoveWall("North"); grid[b.x, b.y].RemoveWall("South"); }
         if (dz == -1) { grid[a.x, a.y].RemoveWall("South"); grid[b.x, b.y].RemoveWall("North"); }
+
+        grid[a.x, a.y].neighbors.Add(b);
+        grid[b.x, b.y].neighbors.Add(a);
     }
 
     void GenerateRooms()
     {
         List<Vector2Int> usedCells = new List<Vector2Int>();
         int roomsCreated = 0;
+
+        // --- Sala principal central ---
+        if (useMainRoom)
+        {
+            int centerX = width / 2 - mainRoomSize / 2;
+            int centerZ = height / 2 - mainRoomSize / 2;
+            // Marcar celdas usadas
+            for (int x = centerX; x < centerX + mainRoomSize; x++)
+                for (int z = centerZ; z < centerZ + mainRoomSize; z++)
+                    usedCells.Add(new Vector2Int(x, z));
+            // Remover paredes internas
+            for (int x = centerX; x < centerX + mainRoomSize; x++)
+            {
+                for (int z = centerZ; z < centerZ + mainRoomSize; z++)
+                {
+                    if (grid[x, z] != null)
+                    {
+                        if (z + 1 < centerZ + mainRoomSize){
+                            grid[x, z].RemoveWall("North");
+                            grid[x, z].neighbors.Add(new Vector2Int(x, z + 1));
+                            grid[x, z + 1].neighbors.Add(new Vector2Int(x, z));
+                        }
+                        if (z - 1 >= centerZ){
+                            grid[x, z].RemoveWall("South");
+                            grid[x, z].neighbors.Add(new Vector2Int(x, z - 1));
+                            grid[x, z - 1].neighbors.Add(new Vector2Int(x, z));
+                        }
+                        if (x + 1 < centerX + mainRoomSize){
+                            grid[x, z].RemoveWall("East");
+                            grid[x, z].neighbors.Add(new Vector2Int(x + 1, z));
+                            grid[x + 1, z].neighbors.Add(new Vector2Int(x, z));
+                        }
+                        if (x - 1 >= centerX){
+                            grid[x, z].RemoveWall("West");
+                            grid[x, z].neighbors.Add(new Vector2Int(x - 1, z));
+                            grid[x - 1, z].neighbors.Add(new Vector2Int(x, z));
+                        }
+                    }
+                }
+            }
+            // Instanciar prefab de sala principal
+            if (roomPrefab != null)
+            {
+                Vector3 roomCenter = new Vector3((centerX + mainRoomSize / 2f) * cellSize, 0, (centerZ + mainRoomSize / 2f) * cellSize);
+                Instantiate(roomPrefab, roomCenter, Quaternion.identity, transform);
+            }
+        }
 
         while (roomsCreated < numberOfRooms)
         {
@@ -159,17 +214,26 @@ public class MazeGenerator : MonoBehaviour
                         if (grid[x, z] != null)
                         {
                             // Remover pared al norte
-                            if (z + 1 < randomZ + roomSize)
+                            if (z + 1 < randomZ + roomSize){
                                 grid[x, z].RemoveWall("North");
-                            // Remover pared al sur
-                            if (z - 1 >= randomZ)
+                                grid[x, z].neighbors.Add(new Vector2Int(x, z + 1));
+                                grid[x, z + 1].neighbors.Add(new Vector2Int(x, z));
+                            }// Remover pared al sur
+                            if (z - 1 >= randomZ){
                                 grid[x, z].RemoveWall("South");
-                            // Remover pared al este
-                            if (x + 1 < randomX + roomSize)
+                                grid[x, z].neighbors.Add(new Vector2Int(x, z - 1));
+                                grid[x, z - 1].neighbors.Add(new Vector2Int(x, z));
+                            }// Remover pared al este
+                            if (x + 1 < randomX + roomSize){
                                 grid[x, z].RemoveWall("East");
-                            // Remover pared al oeste
-                            if (x - 1 >= randomX)
+                                grid[x, z].neighbors.Add(new Vector2Int(x + 1, z));
+                                grid[x + 1, z].neighbors.Add(new Vector2Int(x, z));
+                            }// Remover pared al oeste
+                            if (x - 1 >= randomX){
                                 grid[x, z].RemoveWall("West");
+                                grid[x, z].neighbors.Add(new Vector2Int(x - 1, z));
+                                grid[x - 1, z].neighbors.Add(new Vector2Int(x, z));
+                            }
                         }
                     }
                 }

@@ -157,23 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42c2f613e68eee84f90e872c9bae6e2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  patrolPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  waitAtEndTime: 3
+  waitAtEndTime: 0
   eyePoint: {fileID: 6973892010401793057}
   viewDistance: 30
   viewAngle: 145
@@ -181,7 +165,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 59
   showVisionInScene: 1
-  searchDuration: 10
+  searchDuration: 5
   lookAroundAngle: 90
   lookAroundSpeed: 2
   lostSightForwardAdvance: 5

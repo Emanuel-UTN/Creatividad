@@ -183,7 +183,6 @@ GameObject:
   - component: {fileID: 7193282159078869062}
   - component: {fileID: 6592191160018254181}
   - component: {fileID: 319794225188992464}
-  - component: {fileID: 8822959820158977730}
   - component: {fileID: 3986102747155073728}
   m_Layer: 0
   m_Name: Player
@@ -354,20 +353,6 @@ MonoBehaviour:
   lookSensitivity: 0.1
   minPitch: -80
   maxPitch: 80
---- !u!114 &8822959820158977730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5415888724272369152}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a7a3653af869644690d6719b7b500af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerStaminaUI
-  staminaSlider: {fileID: 0}
-  staminaFillImage: {fileID: 0}
 --- !u!114 &3986102747155073728
 MonoBehaviour:
   m_ObjectHideFlags: 0

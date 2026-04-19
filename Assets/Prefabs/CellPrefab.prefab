@@ -55,6 +55,7 @@ MonoBehaviour:
   wallEast: {fileID: 1601101892908968495}
   wallWest: {fileID: 8844664271455937656}
   floor: {fileID: 3189447351291285780}
+  neighbors: []
 --- !u!1 &1523300166960815209
 GameObject:
   m_ObjectHideFlags: 0
@@ -403,7 +404,7 @@ GameObject:
   - component: {fileID: 9191466060346955002}
   - component: {fileID: 8723203796542521856}
   - component: {fileID: 2803739201879776272}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
