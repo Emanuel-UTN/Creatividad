@@ -5,6 +5,7 @@ public class GameController : MonoBehaviour
 {
     public static GameController gameController;
     public GameObject player;
+    public GameObject[] enemies;
     public GameObject enemy;
 
     private MazeGenerator mazeGenerator;
@@ -27,7 +28,7 @@ public class GameController : MonoBehaviour
         this.grid = grid;
         mazeGenerator = GetComponent<MazeGenerator>();
         player = Instantiate(player, grid[0,0].transform.position, Quaternion.identity);
-        enemy = Instantiate(enemy, grid[mazeGenerator.width - 1, mazeGenerator.height - 1].transform.position, Quaternion.identity);
+        enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], grid[mazeGenerator.width - 1, mazeGenerator.height - 1].transform.position, Quaternion.identity);
     }
 
     public MazeCell[,] Grid()

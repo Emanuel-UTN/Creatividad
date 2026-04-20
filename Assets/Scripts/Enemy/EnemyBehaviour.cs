@@ -31,6 +31,7 @@ public class EnemyBehaviour : MonoBehaviour
     public float minRunSpeedMultiplier = 1.5f;
     public float relativeToPlayerSprintMultiplier = 1.05f;
     public float chaseAdvantageOverPlayer = 1.2f;
+    [Range(0f, 1f)] public float runResumeStaminaNormalized = 0.2f;
 
     [Header("Debug")]
     public bool showEnemyStaminaDebug = false;
@@ -53,8 +54,13 @@ public class EnemyBehaviour : MonoBehaviour
 
     private EnemyState state;
     private bool sawPlayerLastFrame;
+    private bool isRunning;
+    private bool runBlockedByExhaustion;
     private float baseWalkSpeed;
     private float stunTimer;
+
+    public bool IsRunning => isRunning;
+    public bool IsChasing => state == EnemyState.Chase;
 
     void Awake()
     {
@@ -102,6 +108,8 @@ public class EnemyBehaviour : MonoBehaviour
         if (stunTimer > 0f)
         {
             stunTimer -= deltaTime;
+            isRunning = false;
+            runBlockedByExhaustion = false;
             movement.speed = 0f;
             movement.moveToTarget = false;
             movement.rotateTowardsTarget = false;
@@ -116,6 +124,8 @@ public class EnemyBehaviour : MonoBehaviour
         bool runningWithStamina = state == EnemyState.Chase
             ? UpdateChaseMovement(deltaTime)
             : UpdatePatrolMovement(deltaTime);
+
+        isRunning = runningWithStamina;
 
         if (state == EnemyState.Patrol)
             patrolBehaviour.Tick();
@@ -181,9 +191,35 @@ public class EnemyBehaviour : MonoBehaviour
     private bool UpdateChaseMovement(float deltaTime)
     {
         bool wantsToRun = chaseBehaviour != null && chaseBehaviour.ShouldRun;
-        bool canRun = staminaComponent != null
-            ? staminaComponent.ResolveSprint(wantsToRun, false, deltaTime)
-            : wantsToRun;
+        bool canRun = wantsToRun;
+
+        if (staminaComponent != null)
+        {
+            float resumeThreshold = Mathf.Clamp01(runResumeStaminaNormalized);
+
+            if (runBlockedByExhaustion)
+            {
+                staminaComponent.Regenerate(deltaTime);
+                if (staminaComponent.StaminaNormalized >= resumeThreshold)
+                    runBlockedByExhaustion = false;
+
+                canRun = false;
+            }
+            else if (wantsToRun)
+            {
+                canRun = staminaComponent.Consume(deltaTime);
+                if (!canRun)
+                {
+                    runBlockedByExhaustion = true;
+                    staminaComponent.Regenerate(deltaTime);
+                }
+            }
+            else
+            {
+                staminaComponent.Regenerate(deltaTime);
+                canRun = false;
+            }
+        }
 
         movement.speed = canRun ? CalculateEnemyRunSpeed() : baseWalkSpeed;
 
@@ -193,6 +229,7 @@ public class EnemyBehaviour : MonoBehaviour
 
         state = EnemyState.Patrol;
         movement.speed = baseWalkSpeed;
+        runBlockedByExhaustion = false;
         patrolBehaviour.ResetToClosestPoint();
         return false;
     }
@@ -201,6 +238,8 @@ public class EnemyBehaviour : MonoBehaviour
     {
         staminaComponent?.Regenerate(deltaTime);
         movement.speed = baseWalkSpeed;
+        if (staminaComponent != null && staminaComponent.StaminaNormalized >= Mathf.Clamp01(runResumeStaminaNormalized))
+            runBlockedByExhaustion = false;
         return false;
     }
 

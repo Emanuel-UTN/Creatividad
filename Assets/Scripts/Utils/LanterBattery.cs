@@ -1,10 +1,10 @@
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
-[RequireComponent(typeof(Rigidbody))]
-public class FlashlightBatteryPickup : MonoBehaviour
+public class LanterBattery : MonoBehaviour
 {
     [SerializeField] private float batteryAmount = 30f;
+    [Header("Movement")]
     [SerializeField] private float rotationSpeed = 90f;
     [SerializeField] private float bobAmplitude = 0.12f;
     [SerializeField] private float bobFrequency = 2f;
@@ -14,14 +14,6 @@ public class FlashlightBatteryPickup : MonoBehaviour
 
     void Awake()
     {
-        SphereCollider trigger = GetComponent<SphereCollider>();
-        trigger.isTrigger = true;
-        trigger.radius = Mathf.Max(0.2f, trigger.radius);
-
-        Rigidbody body = GetComponent<Rigidbody>();
-        body.isKinematic = true;
-        body.useGravity = false;
-
         initialPosition = transform.position;
     }
 
@@ -45,32 +37,10 @@ public class FlashlightBatteryPickup : MonoBehaviour
         PlayerController player = other.GetComponentInParent<PlayerController>();
         if (player == null)
             return;
-
+        
         wasCollected = true;
         player.AddFlashlightBattery(batteryAmount);
-        SetVisualState(false);
         gameObject.SetActive(false);
         Destroy(gameObject);
-    }
-
-    public void SetBatteryAmount(float amount)
-    {
-        batteryAmount = Mathf.Max(1f, amount);
-    }
-
-    public void CaptureCurrentPosition()
-    {
-        initialPosition = transform.position;
-    }
-
-    private void SetVisualState(bool visible)
-    {
-        Collider[] colliders = GetComponentsInChildren<Collider>(true);
-        for (int i = 0; i < colliders.Length; i++)
-            colliders[i].enabled = visible;
-
-        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
-        for (int i = 0; i < renderers.Length; i++)
-            renderers[i].enabled = visible;
     }
 }

@@ -223,6 +223,7 @@ MonoBehaviour:
   staminaSlider: {fileID: 941569343}
   staminaFillImage: {fileID: 1331369807}
   flashlightBatteryText: {fileID: 0}
+  flashlightBatteryPanel: {fileID: 0}
 --- !u!1 &986205275
 GameObject:
   m_ObjectHideFlags: 0
@@ -363,7 +364,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -10, y: -10}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 96.0545, y: 58.1403}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &986205282
 MonoBehaviour:
@@ -466,7 +467,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 986205280}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdedc8d2e4d84ea4d873c89f0f5df5ee, type: 3}
+  m_Script: {fileID: 11500000, guid: 83e42e9b6b7204d3993d5f11da2f6dbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Clock
   startHour: 9
@@ -662,6 +663,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameController
   player: {fileID: 5415888724272369152, guid: d084b9789b76986479f6a0f902d00af2, type: 3}
+  enemies:
+  - {fileID: 7615203023854442912, guid: 2fae8ebc6210b8b4790c51ace7ea5f66, type: 3}
+  - {fileID: 4890459008080505782, guid: 1873c04664fcb5649a0d20f2987b1838, type: 3}
+  - {fileID: 625166392266714922, guid: 3eb09f5869068724497b3208f9ef6bfa, type: 3}
   enemy: {fileID: 781131125439351914, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
 --- !u!114 &1890286001
 MonoBehaviour:
@@ -679,13 +684,11 @@ MonoBehaviour:
   - prefab: {fileID: 5108500865681255252, guid: 5127648af9f61864a93e606422ab0d1a, type: 3}
     minAmount: 6
     maxAmount: 10
+  - prefab: {fileID: 700100000000000001, guid: 6dd59c8b21144dd8b2f8eb293041d7f1, type: 3}
+    minAmount: 2
+    maxAmount: 5
   wallInset: 0.6
   groundClearance: 0.02
-  spawnFlashlightBatteries: 1
-  flashlightBatteryPrefab: {fileID: 700100000000000001, guid: 6dd59c8b21144dd8b2f8eb293041d7f1, type: 3}
-  minFlashlightBatterySpawns: 4
-  maxFlashlightBatterySpawns: 7
-  batteryChargeAmount: 100
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

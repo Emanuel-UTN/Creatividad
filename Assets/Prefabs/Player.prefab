@@ -186,8 +186,10 @@ GameObject:
   - component: {fileID: 9066317190631719063}
   - component: {fileID: 319794225188992464}
   - component: {fileID: 3309638646496581838}
+  - component: {fileID: 6158549430233471493}
   - component: {fileID: 3986102747155073728}
   - component: {fileID: 6174645802916807233}
+  - component: {fileID: 9010514947739464124}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -329,7 +331,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13d532ac4148d344cacfa4bebbadd075, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  lanter: {fileID: 6458010089474898834}
 --- !u!114 &9066317190631719063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,6 +411,29 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e7c85e649079cdd4bb6f9d09e81fbac9, type: 3}
   - {fileID: 8300000, guid: 4de5a4485b3117747acb264eba0a2a08, type: 3}
   - {fileID: 8300000, guid: 376956f01297aab4397811e8eb074d6d, type: 3}
+--- !u!114 &6158549430233471493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5415888724272369152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed2910b8aadb8014c90f97238fe53aa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFlashlightController
+  lanter: {fileID: 6458010089474898834}
+  maxFlashlightBattery: 100
+  batteryDrainPerSecond: 0.75
+  boostedBatteryDrainPerSecond: 15
+  batteryShutdownClockHour: 10
+  boostedIntensityMultiplier: 2.25
+  boostedRangeMultiplier: 1.1
+  enemyStunDuration: 2.5
+  flashlightOcclusionMask:
+    serializedVersion: 2
+    m_Bits: 59
 --- !u!114 &3986102747155073728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -613,6 +637,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &9010514947739464124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5415888724272369152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed2910b8aadb8014c90f97238fe53aa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFlashlightController
+  lanter: {fileID: 0}
+  maxFlashlightBattery: 100
+  batteryDrainPerSecond: 4
+  boostedBatteryDrainPerSecond: 14
+  batteryShutdownClockHour: 10
+  boostedIntensityMultiplier: 2.25
+  boostedRangeMultiplier: 1.1
+  enemyStunDuration: 1
+  flashlightOcclusionMask:
+    serializedVersion: 2
+    m_Bits: 59
 --- !u!1 &5732925853090164580
 GameObject:
   m_ObjectHideFlags: 0

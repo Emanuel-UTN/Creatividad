@@ -1,0 +1,224 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3450537790340694579
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8600728539634659067}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: m_Name
+      value: Ragged Jester Zombie
+      objectReference: {fileID: 0}
+    - target: {fileID: 8111781155169087978, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: fc7acb50c205c594184897b6469c1020, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5551799475621856313}
+  m_SourcePrefab: {fileID: 100100000, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+--- !u!1 &2532056562807914338 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+  m_PrefabInstance: {fileID: 3450537790340694579}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &5551799475621856313
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2532056562807914338}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+  m_Controller: {fileID: 9100000, guid: 3f6b854e006b9084582d6a063d2a9ea0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!4 &2911714236531795416 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+  m_PrefabInstance: {fileID: 3450537790340694579}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6104951724817306252 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -334426454937481025, guid: 8b396610bd0049f44a3d64b455addb0e, type: 3}
+  m_PrefabInstance: {fileID: 3450537790340694579}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5262812475806394332
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 781131125439351914, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_Name
+      value: Enemy Ragged Jester Zombie Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 12.551397
+      objectReference: {fileID: 0}
+    - target: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 10.798691
+      objectReference: {fileID: 0}
+    - target: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8246497944180058740, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_Height
+      value: 1.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 8246497944180058740, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_Radius
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8246497944180058740, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: m_ProvidesContacts
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8701535584738758948, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: eyePoint
+      value: 
+      objectReference: {fileID: 6104951724817306252}
+    m_RemovedComponents:
+    - {fileID: 4707694580051227835, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+    - {fileID: 6801497401998995811, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+    m_RemovedGameObjects:
+    - {fileID: 1629219250983475904, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2911714236531795416}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 781131125439351914, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 960750785522989145}
+  m_SourcePrefab: {fileID: 100100000, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+--- !u!1 &4890459008080505782 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 781131125439351914, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+  m_PrefabInstance: {fileID: 5262812475806394332}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &960750785522989145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4890459008080505782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aab8e55cdef7a2d4f857c2d5725dc4a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyController
+  animator: {fileID: 5551799475621856313}
+  walkingBoolName: IsWalking
+  runningBoolName: IsRunning
+  walkEnterSpeed: 0.08
+  walkExitSpeed: 0.04
+--- !u!4 &8600728539634659067 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+  m_PrefabInstance: {fileID: 5262812475806394332}
+  m_PrefabAsset: {fileID: 0}
