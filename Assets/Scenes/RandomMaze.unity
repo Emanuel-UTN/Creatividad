@@ -642,6 +642,7 @@ MonoBehaviour:
   width: 15
   height: 15
   cellSize: 4
+  probToConnectMoreNods: 0.1
   cellPrefab: {fileID: 1431481510376813797, guid: 2c5d71f51c8419642ae19ba1986c7640, type: 3}
   exitPrefab: {fileID: 2622602541214653307, guid: 56810e5f0c6514046b0ddd6a6bc440f1, type: 3}
   roomPrefab: {fileID: 3236163725099616086, guid: aeb0b557b7c4f8445a476d814c0040ce, type: 3}

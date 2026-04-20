@@ -16,6 +16,8 @@ public class MazeGenerator : MonoBehaviour
     public int width = 15;
     public int height = 15;
     public float cellSize = 4f;
+    [Range(0f, 1f)]
+    public float probToConnectMoreNods = 0.15f;
 
     [Header("Prefabs")]
     public GameObject cellPrefab;
@@ -96,7 +98,7 @@ public class MazeGenerator : MonoBehaviour
             {
                 Vector2Int next = neighbors[Random.Range(0, neighbors.Count)];
                 RemoveWallBetween(current, next);
-                grid[next.x, next.y].visited = true;
+                grid[next.x, next.y].visited = Random.value >= probToConnectMoreNods; // Probabilidad de marcar como visitado
                 stack.Push(next);
             }
             else
