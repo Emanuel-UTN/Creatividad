@@ -16,7 +16,7 @@ public class MazeGenerator : MonoBehaviour
     public int width = 15;
     public int height = 15;
     public float cellSize = 4f;
-    [Range(0f, 1f)]
+    [Range(0f, .6f)]
     public float probToConnectMoreNods = 0.15f;
 
     [Header("Prefabs")]
