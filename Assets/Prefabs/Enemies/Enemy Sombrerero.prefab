@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3404172251694580090
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2356655621671095362}
+  m_Layer: 0
+  m_Name: Eye Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2356655621671095362
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3404172251694580090}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0.075}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4699486604576641561}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5097326386620806642
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -70,17 +101,15 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 88c83f62ecbb4b34c917c0de042eb38e, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 498a4446791663c4481bab47e7a0f209, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2356655621671095362}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 498a4446791663c4481bab47e7a0f209, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4188311740839235571}
   m_SourcePrefab: {fileID: 100100000, guid: 498a4446791663c4481bab47e7a0f209, type: 3}
---- !u!4 &4460454510836802893 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -334426454937481025, guid: 498a4446791663c4481bab47e7a0f209, type: 3}
-  m_PrefabInstance: {fileID: 5097326386620806642}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4699486604576641561 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 498a4446791663c4481bab47e7a0f209, type: 3}
@@ -123,7 +152,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 781131125439351914, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
       propertyPath: m_Name
-      value: Enemy Sombrerero Variant
+      value: Enemy Sombrerero
       objectReference: {fileID: 0}
     - target: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
       propertyPath: m_LocalPosition.x
@@ -180,7 +209,7 @@ PrefabInstance:
     - target: {fileID: 8701535584738758948, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
       propertyPath: eyePoint
       value: 
-      objectReference: {fileID: 4460454510836802893}
+      objectReference: {fileID: 2356655621671095362}
     - target: {fileID: 8701535584738758948, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
       propertyPath: showEnemyStaminaDebug
       value: 0

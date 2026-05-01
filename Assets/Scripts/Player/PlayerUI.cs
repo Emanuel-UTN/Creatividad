@@ -1,27 +1,46 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerStaminaUI : MonoBehaviour
+public class PlayerUI : MonoBehaviour
 {
+    static public PlayerUI playerUI;
+    private PlayerController playerController;
+
+
     private const float PlayerLookupInterval = 0.5f;
     private static readonly Color FlashlightTextColor = new Color(1f, 0.95f, 0.45f, 1f);
     private static readonly Color FlashlightPanelColor = new Color(0.05f, 0.07f, 0.1f, 0.82f);
 
-    [Header("Referencias")]
+    [Header("Stamina")]
     public Slider staminaSlider;
     public Image staminaFillImage;
+
+    [Header("Flashlight Battery")]
     public TMP_Text flashlightBatteryText;
     public Image flashlightBatteryPanel;
 
-    private PlayerController playerController;
     private StaminaComponent staminaComponent;
     private float nextLookupTime;
     private float lastNormalizedValue = -1f;
     private int lastBatteryPercentage = -1;
 
+    [Header("Key Count")]
+    [SerializeField] private TMP_Text keyCountText;
+
     void Start()
     {
+        if (playerUI == null)
+        {
+            playerUI = this;
+        }
+        else if (playerUI != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         EnsureBatteryUIExists();
 
         if (staminaSlider != null)
@@ -29,6 +48,8 @@ public class PlayerStaminaUI : MonoBehaviour
             staminaSlider.minValue = 0f;
             staminaSlider.maxValue = 1f;
         }
+
+        keyCountText.text = "Keys: 0";
 
         TryAssignPlayerController(true);
     }
@@ -157,5 +178,11 @@ public class PlayerStaminaUI : MonoBehaviour
         staminaComponent = playerController.GetComponent<StaminaComponent>();
         lastNormalizedValue = -1f;
         lastBatteryPercentage = -1;
+    }
+
+    public void UpdateKeyCount(int count)
+    {
+        if (keyCountText != null)
+            keyCountText.text = $"Keys: {count}";
     }
 }

@@ -78,9 +78,7 @@ public class PlayerMovement : MonoBehaviour
         jumpAction = playerInput.actions["Jump"];
         sprintAction = playerInput.actions.FindAction("Sprint", false);
         crouchAction = playerInput.actions.FindAction("Crouch", false);
-        interactAction = playerInput.actions.FindAction("Accion", false);
-        if (interactAction == null)
-            interactAction = playerInput.actions.FindAction("Interact", false);
+        interactAction = playerInput.actions.FindAction("Interact", false);
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

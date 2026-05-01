@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
         add => PlayerFlashlightController.OnFlashlightBatteryChanged += value;
         remove => PlayerFlashlightController.OnFlashlightBatteryChanged -= value;
     }
+    public static event System.Action<int> OnKeyCountChanged;
 
     public static PlayerController playerController;
 
@@ -24,6 +25,18 @@ public class PlayerController : MonoBehaviour
     public float CurrentFlashlightBattery => flashlightController != null ? flashlightController.CurrentFlashlightBattery : 0f;
     public float MaxFlashlightBattery => flashlightController != null ? flashlightController.MaxFlashlightBattery : 0f;
     public float FlashlightBatteryNormalized => flashlightController != null ? flashlightController.FlashlightBatteryNormalized : 0f;
+    
+    private int keyCount = 0;
+    public int KeyCount
+    {
+        get => keyCount;
+        set
+        {
+            keyCount = Mathf.Max(0, value);
+            OnKeyCountChanged?.Invoke(keyCount);
+            PlayerUI.playerUI?.UpdateKeyCount(keyCount);
+        }
+    }
 
     void Awake()
     {
