@@ -478,6 +478,7 @@ GameObject:
   - component: {fileID: 986205281}
   - component: {fileID: 986205282}
   - component: {fileID: 986205283}
+  - component: {fileID: 986205285}
   - component: {fileID: 986205284}
   m_Layer: 5
   m_Name: Clock
@@ -613,6 +614,46 @@ MonoBehaviour:
   realMinutesPerGameHour: 15
   showSeconds: 0
   clockText: {fileID: 986205282}
+--- !u!114 &986205285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986205280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e98e377673742b48ac07f00354f7996, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DayNightCycle
+  useUnscaledTime: 1
+  daySkybox: {fileID: 2100000, guid: 85cf0b004bc4a654b9e501efcce47902, type: 2}
+  nightSkybox: {fileID: 2100000, guid: d4454f71d85928744be7771e2143dab7, type: 2}
+  nightSkyboxStart: 0.65
+  daySkyboxExposure: 0.95
+  nightSkyboxExposure: 0.95
+  skyboxTransitionExposure: 0.25
+  sun: {fileID: 0}
+  daySunEuler: {x: 50, y: -30, z: 0}
+  nightSunEuler: {x: -18, y: -30, z: 0}
+  daySunIntensity: 1.4
+  nightSunIntensity: 0.05
+  daySunColor: {r: 1, g: 1, b: 1, a: 1}
+  sunsetSunColor: {r: 1, g: 0.48, b: 0.22, a: 1}
+  nightSunColor: {r: 0.12, g: 0.16, b: 0.35, a: 1}
+  dayAmbientIntensity: 1
+  nightAmbientIntensity: 0.18
+  dayAmbientSky: {r: 0.72, g: 0.78, b: 0.86, a: 1}
+  dayAmbientEquator: {r: 0.46, g: 0.48, b: 0.48, a: 1}
+  dayAmbientGround: {r: 0.22, g: 0.2, b: 0.16, a: 1}
+  nightAmbientSky: {r: 0.05, g: 0.06, b: 0.12, a: 1}
+  nightAmbientEquator: {r: 0.035, g: 0.04, b: 0.08, a: 1}
+  nightAmbientGround: {r: 0.015, g: 0.015, b: 0.03, a: 1}
+  controlFog: 1
+  dayFogColor: {r: 0.58, g: 0.68, b: 0.82, a: 1}
+  nightFogColor: {r: 0.025, g: 0.03, b: 0.07, a: 1}
+  dayFogDensity: 0.012
+  nightFogDensity: 0.045
 --- !u!222 &986205284
 CanvasRenderer:
   m_ObjectHideFlags: 0
