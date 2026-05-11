@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 1281511181008965012}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.02}
+  m_LocalPosition: {x: 0, y: 0, z: -0.95}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -52,7 +52,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4, y: 1, z: 0.5}
+  m_Size: {x: 4, y: 2, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3814964262426013464
 MonoBehaviour:
@@ -300,6 +300,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7662619356808802871}
   - component: {fileID: 5557454664921413838}
+  - component: {fileID: 2352920451159878154}
   - component: {fileID: 7476594898185059063}
   - component: {fileID: 3918292774939177102}
   m_Layer: 0
@@ -343,6 +344,22 @@ MonoBehaviour:
   doorOpen: {fileID: 7400000, guid: 05978e3de598f7a4ba08b53ea0376d0d, type: 2}
   lockPrefab: {fileID: 5647144428164322703, guid: 0b1d87566b5a8164b8480ba1bf56ee09, type: 3}
   lockCount: 3
+--- !u!114 &2352920451159878154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5763812208419227696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a05a3c5d0af0ff48ae8b89d72983217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialTrigger
+  actionReference: {fileID: 1781555164194001046, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  message: para abrir un candado si tienes al menos una llave
+  showOnStart: 0
+  hideOnInput: 1
 --- !u!65 &7476594898185059063
 BoxCollider:
   m_ObjectHideFlags: 0

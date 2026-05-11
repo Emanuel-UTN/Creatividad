@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6055972737295197379}
   - component: {fileID: 7146849497970623865}
   - component: {fileID: 4046786639862685944}
+  - component: {fileID: 2686442222502941822}
   - component: {fileID: 4744370411706614710}
   m_Layer: 0
   m_Name: Cupboard
@@ -156,6 +157,22 @@ MonoBehaviour:
   enterCupboardClip: {fileID: 8300000, guid: 349cb03a3e316a04b83a11ae5ed5580a, type: 3}
   exitCupboardClip: {fileID: 8300000, guid: 98419811c17334840b8cc2343af47fe6, type: 3}
   cupboardAudioVolume: 0.8
+--- !u!114 &2686442222502941822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5108500865681255252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a05a3c5d0af0ff48ae8b89d72983217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialTrigger
+  actionReference: {fileID: 1781555164194001046, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  message: esconderte en el armario
+  showOnStart: 0
+  hideOnInput: 1
 --- !u!82 &4744370411706614710
 AudioSource:
   m_ObjectHideFlags: 0

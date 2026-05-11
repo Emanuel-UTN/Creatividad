@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 public class DayNightCycle : MonoBehaviour
 {
     [Header("Timing")]
-    private float transitionDurationSeconds = 300f;
+    [SerializeField] private float transitionDurationSeconds = 300f;
     [SerializeField] private bool useUnscaledTime = true;
 
     [Header("Skyboxes")]

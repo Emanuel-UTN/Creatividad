@@ -26,21 +26,9 @@ public class EnemyBehaviour : MonoBehaviour
     public float lookAroundSpeed = 2f;
     public float lostSightForwardAdvance = 2f;
 
-    [Header("Velocidades")]
+    [Header("Correr")]
     public float runSpeedMultiplier = 1.7f;
-    public float minRunSpeedMultiplier = 1.5f;
-    public float relativeToPlayerSprintMultiplier = 1.05f;
-    public float chaseAdvantageOverPlayer = 1.2f;
     [Range(0f, 1f)] public float runResumeStaminaNormalized = 0.2f;
-
-    [Header("Debug")]
-    public bool showEnemyStaminaDebug = false;
-    public Vector2 debugPanelPosition = new Vector2(20f, 80f);
-
-    [SerializeField] private float debugCurrentStamina;
-    [SerializeField] private float debugMaxStamina;
-    [SerializeField, Range(0f, 1f)] private float debugNormalizedStamina;
-    [SerializeField] private bool debugRunningWithStamina;
     
     private Movement movement;
     private StaminaComponent staminaComponent;
@@ -65,7 +53,7 @@ public class EnemyBehaviour : MonoBehaviour
     void Awake()
     {
         movement = GetComponent<Movement>();
-        baseWalkSpeed = movement != null ? movement.speed : 0f;
+        baseWalkSpeed = movement != null ? movement.speed : 5f;
         staminaComponent = GetComponent<StaminaComponent>();
         EnsureValidStaminaSetup();
         PlayerController.OnPlayerEnteredCupboard += HandlePlayerEnteredCupboard;
@@ -94,8 +82,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         TryAssignPlayer();
 
-        if (GameController.gameController != null)
-            cellPosition = GameController.gameController.GetCellByPosition(transform.position);
+        RefreshCellPosition();
     }
 
     void Update()
@@ -113,7 +100,6 @@ public class EnemyBehaviour : MonoBehaviour
             movement.speed = 0f;
             movement.moveToTarget = false;
             movement.rotateTowardsTarget = false;
-            UpdateStaminaDebugCache(false);
             RefreshCellPosition();
             return;
         }
@@ -130,7 +116,6 @@ public class EnemyBehaviour : MonoBehaviour
         if (state == EnemyState.Patrol)
             patrolBehaviour.Tick();
 
-        UpdateStaminaDebugCache(runningWithStamina);
         RefreshCellPosition();
     }
 
@@ -245,21 +230,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private float CalculateEnemyRunSpeed()
     {
-        float enemyRunSpeed = baseWalkSpeed * Mathf.Max(1f, runSpeedMultiplier, minRunSpeedMultiplier);
-        if (playerMovement == null)
-            return enemyRunSpeed;
-
-        float playerBaseSpeed = Mathf.Max(0f, playerMovement.speed);
-        enemyRunSpeed = Mathf.Max(enemyRunSpeed, playerBaseSpeed * Mathf.Max(1f, chaseAdvantageOverPlayer));
-
-        if (!playerMovement.IsSprinting)
-            return enemyRunSpeed;
-
-        float playerSprintSpeed = playerBaseSpeed * Mathf.Max(1f, playerMovement.sprintMultiplier);
-        float relativeSprintSpeed = playerSprintSpeed * Mathf.Max(1f, relativeToPlayerSprintMultiplier);
-        float advantageSprintSpeed = playerSprintSpeed * Mathf.Max(1f, chaseAdvantageOverPlayer);
-
-        return Mathf.Max(enemyRunSpeed, relativeSprintSpeed, advantageSprintSpeed);
+        return baseWalkSpeed * Mathf.Max(1f, runSpeedMultiplier);
     }
 
     private bool CanSeePlayer()
@@ -385,28 +356,6 @@ public class EnemyBehaviour : MonoBehaviour
 
         if (chaseBehaviour != null)
             chaseBehaviour.DrawDebugGizmos();
-    }
-
-    private void UpdateStaminaDebugCache(bool runningWithStamina)
-    {
-        if (staminaComponent == null)
-            return;
-
-        debugCurrentStamina = staminaComponent.CurrentStamina;
-        debugMaxStamina = staminaComponent.MaxStamina;
-        debugNormalizedStamina = staminaComponent.StaminaNormalized;
-        debugRunningWithStamina = runningWithStamina;
-    }
-
-    private void OnGUI()
-    {
-        if (!showEnemyStaminaDebug || !Application.isPlaying)
-            return;
-
-        Rect rect = new Rect(debugPanelPosition.x, debugPanelPosition.y, 360f, 70f);
-        string stateLabel = state == EnemyState.Chase ? "CHASE" : "PATROL";
-        string message = $"Enemy: {stateLabel} | Running: {debugRunningWithStamina}\nStamina: {debugCurrentStamina:0.0}/{debugMaxStamina:0.0} ({debugNormalizedStamina:P0})";
-        GUI.Label(rect, message);
     }
 
     public void ApplyFlashlightStun(float duration)
