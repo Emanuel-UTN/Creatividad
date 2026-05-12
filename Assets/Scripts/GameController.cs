@@ -148,4 +148,8 @@ public class GameController : MonoBehaviour
             }
         }
     }
+
+    public void StartClock(float timeToOpen) {
+        Clock.Instance?.StartClock(timeToOpen);
+    }
 }

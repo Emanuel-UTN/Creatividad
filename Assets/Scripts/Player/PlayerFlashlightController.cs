@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,24 +8,25 @@ public class PlayerFlashlightController : MonoBehaviour
     public static event System.Action<float> OnFlashlightBatteryChanged;
 
     [Header("Linterna")]
-    public Light lanter;
+    public Light flashlight;
     [SerializeField] private float maxFlashlightBattery = 100f;
     [SerializeField] private float batteryDrainPerSecond = 4f;
     [SerializeField] private float boostedBatteryDrainPerSecond = 14f;
-    [SerializeField] private int batteryShutdownClockHour = 10;
+    [SerializeField] [Range(0.2f, 1f)] private float flickerDurationOnEmpty = 0.5f;
     [SerializeField] private float boostedIntensityMultiplier = 2.25f;
     [SerializeField] private float boostedRangeMultiplier = 1.1f;
     [SerializeField] private float enemyStunDuration = 1f;
     [SerializeField] private LayerMask flashlightOcclusionMask = Physics.DefaultRaycastLayers;
 
     private PlayerInput playerInput;
-    private InputAction lanterAction;
+    private InputAction flashlightAction;
     private InputAction flashBoostAction;
     private EnemyBehaviour enemyBehaviour;
     private float flashlightBattery;
     private float baseLightIntensity;
     private float baseLightRange;
     private bool isBoostingFlashlight;
+    private bool flashlightCanTurnOn = true;
 
     public float CurrentFlashlightBattery => flashlightBattery;
     public float MaxFlashlightBattery => maxFlashlightBattery;
@@ -34,22 +36,22 @@ public class PlayerFlashlightController : MonoBehaviour
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-        lanterAction = playerInput != null ? playerInput.actions.FindAction("Lanter", false) : null;
+        flashlightAction = playerInput != null ? playerInput.actions.FindAction("Flashlight", false) : null;
         flashBoostAction = playerInput != null ? playerInput.actions.FindAction("Attack", false) : null;
 
         flashlightBattery = Mathf.Max(0f, maxFlashlightBattery);
 
-        if (lanter != null)
+        if (flashlight != null)
         {
-            baseLightIntensity = lanter.intensity;
-            baseLightRange = lanter.range;
-            if (lanter.shadows == LightShadows.None)
-                lanter.shadows = LightShadows.Soft;
+            baseLightIntensity = flashlight.intensity;
+            baseLightRange = flashlight.range;
+            if (flashlight.shadows == LightShadows.None)
+                flashlight.shadows = LightShadows.Soft;
         }
 
-        if (lanterAction != null)
-            lanterAction.performed += OnToggleLanterPerformed;
-
+        if (flashlightAction != null)
+            flashlightAction.performed += OnToggleFlashlightPerformed;      
+            
         if (flashBoostAction != null)
         {
             flashBoostAction.started += OnFlashBoostStarted;
@@ -71,8 +73,8 @@ public class PlayerFlashlightController : MonoBehaviour
 
     void OnDestroy()
     {
-        if (lanterAction != null)
-            lanterAction.performed -= OnToggleLanterPerformed;
+        if (flashlightAction != null)
+            flashlightAction.performed -= OnToggleFlashlightPerformed;
 
         if (flashBoostAction != null)
         {
@@ -81,21 +83,21 @@ public class PlayerFlashlightController : MonoBehaviour
         }
     }
 
-    public void ToggleLanter()
+    public void ToggleFlashlight()
     {
-        if (lanter == null)
+        if (flashlight == null)
             return;
 
-        if (!lanter.enabled)
+        if (!flashlight.enabled)
         {
             if (!CanUseFlashlight())
                 return;
 
-            lanter.enabled = true;
+            flashlight.enabled = true;
             return;
         }
 
-        lanter.enabled = false;
+        flashlight.enabled = false;
     }
 
     public bool AddFlashlightBattery(float amount)
@@ -110,12 +112,13 @@ public class PlayerFlashlightController : MonoBehaviour
             return false;
 
         NotifyBatteryChanged();
+        flashlightCanTurnOn = true;
         return true;
     }
 
-    private void OnToggleLanterPerformed(InputAction.CallbackContext context)
+    private void OnToggleFlashlightPerformed(InputAction.CallbackContext context)
     {
-        ToggleLanter();
+        ToggleFlashlight();
     }
 
     private void OnFlashBoostStarted(InputAction.CallbackContext context)
@@ -156,7 +159,7 @@ public class PlayerFlashlightController : MonoBehaviour
 
         float previousBattery = flashlightBattery;
 
-        if (lanter != null && lanter.enabled)
+        if (flashlight != null && flashlight.enabled)
         {
             float drain = batteryDrainPerSecond;
             if (isBoostingFlashlight)
@@ -174,70 +177,63 @@ public class PlayerFlashlightController : MonoBehaviour
 
     private bool CanUseFlashlight()
     {
-        return lanter != null && flashlightBattery > 0.001f && !HasReachedBatteryShutdownHour();
-    }
-
-    private bool HasReachedBatteryShutdownHour()
-    {
-        Clock clock = Clock.Instance;
-        if (clock == null)
-            return false;
-
-        return clock.CurrentGameMinutes >= GetShutdownAbsoluteMinutes(clock.startHour);
-    }
-
-    private float GetShutdownAbsoluteMinutes(int startHour)
-    {
-        int normalizedStartHour = Mathf.Clamp(startHour, 0, 23);
-        int targetClockHour = Mathf.Clamp(batteryShutdownClockHour, 1, 12);
-
-        for (int elapsedHours = 1; elapsedHours <= 24; elapsedHours++)
-        {
-            int absoluteHour = normalizedStartHour + elapsedHours;
-            if (Clock.ToDisplayHour(absoluteHour) == targetClockHour)
-                return absoluteHour * 60f;
-        }
-
-        return (normalizedStartHour + 24) * 60f;
+        return flashlight != null && flashlightBattery > 0.001f;
     }
 
     private void ForceFlashlightOff()
     {
         isBoostingFlashlight = false;
-        if (lanter == null)
+        if (flashlight == null || !flashlightCanTurnOn)
             return;
 
-        lanter.enabled = false;
-        lanter.intensity = baseLightIntensity;
-        lanter.range = baseLightRange;
+        flashlightCanTurnOn = false;
+        flashlight.intensity = baseLightIntensity;
+        flashlight.range = baseLightRange;
+        StartCoroutine(FlashLightFlicker(flickerDurationOnEmpty));
+    }
+
+    private IEnumerator FlashLightFlicker(float duration)
+    {
+        if (flashlight == null)
+            yield break;
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            flashlight.enabled = !flashlight.enabled;
+            yield return new WaitForSeconds(0.15f);
+            elapsed += 0.1f;
+        }
+
+        flashlight.enabled = false;
     }
 
     private void UpdateFlashlightVisuals()
     {
-        if (lanter == null)
+        if (flashlight == null)
             return;
 
-        if (!lanter.enabled)
+        if (!flashlight.enabled)
         {
-            lanter.intensity = baseLightIntensity;
-            lanter.range = baseLightRange;
+            flashlight.intensity = baseLightIntensity;
+            flashlight.range = baseLightRange;
             return;
         }
 
         if (isBoostingFlashlight && flashlightBattery > 0.001f)
         {
-            lanter.intensity = baseLightIntensity * Mathf.Max(1f, boostedIntensityMultiplier);
-            lanter.range = baseLightRange * Mathf.Max(1f, boostedRangeMultiplier);
+            flashlight.intensity = baseLightIntensity * Mathf.Max(1f, boostedIntensityMultiplier);
+            flashlight.range = baseLightRange * Mathf.Max(1f, boostedRangeMultiplier);
             return;
         }
 
-        lanter.intensity = baseLightIntensity;
-        lanter.range = baseLightRange;
+        flashlight.intensity = baseLightIntensity;
+        flashlight.range = baseLightRange;
     }
 
     private void TryStunEnemyWithFlashlight()
     {
-        if (!CanUseFlashlight() || lanter == null || !lanter.enabled)
+        if (!CanUseFlashlight() || flashlight == null || !flashlight.enabled)
             return;
 
         UpdateEnemyReference();
@@ -245,16 +241,16 @@ public class PlayerFlashlightController : MonoBehaviour
             return;
 
         Transform enemyTransform = enemyBehaviour.transform;
-        Vector3 origin = lanter.transform.position;
+        Vector3 origin = flashlight.transform.position;
         Vector3 target = enemyTransform.position + Vector3.up * 1.2f;
         Vector3 toEnemy = target - origin;
         float distance = toEnemy.magnitude;
 
-        if (distance > Mathf.Max(0.1f, lanter.range))
+        if (distance > Mathf.Max(0.1f, flashlight.range))
             return;
 
-        float halfAngle = lanter.type == LightType.Spot ? lanter.spotAngle * 0.5f : 35f;
-        if (Vector3.Angle(lanter.transform.forward, toEnemy) > halfAngle)
+        float halfAngle = flashlight.type == LightType.Spot ? flashlight.spotAngle * 0.5f : 35f;
+        if (Vector3.Angle(flashlight.transform.forward, toEnemy) > halfAngle)
             return;
 
         if (!HasClearFlashlightSight(origin, enemyTransform, distance))

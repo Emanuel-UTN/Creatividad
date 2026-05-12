@@ -698,7 +698,6 @@ GameObject:
   - component: {fileID: 986205281}
   - component: {fileID: 986205282}
   - component: {fileID: 986205283}
-  - component: {fileID: 986205285}
   - component: {fileID: 986205284}
   m_Layer: 5
   m_Name: Clock
@@ -830,9 +829,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83e42e9b6b7204d3993d5f11da2f6dbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Clock
-  startHour: 9
-  realMinutesPerGameHour: 15
-  showSeconds: 0
   clockText: {fileID: 986205282}
 --- !u!222 &986205284
 CanvasRenderer:
@@ -842,47 +838,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 986205280}
   m_CullTransparentMesh: 1
---- !u!114 &986205285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 986205280}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e98e377673742b48ac07f00354f7996, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DayNightCycle
-  transitionDurationSeconds: 300
-  useUnscaledTime: 1
-  daySkybox: {fileID: 2100000, guid: e391f00234292cc4f935308c11cf0e54, type: 2}
-  nightSkybox: {fileID: 2100000, guid: 2039a0ad0a9d05549928b70362f54902, type: 2}
-  nightSkyboxStart: 0.65
-  daySkyboxExposure: 0.95
-  nightSkyboxExposure: 0.95
-  skyboxTransitionExposure: 0.15
-  sun: {fileID: 0}
-  daySunEuler: {x: 50, y: -30, z: 0}
-  nightSunEuler: {x: -18, y: -30, z: 0}
-  daySunIntensity: 1.4
-  nightSunIntensity: 0.05
-  daySunColor: {r: 1, g: 1, b: 1, a: 1}
-  sunsetSunColor: {r: 1, g: 0.48, b: 0.22, a: 1}
-  nightSunColor: {r: 0.12, g: 0.16, b: 0.35, a: 1}
-  dayAmbientIntensity: 1
-  nightAmbientIntensity: 0.1
-  dayAmbientSky: {r: 0.72, g: 0.78, b: 0.86, a: 1}
-  dayAmbientEquator: {r: 0.46, g: 0.48, b: 0.48, a: 1}
-  dayAmbientGround: {r: 0.22, g: 0.2, b: 0.16, a: 1}
-  nightAmbientSky: {r: 0.05, g: 0.06, b: 0.12, a: 1}
-  nightAmbientEquator: {r: 0.035, g: 0.04, b: 0.08, a: 1}
-  nightAmbientGround: {r: 0.015, g: 0.015, b: 0.03, a: 1}
-  controlFog: 1
-  dayFogColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  nightFogColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  dayFogDensity: 0.012
-  nightFogDensity: 0.045
 --- !u!1 &1108669010
 GameObject:
   m_ObjectHideFlags: 0
@@ -1174,27 +1129,47 @@ MonoBehaviour:
     maxAmount: 5
   wallInset: 0.6
   groundClearance: 0.02
---- !u!65 &1890286002
-BoxCollider:
+--- !u!114 &1890286002
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890285996}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e98e377673742b48ac07f00354f7996, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DayNightCycle
+  transitionDurationSeconds: 300
+  useUnscaledTime: 1
+  daySkybox: {fileID: 2100000, guid: e391f00234292cc4f935308c11cf0e54, type: 2}
+  nightSkybox: {fileID: 2100000, guid: 2039a0ad0a9d05549928b70362f54902, type: 2}
+  nightSkyboxStart: 0.65
+  daySkyboxExposure: 0.95
+  nightSkyboxExposure: 0.95
+  skyboxTransitionExposure: 0.15
+  sun: {fileID: 0}
+  daySunEuler: {x: 50, y: -30, z: 0}
+  nightSunEuler: {x: -18, y: -30, z: 0}
+  daySunIntensity: 1.4
+  nightSunIntensity: 0.05
+  daySunColor: {r: 1, g: 1, b: 1, a: 1}
+  sunsetSunColor: {r: 1, g: 0.48, b: 0.22, a: 1}
+  nightSunColor: {r: 0.12, g: 0.16, b: 0.35, a: 1}
+  dayAmbientIntensity: 1
+  nightAmbientIntensity: 0.1
+  dayAmbientSky: {r: 0.72, g: 0.78, b: 0.86, a: 1}
+  dayAmbientEquator: {r: 0.46, g: 0.48, b: 0.48, a: 1}
+  dayAmbientGround: {r: 0.22, g: 0.2, b: 0.16, a: 1}
+  nightAmbientSky: {r: 0.05, g: 0.06, b: 0.12, a: 1}
+  nightAmbientEquator: {r: 0.035, g: 0.04, b: 0.08, a: 1}
+  nightAmbientGround: {r: 0.015, g: 0.015, b: 0.03, a: 1}
+  controlFog: 1
+  dayFogColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+  nightFogColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+  dayFogDensity: 0.012
+  nightFogDensity: 0.045
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Camara en escondite")]
     public float hiddenYawLimit = 55f;
-    public float hiddenMinPitch = -25f;
+    public float hiddenMinPitch = -30f;
     public float hiddenMaxPitch = 30f;
 
     private CharacterController controller;

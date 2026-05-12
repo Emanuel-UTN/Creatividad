@@ -10,6 +10,7 @@ public class Door : MonoBehaviour
     private bool isPlayerInRange = false;
     private bool isInitialized = false;
     public AnimationClip doorOpen;
+    public float timeToOpen = 60f;
 
     [Header("Lock Settings")]
     public GameObject lockPrefab;
@@ -110,6 +111,14 @@ public class Door : MonoBehaviour
         if (doorCollider != null)
             doorCollider.enabled = false;
 
+        if (doorAnimator != null && doorOpen != null)
+            Invoke("PlayAnimation", timeToOpen);
+        
+        GameController.gameController.StartClock(timeToOpen);
+    }
+
+    public void PlayAnimation() {
+        Animator doorAnimator = GetComponent<Animator>();
         if (doorAnimator != null && doorOpen != null)
             doorAnimator.Play(doorOpen.name);
     }

@@ -113,9 +113,9 @@ public class PlayerController : MonoBehaviour
         OnPlayerExitedCupboard?.Invoke(cupboard, forcedByEnemy);
     }
 
-    public void ToggleLanter()
+    public void ToggleFlashlight()
     {
-        flashlightController?.ToggleLanter();
+        flashlightController?.ToggleFlashlight();
     }
 
     private bool HasEnemyDirectVisionNow()

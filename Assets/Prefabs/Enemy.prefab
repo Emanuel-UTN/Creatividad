@@ -170,6 +170,8 @@ MonoBehaviour:
   lookAroundAngle: 90
   lookAroundSpeed: 2
   lostSightForwardAdvance: 5
+  runSpeedMultiplier: 1.5
+  runResumeStaminaNormalized: 0.2
 --- !u!114 &4785869034785869034
 MonoBehaviour:
   m_ObjectHideFlags: 0

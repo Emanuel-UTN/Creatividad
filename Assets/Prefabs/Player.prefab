@@ -375,7 +375,7 @@ MonoBehaviour:
   minPitch: -80
   maxPitch: 80
   hiddenYawLimit: 55
-  hiddenMinPitch: -25
+  hiddenMinPitch: -30
   hiddenMaxPitch: 30
 --- !u!114 &3309638646496581838
 MonoBehaviour:
@@ -423,11 +423,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed2910b8aadb8014c90f97238fe53aa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFlashlightController
-  lanter: {fileID: 6458010089474898834}
+  flashlight: {fileID: 6458010089474898834}
   maxFlashlightBattery: 100
   batteryDrainPerSecond: 0.75
   boostedBatteryDrainPerSecond: 15
-  batteryShutdownClockHour: 10
+  flickerDurationOnEmpty: 0.6
   boostedIntensityMultiplier: 2.25
   boostedRangeMultiplier: 1.1
   enemyStunDuration: 2.5
@@ -649,11 +649,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed2910b8aadb8014c90f97238fe53aa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFlashlightController
-  lanter: {fileID: 0}
+  flashlight: {fileID: 0}
   maxFlashlightBattery: 100
   batteryDrainPerSecond: 4
   boostedBatteryDrainPerSecond: 14
-  batteryShutdownClockHour: 10
+  flickerDurationOnEmpty: 0.5
   boostedIntensityMultiplier: 2.25
   boostedRangeMultiplier: 1.1
   enemyStunDuration: 1

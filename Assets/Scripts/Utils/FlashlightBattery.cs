@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
-public class LanterBattery : MonoBehaviour
+public class FlashlightBattery : MonoBehaviour
 {
     [SerializeField] private float batteryAmount = 30f;
     [Header("Movement")]
