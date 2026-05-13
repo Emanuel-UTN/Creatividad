@@ -139,4 +139,12 @@ public class PlayerController : MonoBehaviour
     {
         return flashlightController != null && flashlightController.AddFlashlightBattery(amount);
     }
+
+    public void TakeDamage(float damage)
+    {
+        Debug.Log($"Player takes {damage} damage.");
+        PlayerHealth playerHealth = GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+            playerHealth.TakeDamage(damage);
+    }
 }

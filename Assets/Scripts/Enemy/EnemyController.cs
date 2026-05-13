@@ -10,6 +10,12 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float walkEnterSpeed = 0.08f;
     [SerializeField] private float walkExitSpeed = 0.04f;
 
+    [Header("Attack")]
+    public float attackRange = 1.5f;
+    public float attackDamage = 10f;
+    public float attackCooldown = 1.5f;
+    private float lastAttackTime;
+
     private EnemyBehaviour enemyBehaviour;
     private Movement movement;
     private int walkingBoolHash;
@@ -59,5 +65,21 @@ public class EnemyController : MonoBehaviour
 
         animator.SetBool(walkingBoolHash, walkingState);
         animator.SetBool(runningBoolHash, isRunning);
+    }
+
+    public void TryAttack()
+    {
+        PlayerController player = PlayerController.playerController;
+        if (player == null)
+            return;
+        
+        if (Vector3.Distance(transform.position, player.transform.position) <= attackRange)
+        {
+            if (Time.time - lastAttackTime >= attackCooldown)
+            {
+                player.TakeDamage(attackDamage);
+                lastAttackTime = Time.time;
+            }
+        }
     }
 }

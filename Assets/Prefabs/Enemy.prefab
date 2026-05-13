@@ -201,7 +201,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   speed: 5
   rotationSpeed: 10
-  offset: 4
+  offset: 1.25
   target: {fileID: 0}
   moveToTarget: 1
   rotateTowardsTarget: 1

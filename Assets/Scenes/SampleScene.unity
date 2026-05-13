@@ -517,7 +517,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 832575519}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &131963269
@@ -1095,6 +1096,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e98e377673742b48ac07f00354f7996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayNightCycle
+  transitionDurationSeconds: 300
   useUnscaledTime: 1
   daySkybox: {fileID: 2100000, guid: 85cf0b004bc4a654b9e501efcce47902, type: 2}
   nightSkybox: {fileID: 2100000, guid: d4454f71d85928744be7771e2143dab7, type: 2}
@@ -1533,11 +1535,24 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6915045241780733657, guid: d084b9789b76986479f6a0f902d00af2, type: 3}
+      propertyPath: showInEditor
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6915045241780733657, guid: d084b9789b76986479f6a0f902d00af2, type: 3}
+      propertyPath: simulateHealth
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6915045241780733657, guid: d084b9789b76986479f6a0f902d00af2, type: 3}
+      propertyPath: visionLossEnabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8822959820158977730, guid: d084b9789b76986479f6a0f902d00af2, type: 3}
       propertyPath: staminaSlider
       value: 
       objectReference: {fileID: 1986982497}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6915045241780733657, guid: d084b9789b76986479f6a0f902d00af2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1551,6 +1566,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 832575519}
+  - component: {fileID: 832575520}
   - component: {fileID: 832575518}
   m_Layer: 0
   m_Name: Global Volume
@@ -1575,7 +1591,7 @@ MonoBehaviour:
   priority: 0
   blendDistance: 0
   weight: 1
-  sharedProfile: {fileID: 11400000, guid: 10fc4df2da32a41aaa32d77bc913491c, type: 2}
+  sharedProfile: {fileID: 11400000, guid: 71cf0974ed2d3be49b1fe88a1d2b4fd0, type: 2}
 --- !u!4 &832575519
 Transform:
   m_ObjectHideFlags: 0
@@ -1584,13 +1600,27 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 832575517}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 131963268}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &832575520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 832575517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 196ca34b1c8b78b4eb6931ca0b1d3c2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LowHealthEffects
+  healthPercent: 1
+  volume: {fileID: 832575518}
 --- !u!1 &852961026
 GameObject:
   m_ObjectHideFlags: 0
@@ -2830,6 +2860,7 @@ MonoBehaviour:
   staminaFillImage: {fileID: 1412176717}
   flashlightBatteryText: {fileID: 0}
   flashlightBatteryPanel: {fileID: 0}
+  keyCountText: {fileID: 0}
 --- !u!1 &2023121837
 GameObject:
   m_ObjectHideFlags: 0
@@ -2986,7 +3017,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 131963268}
   - {fileID: 410087041}
-  - {fileID: 832575519}
   - {fileID: 1466441141}
   - {fileID: 1307024391}
   - {fileID: 775999862}

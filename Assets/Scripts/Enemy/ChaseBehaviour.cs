@@ -185,6 +185,10 @@ public class ChaseBehaviour : Behaviour
                 }
 
                 Move(currentPlayer, defaultMovementOffset);
+                EnemyController enemyController = enemyTransform.GetComponent<EnemyController>();
+                if (enemyController != null)
+                    enemyController.TryAttack();
+                
                 return true;
 
             case ChaseState.GoToNoise:
