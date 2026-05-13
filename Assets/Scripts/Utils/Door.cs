@@ -114,7 +114,7 @@ public class Door : MonoBehaviour
         if (doorAnimator != null && doorOpen != null)
             Invoke("PlayAnimation", timeToOpen);
         
-        GameController.gameController.StartClock(timeToOpen);
+        GameController.gameController.OpenDoor(timeToOpen);
     }
 
     public void PlayAnimation() {

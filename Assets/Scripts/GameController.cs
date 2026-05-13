@@ -149,7 +149,18 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public void StartClock(float timeToOpen) {
-        Clock.Instance?.StartClock(timeToOpen);
+    public void OpenDoor(float timeToOpen) {
+        StartClock(timeToOpen);
+        
+        if (enemy == null || player == null)
+            return;
+
+        float distance = Vector3.Distance(player.transform.position, enemy.transform.position);
+        player.GetComponent<PlayerNoises>()?.AlertEnemiesInRange(distance, false);
+    }
+
+    public void StartClock(float time)
+    {
+        Clock.Instance?.StartClock(time);
     }
 }

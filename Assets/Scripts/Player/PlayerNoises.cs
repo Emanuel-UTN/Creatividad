@@ -70,7 +70,12 @@ public class PlayerNoises : MonoBehaviour
             return;
 
         RegisterNoiseGizmo(transform.position, hearingRange, isSprinting);
-        OnNoiseEmitted?.Invoke(transform, transform.position, hearingRange, isSprinting);
+        AlertEnemiesInRange(hearingRange, isSprinting);
+    }
+
+    public void AlertEnemiesInRange(float range, bool isSprinting)
+    {
+        OnNoiseEmitted?.Invoke(transform, transform.position, range, isSprinting);
     }
 
     public void PlayFootstepAndEmit(bool isSprinting)
