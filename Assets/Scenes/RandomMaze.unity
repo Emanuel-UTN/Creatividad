@@ -490,6 +490,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LowHealthEffects
   healthPercent: 1
   volume: {fileID: 314631784}
+  enableVignette: 1
+  vignetteIntensity: 0.45
+  enablePulse: 1
+  pulseSpeed: 4
+  pulseStrength: 0.08
+  enableChromatic: 1
+  chromaticIntensity: 1
+  enableDistortion: 1
+  distortionIntensity: -0.35
+  enableColorAdjustments: 1
+  colorAdjustmentSaturation: -60
+  colorAdjustmentPostExposure: -1
+  heartbeatAudio: {fileID: 0}
+  enableBreathing: 1
+  breathingAmount: 0.03
+  breathingSpeed: 1.5
+  damageBlurDuration: 0.35
+  damageBlurIntensity: 1
 --- !u!1 &564695429
 GameObject:
   m_ObjectHideFlags: 0

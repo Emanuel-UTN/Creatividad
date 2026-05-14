@@ -10,10 +10,27 @@ public class LowHealthEffects : MonoBehaviour
     [Header("Volume")]
     public Volume volume;
 
+    [Header("Vignette")]
+    public bool enableVignette = true;
+    public float vignetteIntensity = 0.45f;
+
     [Header("Heartbeat")]
     public bool enablePulse = true;
     public float pulseSpeed = 4f;
     public float pulseStrength = .08f;
+
+    [Header("Chromatic Aberration")]
+    public bool enableChromatic = true;
+    public float chromaticIntensity = 1f;
+
+    [Header("Lens Distortion")]
+    public bool enableDistortion = true;
+    public float distortionIntensity = -0.35f;
+
+    [Header("Color Adjustments")]
+    public bool enableColorAdjustments = true;
+    public float colorAdjustmentSaturation = -60f;
+    public float colorAdjustmentPostExposure = -1.5f;
 
     [Header("Audio")]
     public AudioSource heartbeatAudio;
@@ -57,29 +74,42 @@ public class LowHealthEffects : MonoBehaviour
         float intensity = 1f - healthPercent;
 
         // Vignette
-        float vignetteBase = Mathf.Lerp(0f, 0.45f, intensity);
+        if (enableVignette)
+        {
+            float vignetteBase = Mathf.Lerp(0f, vignetteIntensity, intensity);
 
-        if(enablePulse && healthPercent < 0.5f)
-            vignetteBase += Mathf.Sin(Time.time * pulseSpeed) * pulseStrength * intensity;
+            if(enablePulse && healthPercent < 0.5f)
+                vignetteBase += Mathf.Sin(Time.time * pulseSpeed) * pulseStrength * intensity;
 
-        vignette.intensity.value = vignetteBase;
+            vignette.intensity.value = vignetteBase;
+        }
 
         // Aberración Cromática
-        chromatic.intensity.value = Mathf.Lerp(0f, 1f, intensity);
+        if (enableChromatic)
+        {
+            chromatic.intensity.value = Mathf.Lerp(0f, chromaticIntensity, intensity);
+        }
 
         // Distorsión
-        float distortionBase = Mathf.Lerp(0f, -0.35f, intensity);
+        if (enableDistortion)
+        {
+            float distortionBase = Mathf.Lerp(0f, distortionIntensity, intensity);
 
-        if (healthPercent < 0.5f)
-            distortionBase += Mathf.Sin(Time.time * 3f) * .05f;
-        
-        distortion.intensity.value = distortionBase;
+            if (healthPercent < 0.5f)
+                distortionBase += Mathf.Sin(Time.time * 3f) * .05f;
 
-        // Saturación
-        colorAdjustments.saturation.value = Mathf.Lerp(0f, -60f, intensity);
+            distortion.intensity.value = distortionBase;
+        }
 
-        // Post Exposure
-        colorAdjustments.postExposure.value = Mathf.Lerp(0f, -1.5f, intensity);
+        // Ajuste de Color
+        if (enableColorAdjustments)
+        {
+            // Saturación
+            colorAdjustments.saturation.value = Mathf.Lerp(0f, colorAdjustmentSaturation, intensity);
+
+            // Post Exposure
+            colorAdjustments.postExposure.value = Mathf.Lerp(0f, colorAdjustmentPostExposure, intensity);
+        }
 
         // Audio
         if (heartbeatAudio)
