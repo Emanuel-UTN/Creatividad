@@ -146,5 +146,7 @@ public class PlayerController : MonoBehaviour
         PlayerHealth playerHealth = GetComponent<PlayerHealth>();
         if (playerHealth != null)
             playerHealth.TakeDamage(damage);
+        if (playerMovement != null)
+            playerMovement.DamageShake();
     }
 }

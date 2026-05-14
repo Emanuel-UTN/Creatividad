@@ -6,19 +6,25 @@ public class PlayerHealth : MonoBehaviour
     public float maxHealth = 100f;
     private float currentHealth;
 
+    private LowHealthEffects lowHealthEffects;
+
     void Start()
     {
         currentHealth = maxHealth;
+        lowHealthEffects = GameController.gameController.GetComponentInChildren<LowHealthEffects>();
+        if (lowHealthEffects != null)
+            lowHealthEffects.SetCamera(GetComponentInChildren<Camera>().transform);
     }
 
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
-        GameController.gameController.GetComponentInChildren<LowHealthEffects>().SetHealth(currentHealth, maxHealth);
+        
+        if (lowHealthEffects != null)
+            lowHealthEffects.SetHealth(currentHealth, maxHealth);
         if (currentHealth <= 0)
-        {
             Die();
-        }
+        
     }
 
     private void Die()

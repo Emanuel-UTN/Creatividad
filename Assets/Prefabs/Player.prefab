@@ -378,6 +378,9 @@ MonoBehaviour:
   hiddenYawLimit: 55
   hiddenMinPitch: -30
   hiddenMaxPitch: 30
+  shakeDuration: 0.2
+  shakeMagnitude: 0.15
+  shakeSpeed: 18
 --- !u!114 &3309638646496581838
 MonoBehaviour:
   m_ObjectHideFlags: 0

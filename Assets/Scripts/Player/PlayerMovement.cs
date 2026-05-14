@@ -31,6 +31,13 @@ public class PlayerMovement : MonoBehaviour
     public float hiddenMinPitch = -30f;
     public float hiddenMaxPitch = 30f;
 
+    [Header("Damage Shake")]
+    public float shakeDuration = .2f;
+    public float shakeMagnitude = .06f;
+    public float shakeSpeed = 25f;
+
+    private float currentShakeTime;
+
     private CharacterController controller;
     private PlayerInput playerInput;
     private PlayerController playerController;
@@ -72,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
         standingCenter = controller.center;
         if (cameraPivot != null)
             standingCameraLocalPosition = cameraPivot.localPosition;
-
+        
         moveAction = playerInput.actions["Move"];
         lookAction = playerInput.actions["Look"];
         jumpAction = playerInput.actions["Jump"];
@@ -149,6 +156,8 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 motion = move * currentSpeed + Vector3.up * verticalVelocity;
         controller.Move(motion * dt);
+
+        UpdateCameraShake(dt);
     }
 
     private void UpdateCrouchPose()
@@ -225,5 +234,39 @@ public class PlayerMovement : MonoBehaviour
         pitch = Mathf.Clamp(pitch, hiddenMinPitch, hiddenMaxPitch);
         if (cameraPivot != null)
             cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+    }
+
+    private void UpdateCameraShake(float dt)
+    {
+        if (cameraPivot == null)
+            return;
+
+        if (currentShakeTime > 0f)
+        {
+            currentShakeTime -= dt;
+
+            float strength = currentShakeTime / shakeDuration;
+
+            Vector3 randomOffset = Random.insideUnitSphere * shakeMagnitude * strength;
+
+            Vector3 basePos = standingCameraLocalPosition;
+            if (isCrouching)
+                basePos += Vector3.down * crouchCameraDrop;
+
+            cameraPivot.localPosition = basePos + randomOffset;
+        }
+        else
+        {
+            Vector3 targetPos = standingCameraLocalPosition;
+            if (isCrouching)
+                targetPos += Vector3.down * crouchCameraDrop;
+            
+            cameraPivot.localPosition = Vector3.Lerp(cameraPivot.localPosition, targetPos, dt * shakeSpeed);
+        }
+    }
+
+    public void DamageShake()
+    {
+        currentShakeTime = shakeDuration;
     }
 }
