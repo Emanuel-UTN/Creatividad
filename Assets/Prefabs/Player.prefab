@@ -799,10 +799,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4543401437352771106}
+  - component: {fileID: 8224291937188639575}
   - component: {fileID: 6458010089474898834}
   - component: {fileID: 1148204966124947876}
   m_Layer: 0
-  m_Name: Lanter
+  m_Name: Flashlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -823,6 +824,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3078219622192075529}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8224291937188639575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7081448716749988358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0450495c39bd34947b4fcbb43c4d39b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlashlightController
+  cameraTransform: {fileID: 3078219622192075529}
+  swayAmount: 2
+  smoothSpeed: 0.8
+  rotationAmount: 2.5
+  enableBreathing: 1
+  breathingSpeed: 1.5
+  breathingAmount: 0.015
+  enableFlicker: 1
+  intensityVariance: 2
+  flickerSpeed: 3
+  enableBlink: 1
+  blinkDuration: 0.35
+  blinkInterval: 5
 --- !u!108 &6458010089474898834
 Light:
   m_ObjectHideFlags: 0
@@ -833,14 +859,14 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 0
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 250
-  m_Range: 20
-  m_SpotAngle: 55
-  m_InnerSpotAngle: 0
+  m_Color: {r: 1, g: 0.94509804, b: 0.8392157, a: 1}
+  m_Intensity: 125
+  m_Range: 22
+  m_SpotAngle: 60
+  m_InnerSpotAngle: 28
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
-    m_Type: 0
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -865,7 +891,7 @@ Light:
       e32: 0
       e33: 1
     m_UseCullingMatrixOverride: 0
-  m_Cookie: {fileID: 0}
+  m_Cookie: {fileID: 2800000, guid: 0a8ac5759f72d474792e0a4cdd3ba99d, type: 3}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
   m_RenderMode: 0
@@ -878,7 +904,7 @@ Light:
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 0
   m_ColorTemperature: 6041
-  m_UseColorTemperature: 1
+  m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1

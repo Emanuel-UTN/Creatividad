@@ -1224,7 +1224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e98e377673742b48ac07f00354f7996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayNightCycle
-  transitionDurationSeconds: 1
+  transitionDurationSeconds: 300
   useUnscaledTime: 1
   daySkybox: {fileID: 2100000, guid: e391f00234292cc4f935308c11cf0e54, type: 2}
   nightSkybox: {fileID: 2100000, guid: 2039a0ad0a9d05549928b70362f54902, type: 2}

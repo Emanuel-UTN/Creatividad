@@ -201,7 +201,7 @@ public class PlayerFlashlightController : MonoBehaviour
         while (elapsed < duration)
         {
             flashlight.enabled = !flashlight.enabled;
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSeconds(Random.Range(0.05f, 0.15f));
             elapsed += 0.1f;
         }
 
