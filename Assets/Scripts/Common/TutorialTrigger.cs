@@ -15,6 +15,9 @@ public class TutorialTrigger : MonoBehaviour
     public bool showOnStart = false;
     public bool hideOnInput = true;
 
+    [Header("Next Tutorial")]
+    public TutorialTrigger nextTutorial;
+
     private bool completed = false;
 
     public void Start()
@@ -36,7 +39,7 @@ public class TutorialTrigger : MonoBehaviour
             ShowTutorial();
     }
 
-    private void ShowTutorial()
+    public void ShowTutorial()
     {
         if (completed)
             return;
@@ -47,7 +50,7 @@ public class TutorialTrigger : MonoBehaviour
         }
         catch { }
 
-        TutorialUI.Instance.ShowTutorial(message, actionReference, hideOnInput);
+        TutorialUI.Instance.ShowTutorial(message, actionReference, hideOnInput, nextTutorial);
         completed = true;
     }
 }

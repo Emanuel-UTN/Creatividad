@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 279089309}
   - component: {fileID: 279089310}
   - component: {fileID: 279089308}
+  - component: {fileID: 279089312}
   - component: {fileID: 279089311}
   m_Layer: 5
   m_Name: Tutorial txt
@@ -287,8 +288,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialTrigger
   actionReference: {fileID: -3620681852869452193, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   message: apagar/encender la linterna
+  showOnStart: 0
+  hideOnInput: 1
+  nextTutorial: {fileID: 0}
+--- !u!114 &279089312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279089306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a05a3c5d0af0ff48ae8b89d72983217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialTrigger
+  actionReference: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  message: para cegar al asesino con tu linterna
   showOnStart: 1
   hideOnInput: 1
+  nextTutorial: {fileID: 279089311}
 --- !u!1 &282297539
 GameObject:
   m_ObjectHideFlags: 0
@@ -1224,7 +1243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e98e377673742b48ac07f00354f7996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayNightCycle
-  transitionDurationSeconds: 1
+  transitionDurationSeconds: 300
   useUnscaledTime: 1
   daySkybox: {fileID: 2100000, guid: e391f00234292cc4f935308c11cf0e54, type: 2}
   nightSkybox: {fileID: 2100000, guid: 2039a0ad0a9d05549928b70362f54902, type: 2}

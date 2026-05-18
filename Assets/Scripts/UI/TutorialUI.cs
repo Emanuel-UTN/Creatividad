@@ -38,7 +38,9 @@ public class TutorialUI : MonoBehaviour
     private bool currentHideOnInput;
     private System.Collections.Generic.List<InputAction> subscribedActions = new System.Collections.Generic.List<InputAction>();
 
-    public void ShowTutorial(string message, InputActionReference actionReference, bool hideOnInput = true)
+    private TutorialTrigger currentNextTutorial = null;
+
+    public void ShowTutorial(string message, InputActionReference actionReference, bool hideOnInput = true, TutorialTrigger nextTutorial = null)
     {
         if (Array.Exists(tutorialsCompleted, element => element == message))
             return;
@@ -65,6 +67,11 @@ public class TutorialUI : MonoBehaviour
 
         // Subscribe to enabled actions to detect device changes and update sprite dynamically
         SubscribeToEnabledActions();
+
+        if (nextTutorial)
+            currentNextTutorial = nextTutorial;
+        else
+            currentNextTutorial = null;
     }
 
     private string GetSpriteTag(string binding)
@@ -240,6 +247,11 @@ public class TutorialUI : MonoBehaviour
         }
 
         textUI.text = string.Empty;
+        if (currentNextTutorial != null)
+        {
+            currentNextTutorial.ShowTutorial();
+            currentNextTutorial = null;
+        }
     }
 
     private T[] AppendToArray<T>(T[] array, T item)

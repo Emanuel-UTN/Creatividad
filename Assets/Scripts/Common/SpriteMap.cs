@@ -80,8 +80,8 @@ public static class SpriteMap
         {"slash", "Slash_Key_Light" },
         {"semicolon", "Semicolon_Key_Light" },
         {"quote", "Quote_Key_Light" },
-        {"bracket left", "Bracket_Left_Key_Light" },
-        {"bracket right", "Bracket_Right_Key_Light" },
+        {"bracketleft", "Bracket_Left_Key_Light" },
+        {"bracketright", "Bracket_Right_Key_Light" },
         {"mark left", "Mark_Left_Key_Light" },
         {"mark right", "Mark_Right_Key_Light" },
         {"tilda", "Tilda_Key_Light" },
@@ -91,9 +91,9 @@ public static class SpriteMap
         {"num lock", "Num_Lock_Key_Light" },
 
         // Mouse
-        { "left button", "Mouse_Left_Key_Light" },
-        { "right button", "Mouse_Right_Key_Light" },
-        { "middle button", "Mouse_Middle_Key_Light" },
+        { "leftbutton", "Mouse_Left_Key_Light" },
+        { "rightbutton", "Mouse_Right_Key_Light" },
+        { "middlebutton", "Mouse_Middle_Key_Light" },
         { "mouse", "Mouse_Simple_Key_Light" },
 
         // Xbox controller
