@@ -7,7 +7,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Jazz Dancing
+  m_Name: Look Around
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -20,7 +20,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: ffe363fde85f8fa4eb3a08d162c8b6d5, type: 3}
+  m_Motion: {fileID: -203655887218126122, guid: de2c64d5915215a49b742d98645eeb58, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -72,7 +72,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: aa7c1c16d68faef40b47eb50a07cf34e, type: 3}
+  m_Motion: {fileID: -203655887218126122, guid: 70379a28aeda9af4aac9e5f91caef804, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

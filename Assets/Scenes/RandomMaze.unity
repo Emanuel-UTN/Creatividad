@@ -1203,9 +1203,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameController
   player: {fileID: 5415888724272369152, guid: d084b9789b76986479f6a0f902d00af2, type: 3}
   enemies:
-  - {fileID: 7615203023854442912, guid: 2fae8ebc6210b8b4790c51ace7ea5f66, type: 3}
-  - {fileID: 4890459008080505782, guid: 1873c04664fcb5649a0d20f2987b1838, type: 3}
-  - {fileID: 8412331373827298032, guid: 5a4401b5493a53a45b9593b6ae8e5f79, type: 3}
+  - {fileID: 7658919285658273848, guid: 6a814b578de6c1e46b7972022edce61f, type: 3}
+  - {fileID: 1803908535292369765, guid: 9d12ed417529d684f9742e43e2d2dc18, type: 3}
+  - {fileID: 8138782566121117476, guid: 8f575ec4404a1dc43bec14c5f9593475, type: 3}
   - {fileID: 2177102992178274316, guid: 58f19a1b7b315ae449c2df91bf660644, type: 3}
   enemy: {fileID: 781131125439351914, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
   doorPrefab: {fileID: 5763812208419227696, guid: 89c3145fe3349b04ea0d03962c505961, type: 3}
