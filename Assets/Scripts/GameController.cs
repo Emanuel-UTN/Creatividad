@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour
 {
     public static GameController gameController;
+    public static bool IsPaused { get; private set; }
+    public static bool IsGodModeEnabled { get; private set; }
     public GameObject player;
     public GameObject[] enemies;
     public GameObject enemy;
@@ -22,13 +24,18 @@ public class GameController : MonoBehaviour
         if (gameController == null)
         {
             gameController = this;
+            SetPaused(false);
+            SetGodModeEnabled(false);
         }
         else if (gameController != this)
         {
             Destroy(gameObject);
+            return;
         }
 
         audioManager = GetComponentInChildren<AudioManager>();
+        if (GetComponent<PauseMenuController>() == null)
+            gameObject.AddComponent<PauseMenuController>();
     }
 
     public void Initialize(MazeCell [,] grid) {
@@ -131,6 +138,7 @@ public class GameController : MonoBehaviour
     public void PlayerWin(){
         Debug.Log("¡Has ganado!");
         audioManager.PlayerWon();
+        ResetRuntimeState();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reinicia la escena actual
     }
 
@@ -180,5 +188,24 @@ public class GameController : MonoBehaviour
             audioManager.StartChase();
         else
             audioManager.StopChase();
+    }
+
+    public static void SetPaused(bool paused)
+    {
+        IsPaused = paused;
+    }
+
+    public static void SetGodModeEnabled(bool enabled)
+    {
+        IsGodModeEnabled = enabled;
+    }
+
+    public static void ResetRuntimeState()
+    {
+        SetPaused(false);
+        SetGodModeEnabled(false);
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }

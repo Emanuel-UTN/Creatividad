@@ -66,6 +66,9 @@ public class PlayerFlashlightController : MonoBehaviour
 
     void Update()
     {
+        if (GameController.IsPaused)
+            return;
+
         UpdateEnemyReference();
         UpdateFlashlightBattery();
         UpdateFlashlightVisuals();
@@ -118,17 +121,26 @@ public class PlayerFlashlightController : MonoBehaviour
 
     private void OnToggleFlashlightPerformed(InputAction.CallbackContext context)
     {
+        if (GameController.IsPaused)
+            return;
+
         ToggleFlashlight();
     }
 
     private void OnFlashBoostStarted(InputAction.CallbackContext context)
     {
+        if (GameController.IsPaused)
+            return;
+
         isBoostingFlashlight = true;
         TryStunEnemyWithFlashlight();
     }
 
     private void OnFlashBoostCanceled(InputAction.CallbackContext context)
     {
+        if (GameController.IsPaused)
+            return;
+
         isBoostingFlashlight = false;
     }
 
@@ -154,6 +166,14 @@ public class PlayerFlashlightController : MonoBehaviour
             }
 
             ForceFlashlightOff();
+            return;
+        }
+
+        if (GameController.IsGodModeEnabled)
+        {
+            if (!CanUseFlashlight())
+                ForceFlashlightOff();
+
             return;
         }
 

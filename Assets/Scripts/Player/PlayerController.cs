@@ -142,6 +142,9 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        if (GameController.IsPaused || GameController.IsGodModeEnabled)
+            return;
+
         Debug.Log($"Player takes {damage} damage.");
         PlayerHealth playerHealth = GetComponent<PlayerHealth>();
         if (playerHealth != null)

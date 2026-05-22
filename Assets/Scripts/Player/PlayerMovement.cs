@@ -48,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
     private InputAction sprintAction;
     private InputAction crouchAction;
     private InputAction interactAction;
+    private InputAction pauseAction;
 
     private float verticalVelocity;
     private float pitch;
@@ -86,6 +87,7 @@ public class PlayerMovement : MonoBehaviour
         sprintAction = playerInput.actions.FindAction("Sprint", false);
         crouchAction = playerInput.actions.FindAction("Crouch", false);
         interactAction = playerInput.actions.FindAction("Interact", false);
+        pauseAction = playerInput.actions.FindAction("Pause", false);
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -99,6 +101,15 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (pauseAction != null && pauseAction.WasPressedThisFrame())
+        {
+            GameController.gameController?.GetComponent<PauseMenuController>()?.TogglePause();
+            return;
+        }
+
+        if (GameController.IsPaused)
+            return;
+
         if (interactAction != null && interactAction.WasPressedThisFrame() && playerController != null)
             playerController.TryInteractWithCupboard();
 
@@ -144,9 +155,11 @@ public class PlayerMovement : MonoBehaviour
         bool shouldTrySprint = sprintRequested && isMoving && !isCrouching;
 
         bool isHidden = playerController != null && playerController.IsHidden;
-        isSprinting = staminaComponent != null
-            ? staminaComponent.ResolveSprint(shouldTrySprint, isHidden, dt)
-            : shouldTrySprint;
+        isSprinting = GameController.IsGodModeEnabled
+            ? shouldTrySprint && !isHidden
+            : staminaComponent != null
+                ? staminaComponent.ResolveSprint(shouldTrySprint, isHidden, dt)
+                : shouldTrySprint;
 
         float currentSpeed = speed;
         if (isSprinting)

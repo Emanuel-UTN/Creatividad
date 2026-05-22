@@ -18,6 +18,9 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        if (GameController.IsPaused || GameController.IsGodModeEnabled)
+            return;
+
         currentHealth -= damage;
         
         if (lowHealthEffects != null)
@@ -31,6 +34,7 @@ public class PlayerHealth : MonoBehaviour
     {
         // Handle player death (e.g., play animation, reload scene, etc.)
         Debug.Log("Player has died.");
+        GameController.ResetRuntimeState();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload the current scene
     }
 }
