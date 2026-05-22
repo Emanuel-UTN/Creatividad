@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
 
     private MazeGenerator mazeGenerator;
     private MazeCell[,] grid;
+    private AudioManager audioManager;
 
     void Awake()
     {
@@ -26,6 +27,8 @@ public class GameController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        audioManager = GetComponentInChildren<AudioManager>();
     }
 
     public void Initialize(MazeCell [,] grid) {
@@ -34,6 +37,9 @@ public class GameController : MonoBehaviour
         player = Instantiate(player, grid[0,0].transform.position, Quaternion.identity);
         enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], grid[mazeGenerator.width - 1, mazeGenerator.height - 1].transform.position, Quaternion.identity);
         InstantiateDoorAndKey();
+
+        audioManager.SetPlayer(player.transform);
+        audioManager.SetEnemy(enemy.transform);
     }
 
     public MazeCell[,] Grid()
@@ -124,6 +130,7 @@ public class GameController : MonoBehaviour
 
     public void PlayerWin(){
         Debug.Log("¡Has ganado!");
+        audioManager.PlayerWon();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reinicia la escena actual
     }
 
@@ -162,5 +169,16 @@ public class GameController : MonoBehaviour
     public void StartClock(float time)
     {
         Clock.Instance?.StartClock(time);
+    }
+
+    public void SetChaseMusic(bool isChasing)
+    {
+        if (audioManager == null)
+            return;
+        
+        if (isChasing)
+            audioManager.StartChase();
+        else
+            audioManager.StopChase();
     }
 }

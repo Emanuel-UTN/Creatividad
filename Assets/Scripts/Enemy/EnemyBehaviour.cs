@@ -158,7 +158,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (seesPlayer)
         {
-            state = EnemyState.Chase;
+            SetState(EnemyState.Chase);
             chaseBehaviour.OnPlayerSeen(player);
             sawPlayerLastFrame = true;
             return;
@@ -212,7 +212,7 @@ public class EnemyBehaviour : MonoBehaviour
         if (chaseInProgress)
             return canRun;
 
-        state = EnemyState.Patrol;
+        SetState(EnemyState.Patrol);
         movement.speed = baseWalkSpeed;
         runBlockedByExhaustion = false;
         patrolBehaviour.ResetToClosestPoint();
@@ -289,7 +289,7 @@ public class EnemyBehaviour : MonoBehaviour
         if (!enemyHadDirectVision)
             return;
 
-        state = EnemyState.Chase;
+        SetState(EnemyState.Chase);
         sawPlayerLastFrame = false;
         chaseBehaviour.OnPlayerHiddenInCupboard(cupboard, player);
     }
@@ -316,7 +316,7 @@ public class EnemyBehaviour : MonoBehaviour
         if (flatDelta.sqrMagnitude > hearingRange * hearingRange)
             return;
 
-        state = EnemyState.Chase;
+        SetState(EnemyState.Chase);
         sawPlayerLastFrame = false;
         chaseBehaviour.OnPlayerHeardNoise(noisePosition, player);
     }
@@ -367,5 +367,16 @@ public class EnemyBehaviour : MonoBehaviour
         movement.speed = 0f;
         movement.moveToTarget = false;
         movement.rotateTowardsTarget = false;
+    }
+
+    private void SetState(EnemyState newState, bool notifyMusic = true)
+    {
+        if (state == newState)
+            return;
+
+        state = newState;
+
+        if (notifyMusic)
+            GameController.gameController?.SetChaseMusic(state == EnemyState.Chase);
     }
 }
