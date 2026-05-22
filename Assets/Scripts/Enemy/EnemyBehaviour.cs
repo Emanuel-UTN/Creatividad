@@ -101,6 +101,12 @@ public class EnemyBehaviour : MonoBehaviour
             movement.moveToTarget = false;
             movement.rotateTowardsTarget = false;
             RefreshCellPosition();
+
+            if (stunTimer <= 0f)
+            {
+                GetComponent<EnemyController>()?.animator?.SetBool("CanAnim", true);
+                stunTimer = 0f;
+            }
             return;
         }
 
@@ -367,16 +373,15 @@ public class EnemyBehaviour : MonoBehaviour
         movement.speed = 0f;
         movement.moveToTarget = false;
         movement.rotateTowardsTarget = false;
+        GetComponent<EnemyController>()?.animator?.SetTrigger("Flashed");
+        GetComponent<EnemyController>()?.animator?.SetBool("CanAnim", false);
     }
 
-    private void SetState(EnemyState newState, bool notifyMusic = true)
+    private void SetState(EnemyState newState)
     {
         if (state == newState)
             return;
 
         state = newState;
-
-        if (notifyMusic)
-            GameController.gameController?.SetChaseMusic(state == EnemyState.Chase);
     }
 }

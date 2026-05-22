@@ -123,6 +123,7 @@ public class ChaseBehaviour : Behaviour
         hasPreviousPlayerPosition = true;
 
         state = ChaseState.Chase;
+        GameController.gameController?.SetChaseMusic(true);
     }
 
     public void OnPlayerLost(Transform player)
@@ -341,6 +342,7 @@ public class ChaseBehaviour : Behaviour
                 if (stateTimer <= 0f)
                 {
                     state = ChaseState.Idle;
+                    GameController.gameController?.SetChaseMusic(false);
                     return false;
                 }
 
