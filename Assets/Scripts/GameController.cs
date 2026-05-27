@@ -16,7 +16,6 @@ public class GameController : MonoBehaviour
     public GameObject doorKeyPrefab;
 
     private MazeGenerator mazeGenerator;
-    private MazeCell[,] grid;
     private AudioManager audioManager;
 
     void Awake()
@@ -38,49 +37,19 @@ public class GameController : MonoBehaviour
             gameObject.AddComponent<PauseMenuController>();
     }
 
-    public void Initialize(MazeCell [,] grid) {
-        this.grid = grid;
+    public void Initialize() {
         mazeGenerator = GetComponent<MazeGenerator>();
-        player = Instantiate(player, grid[0,0].transform.position, Quaternion.identity);
-        enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], grid[mazeGenerator.width - 1, mazeGenerator.height - 1].transform.position, Quaternion.identity);
+        player = Instantiate(player, MazeController.Grid[0,0].transform.position, Quaternion.identity);
+        enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], MazeController.Grid[mazeGenerator.width - 1, mazeGenerator.height - 1].transform.position, Quaternion.identity);
         InstantiateDoorAndKey();
 
         audioManager.SetPlayer(player.transform);
         audioManager.SetEnemy(enemy.transform);
     }
 
-    public MazeCell[,] Grid()
-    {
-        return grid;
-    }
-
-    public MazeCell Cell(int x, int z)
-    {
-        return grid[x,z];
-    }
-
-    public MazeCell GetCellByPosition(Vector3 position)
-    {
-        if (grid == null || mazeGenerator == null)
-            return null;
-
-        float size = Mathf.Max(0.0001f, mazeGenerator.cellSize);
-
-        int x = Mathf.RoundToInt(position.x / size);
-        int z = Mathf.RoundToInt(position.z / size);
-
-        int maxX = grid.GetLength(0) - 1;
-        int maxZ = grid.GetLength(1) - 1;
-
-        x = Mathf.Clamp(x, 0, maxX);
-        z = Mathf.Clamp(z, 0, maxZ);
-
-        return grid[x, z];
-    }
-
     private void InstantiateDoorAndKey()
     {
-        if (doorPrefab == null || doorKeyPrefab == null || grid == null || mazeGenerator == null)
+        if (doorPrefab == null || doorKeyPrefab == null || MazeController.Grid == null || mazeGenerator == null)
             return;
 
         // Seleccionar una celda aleatoria del borde del laberinto
@@ -101,8 +70,8 @@ public class GameController : MonoBehaviour
     {
         borderDirection = "North"; // Por defecto
         
-        int width = grid.GetLength(0);
-        int height = grid.GetLength(1);
+        int width = MazeController.Width;
+        int height = MazeController.Height;
 
         // Elegir aleatoriamente cuál borde (0: Norte, 1: Sur, 2: Este, 3: Oeste)
         int randomBorder = Random.Range(0, 4);
@@ -132,7 +101,7 @@ public class GameController : MonoBehaviour
                 break;
         }
 
-        return grid[x, z];
+        return MazeController.Grid[x, z];
     }
 
     public void PlayerWin(){
@@ -144,15 +113,15 @@ public class GameController : MonoBehaviour
 
     private void InstantiateKeysRandomly(int keyCount)
     {
-        int width = grid.GetLength(0);
-        int height = grid.GetLength(1);
+        int width = MazeController.Width;
+        int height = MazeController.Height;
 
         for (int i = 0; i < keyCount; i++)
         {
             // Seleccionar una celda aleatoria del mapa
             int randomX = Random.Range(0, width);
             int randomZ = Random.Range(0, height);
-            MazeCell randomCell = grid[randomX, randomZ];
+            MazeCell randomCell = MazeController.Grid[randomX, randomZ];
 
             if (randomCell != null)
             {

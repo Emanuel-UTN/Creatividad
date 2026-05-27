@@ -420,7 +420,7 @@ public class ChaseBehaviour : Behaviour
             return null;
         }
 
-        MazeCell cell = GameController.gameController.GetCellByPosition(position);
+        MazeCell cell = MazeController.GetCellByPosition(position);
         return cell;
     }
 
@@ -443,7 +443,7 @@ public class ChaseBehaviour : Behaviour
         for (int i = 0; i < currentCell.neighbors.Count; i++)
         {
             Vector2Int coords = currentCell.neighbors[i];
-            MazeCell neighbor = GameController.gameController != null ? GameController.gameController.Cell(coords.x, coords.y) : null;
+            MazeCell neighbor = MazeController.Cell(coords.x, coords.y);
             if (neighbor == null)
                 continue;
 
@@ -504,7 +504,7 @@ public class ChaseBehaviour : Behaviour
             for (int i = 0; i < current.neighbors.Count; i++)
             {
                 Vector2Int coords = current.neighbors[i];
-                MazeCell neighbor = GameController.gameController != null ? GameController.gameController.Cell(coords.x, coords.y) : null;
+                MazeCell neighbor = MazeController.Cell(coords.x, coords.y);
                 if (neighbor == null || pathVisited.Contains(neighbor))
                     continue;
 

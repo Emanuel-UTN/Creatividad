@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(SpawnUtils))]
+[RequireComponent(typeof(PuzzleManager))]
 public class MazeGenerator : MonoBehaviour
 {
     private static readonly Vector2Int[] NeighborDirections =
@@ -35,17 +36,22 @@ public class MazeGenerator : MonoBehaviour
     public bool useMainRoom = true;
     public int mainRoomSize = 5;
 
-    private MazeCell[,] grid;
+    private MazeCell[,] grid { get { return MazeController.Grid; } set { MazeController.Grid = value; } }
+    private List<MazeRoom> rooms = new List<MazeRoom>();
     private SpawnUtils spawnUtils;
     private readonly List<Vector2Int> neighborBuffer = new List<Vector2Int>(4);
 
     void Start()
     {
+        MazeController.CellSize = cellSize;
         GenerateMaze();
         spawnUtils = GetComponent<SpawnUtils>();
+
+        GetComponent<PuzzleManager>().GeneratePuzzles(rooms, spawnUtils);
+
         if (spawnUtils != null)
-            spawnUtils.Spawn(grid, cellSize);
-        GameController.gameController.Initialize(grid);
+            spawnUtils.Spawn();
+        GameController.gameController.Initialize();
     }
 
     void GenerateMaze()
@@ -131,8 +137,7 @@ public class MazeGenerator : MonoBehaviour
         if (dz == 1)  { grid[a.x, a.y].RemoveWall("North"); grid[b.x, b.y].RemoveWall("South"); }
         if (dz == -1) { grid[a.x, a.y].RemoveWall("South"); grid[b.x, b.y].RemoveWall("North"); }
 
-        grid[a.x, a.y].neighbors.Add(b);
-        grid[b.x, b.y].neighbors.Add(a);
+        MazeController.CellsNeighbors(a, b);
     }
 
     void GenerateRooms()
@@ -158,23 +163,19 @@ public class MazeGenerator : MonoBehaviour
                     {
                         if (z + 1 < centerZ + mainRoomSize){
                             grid[x, z].RemoveWall("North");
-                            grid[x, z].neighbors.Add(new Vector2Int(x, z + 1));
-                            grid[x, z + 1].neighbors.Add(new Vector2Int(x, z));
+                            MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x, z + 1));
                         }
                         if (z - 1 >= centerZ){
                             grid[x, z].RemoveWall("South");
-                            grid[x, z].neighbors.Add(new Vector2Int(x, z - 1));
-                            grid[x, z - 1].neighbors.Add(new Vector2Int(x, z));
+                            MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x, z - 1));
                         }
                         if (x + 1 < centerX + mainRoomSize){
                             grid[x, z].RemoveWall("East");
-                            grid[x, z].neighbors.Add(new Vector2Int(x + 1, z));
-                            grid[x + 1, z].neighbors.Add(new Vector2Int(x, z));
+                            MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x + 1, z));
                         }
                         if (x - 1 >= centerX){
                             grid[x, z].RemoveWall("West");
-                            grid[x, z].neighbors.Add(new Vector2Int(x - 1, z));
-                            grid[x - 1, z].neighbors.Add(new Vector2Int(x, z));
+                            MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x - 1, z));
                         }
                     }
                 }
@@ -208,46 +209,44 @@ public class MazeGenerator : MonoBehaviour
 
             if (canPlace)
             {
-                // Marcar células como usadas
-                for (int x = randomX; x < randomX + roomSize; x++)
-                {
-                    for (int z = randomZ; z < randomZ + roomSize; z++)
-                    {
-                        usedCells.Add(new Vector2Int(x, z));
-                    }
-                }
+                MazeRoom newRoom = new GameObject($"Room_{roomsCreated + 1}").AddComponent<MazeRoom>();
+                newRoom.origin = new Vector2Int(randomX, randomZ);
+                newRoom.size = roomSize;
 
-                // Remover paredes internas de la sala
                 for (int x = randomX; x < randomX + roomSize; x++)
                 {
                     for (int z = randomZ; z < randomZ + roomSize; z++)
                     {
+                        // Marcar celdas como usadas
+                        usedCells.Add(new Vector2Int(x, z));
+
+                        // Remover paredes internas de la sala
                         if (grid[x, z] != null)
                         {
+                            newRoom.cells.Add(grid[x, z]);
+
                             // Remover pared al norte
                             if (z + 1 < randomZ + roomSize){
                                 grid[x, z].RemoveWall("North");
-                                grid[x, z].neighbors.Add(new Vector2Int(x, z + 1));
-                                grid[x, z + 1].neighbors.Add(new Vector2Int(x, z));
+                                MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x, z + 1));
                             }// Remover pared al sur
                             if (z - 1 >= randomZ){
                                 grid[x, z].RemoveWall("South");
-                                grid[x, z].neighbors.Add(new Vector2Int(x, z - 1));
-                                grid[x, z - 1].neighbors.Add(new Vector2Int(x, z));
+                                MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x, z - 1));
                             }// Remover pared al este
                             if (x + 1 < randomX + roomSize){
                                 grid[x, z].RemoveWall("East");
-                                grid[x, z].neighbors.Add(new Vector2Int(x + 1, z));
-                                grid[x + 1, z].neighbors.Add(new Vector2Int(x, z));
+                                MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x + 1, z));
                             }// Remover pared al oeste
                             if (x - 1 >= randomX){
                                 grid[x, z].RemoveWall("West");
-                                grid[x, z].neighbors.Add(new Vector2Int(x - 1, z));
-                                grid[x - 1, z].neighbors.Add(new Vector2Int(x, z));
+                                MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x - 1, z));
                             }
                         }
                     }
                 }
+
+                rooms.Add(newRoom);
 
                 // Instanciar el prefab de la sala si existe
                 if (roomPrefab != null)

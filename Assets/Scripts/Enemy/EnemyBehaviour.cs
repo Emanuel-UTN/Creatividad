@@ -135,10 +135,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void RefreshCellPosition()
     {
-        if (GameController.gameController == null)
-            return;
-
-        MazeCell current = GameController.gameController.GetCellByPosition(transform.position);
+        MazeCell current = MazeController.GetCellByPosition(transform.position);
         if (current != null)
             cellPosition = current;
     }

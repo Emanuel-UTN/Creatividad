@@ -29,6 +29,9 @@ public class PlayerUI : MonoBehaviour
     [Header("Key Count")]
     [SerializeField] private TMP_Text keyCountText;
 
+    [Header("Interaction Point")]
+    public RawImage interactionPoint;
+
     void Start()
     {
         if (playerUI == null)
@@ -50,6 +53,8 @@ public class PlayerUI : MonoBehaviour
         }
 
         keyCountText.text = "Keys: 0";
+
+        interactionPoint.enabled = false;
 
         TryAssignPlayerController(true);
     }
@@ -184,5 +189,11 @@ public class PlayerUI : MonoBehaviour
     {
         if (keyCountText != null)
             keyCountText.text = $"Keys: {count}";
+    }
+
+    public void SetInteractionPointActive(bool active)
+    {
+        if (interactionPoint != null)
+            interactionPoint.enabled = active;
     }
 }

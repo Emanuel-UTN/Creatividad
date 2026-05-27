@@ -25,22 +25,35 @@ public class SpawnUtils : MonoBehaviour
     [Header("Placement")]
     public float wallInset = 0.6f;
     public float groundClearance = 0.02f;
+    public float minimumSpawnSeparation = 0.15f;
 
     private Transform spawnedRoot;
     private readonly List<MazeCell> eligibleCellsBuffer = new List<MazeCell>();
     private readonly List<Vector3> wallDirectionsBuffer = new List<Vector3>(4);
+    private readonly List<SpawnSlot> spawnSlotsBuffer = new List<SpawnSlot>();
+    private readonly List<Vector3> occupiedSpawnPositionsBuffer = new List<Vector3>();
 
-    public void Spawn(MazeCell[,] grid, float cellSize)
+    private struct SpawnSlot
     {
-        if (grid == null || grid.Length == 0)
+        public MazeCell cell;
+        public Vector3 wallDirection;
+        public Vector3 spawnPosition;
+    }
+
+    public void Spawn()
+    {
+        if (MazeController.Grid == null || MazeController.Grid.Length == 0)
             return;
 
         EnsureSpawnRoot();
         ClearSpawnedRoot();
-        BuildEligibleWallCells(grid, eligibleCellsBuffer);
+        BuildEligibleWallCells(MazeController.Grid, eligibleCellsBuffer);
+        BuildSpawnSlots(eligibleCellsBuffer, spawnSlotsBuffer);
 
-        if (eligibleCellsBuffer.Count == 0)
+        if (spawnSlotsBuffer.Count == 0)
             return;
+
+        occupiedSpawnPositionsBuffer.Clear();
 
         for (int i = 0; i < spawnEntries.Count; i++)
         {
@@ -52,17 +65,55 @@ public class SpawnUtils : MonoBehaviour
             int maxAmount = Mathf.Max(1, Mathf.Max(entry.minAmount, entry.maxAmount));
             int spawnCount = Random.Range(minAmount, maxAmount + 1);
 
-            for (int spawnIndex = 0; spawnIndex < spawnCount; spawnIndex++)
-            {
-                if (!TryGetRandomWallCell(eligibleCellsBuffer, out MazeCell cell, out Vector3 wallDirection))
-                    continue;
-
-                Vector3 spawnPosition = GetSpawnPosition(cell, wallDirection, cellSize);
-                Quaternion rotation = Quaternion.LookRotation(-wallDirection, Vector3.up);
-                GameObject spawnedObject = Instantiate(entry.prefab, spawnPosition, rotation, spawnedRoot);
-                AlignSpawnToGround(spawnedObject, cell.transform.position.y + groundClearance);
-            }
+            SpawnObjectsFromSlots(entry.prefab, spawnCount, spawnSlotsBuffer, occupiedSpawnPositionsBuffer);
         }
+    }
+
+    public List<GameObject> SpawnObjects(GameObject prefab, int count, bool buildElegibleCells = false)
+    {
+        if (prefab == null || count <= 0)
+            return new List<GameObject>();
+
+        EnsureSpawnRoot();
+
+        if (buildElegibleCells)
+            BuildEligibleWallCells(MazeController.Grid, eligibleCellsBuffer);        
+
+        if (eligibleCellsBuffer.Count == 0)
+            BuildEligibleWallCells(MazeController.Grid, eligibleCellsBuffer);
+
+        BuildSpawnSlots(eligibleCellsBuffer, spawnSlotsBuffer);
+
+        List<GameObject> spawnedObjects = new List<GameObject>();
+        List<Vector3> occupiedSpawnPositions = new List<Vector3>();
+        CollectSpawnedPositions(occupiedSpawnPositions);
+
+        spawnedObjects.AddRange(SpawnObjectsFromSlots(prefab, count, spawnSlotsBuffer, occupiedSpawnPositions));
+
+        return spawnedObjects;
+    }
+
+    private List<GameObject> SpawnObjectsFromSlots(GameObject prefab, int count, List<SpawnSlot> availableSlots, List<Vector3> occupiedSpawnPositions)
+    {
+        List<GameObject> spawnedObjects = new List<GameObject>();
+
+        if (prefab == null || count <= 0 || availableSlots == null || availableSlots.Count == 0)
+            return spawnedObjects;
+
+        for (int spawnIndex = 0; spawnIndex < count && availableSlots.Count > 0; spawnIndex++)
+        {
+            int slotIndex = SelectBestSpawnSlotIndex(availableSlots, occupiedSpawnPositions);
+            SpawnSlot slot = availableSlots[slotIndex];
+            availableSlots.RemoveAt(slotIndex);
+
+            Quaternion rotation = Quaternion.LookRotation(-slot.wallDirection, Vector3.up);
+            GameObject spawnedObject = Instantiate(prefab, slot.spawnPosition, rotation, spawnedRoot);
+            AlignSpawnToGround(spawnedObject, slot.cell.transform.position.y + groundClearance);
+            spawnedObjects.Add(spawnedObject);
+            occupiedSpawnPositions.Add(spawnedObject.transform.position);
+        }
+
+        return spawnedObjects;
     }
 
     private void EnsureSpawnRoot()
@@ -101,6 +152,114 @@ public class SpawnUtils : MonoBehaviour
         }
     }
 
+    private void BuildSpawnSlots(List<MazeCell> eligibleCells, List<SpawnSlot> spawnSlots)
+    {
+        spawnSlots.Clear();
+
+        for (int i = 0; i < eligibleCells.Count; i++)
+        {
+            MazeCell cell = eligibleCells[i];
+            if (cell == null)
+                continue;
+
+            if (!TryGetActiveWallDirections(cell, wallDirectionsBuffer))
+                continue;
+
+            for (int directionIndex = 0; directionIndex < wallDirectionsBuffer.Count; directionIndex++)
+            {
+                Vector3 wallDirection = wallDirectionsBuffer[directionIndex];
+
+                spawnSlots.Add(new SpawnSlot
+                {
+                    cell = cell,
+                    wallDirection = wallDirection,
+                    spawnPosition = GetSpawnPosition(cell, wallDirection, MazeController.CellSize)
+                });
+            }
+        }
+    }
+
+    private int SelectBestSpawnSlotIndex(List<SpawnSlot> availableSlots, List<Vector3> occupiedSpawnPositions)
+    {
+        if (availableSlots.Count == 1)
+            return 0;
+
+        int bestIndex = -1;
+        float bestScore = float.NegativeInfinity;
+        bool foundSeparatedSlot = false;
+
+        for (int i = 0; i < availableSlots.Count; i++)
+        {
+            if (IsTooCloseToOccupiedPosition(availableSlots[i].spawnPosition, occupiedSpawnPositions))
+                continue;
+
+            foundSeparatedSlot = true;
+            float score = GetSpawnSlotScore(availableSlots[i], occupiedSpawnPositions);
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestIndex = i;
+            }
+            else if (Mathf.Abs(score - bestScore) <= 0.0001f && Random.value < 0.5f)
+            {
+                bestIndex = i;
+            }
+        }
+
+        if (foundSeparatedSlot)
+            return bestIndex >= 0 ? bestIndex : 0;
+
+        bestIndex = 0;
+        bestScore = float.NegativeInfinity;
+
+        for (int i = 0; i < availableSlots.Count; i++)
+        {
+            float score = GetSpawnSlotScore(availableSlots[i], occupiedSpawnPositions);
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestIndex = i;
+            }
+        }
+
+        return bestIndex;
+    }
+
+    private bool IsTooCloseToOccupiedPosition(Vector3 spawnPosition, List<Vector3> occupiedSpawnPositions)
+    {
+        if (occupiedSpawnPositions == null || occupiedSpawnPositions.Count == 0)
+            return false;
+
+        float minSqrDistance = minimumSpawnSeparation * minimumSpawnSeparation;
+
+        for (int i = 0; i < occupiedSpawnPositions.Count; i++)
+        {
+            if ((spawnPosition - occupiedSpawnPositions[i]).sqrMagnitude <= minSqrDistance)
+                return true;
+        }
+
+        return false;
+    }
+
+    private float GetSpawnSlotScore(SpawnSlot slot, List<Vector3> occupiedSpawnPositions)
+    {
+        if (occupiedSpawnPositions == null || occupiedSpawnPositions.Count == 0)
+            return Random.value;
+
+        float minSqrDistance = float.PositiveInfinity;
+
+        for (int i = 0; i < occupiedSpawnPositions.Count; i++)
+        {
+            float sqrDistance = (slot.spawnPosition - occupiedSpawnPositions[i]).sqrMagnitude;
+            if (sqrDistance < minSqrDistance)
+                minSqrDistance = sqrDistance;
+        }
+
+        return minSqrDistance;
+    }
+
     private bool TryGetRandomWallCell(List<MazeCell> eligibleCells, out MazeCell cell, out Vector3 wallDirection)
     {
         cell = null;
@@ -116,6 +275,19 @@ public class SpawnUtils : MonoBehaviour
 
         wallDirection = wallDirectionsBuffer[Random.Range(0, wallDirectionsBuffer.Count)];
         return true;
+    }
+
+    private void CollectSpawnedPositions(List<Vector3> occupiedSpawnPositions)
+    {
+        occupiedSpawnPositions.Clear();
+
+        if (spawnedRoot == null)
+            return;
+
+        for (int i = 0; i < spawnedRoot.childCount; i++)
+        {
+            occupiedSpawnPositions.Add(spawnedRoot.GetChild(i).position);
+        }
     }
 
     private bool HasAnyWall(MazeCell cell)
