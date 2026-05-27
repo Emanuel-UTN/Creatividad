@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class PowerPuzzle : PuzzleBase
 {
-    [Header("Prefabs")]
     public GameObject generatorPrefab;
     public GameObject switchPrefab;
-    public GameObject keyPrefab;
+
+    [Header("Sounds Effects")]
+    public AudioClip puzzleCompleteSound;
+    private AudioSource audioSource;
 
     [Header("Configuración")]
     public int switchCount = 3;
@@ -16,6 +19,7 @@ public class PowerPuzzle : PuzzleBase
 
     public override void StartPuzzle()
     {
+        audioSource = GetComponent<AudioSource>();
         SpawnGenerator();
         SpawnSwitches();
     }
@@ -36,7 +40,7 @@ public class PowerPuzzle : PuzzleBase
         foreach (Vector2Int neighbor in neighbors)
             MazeController.CellsNeighbors(position, neighbor, false);
 
-        Instantiate(generatorPrefab, center, Quaternion.identity, transform);
+        generatorPrefab = Instantiate(generatorPrefab, center, Quaternion.identity, transform);
     }
 
     void SpawnSwitches()
@@ -57,6 +61,8 @@ public class PowerPuzzle : PuzzleBase
 
         Debug.Log($"Interruptores activados: {activatedSwitches}/{switchCount}");
 
+        generatorPrefab.GetComponent<Animator>().SetTrigger("ActivateSwitch");
+
         if(activatedSwitches >= switchCount)
             CompletePuzzle();
     }
@@ -64,14 +70,20 @@ public class PowerPuzzle : PuzzleBase
     void CompletePuzzle()
     {
         Debug.Log("¡Puzzle de energía completado!");
+
+        if (puzzleCompleteSound != null)
+            audioSource.PlayOneShot(puzzleCompleteSound);
+
+        GameController.gameController.AlertEnemy(room.cells[room.cells.Count/2].transform.position);
+
         SpawnKey();
     }
 
-    void SpawnKey()
+    protected void SpawnKey()
     {
         Vector3 center = GetRoomCenter();
 
-        Instantiate(keyPrefab, center + Vector3.up, Quaternion.identity, transform);
+        base.SpawnKey(center + Vector3.forward * 2f);
     }
 
     Vector3 GetRoomCenter()

@@ -57,7 +57,7 @@ public class EnemyBehaviour : MonoBehaviour
         staminaComponent = GetComponent<StaminaComponent>();
         EnsureValidStaminaSetup();
         PlayerController.OnPlayerEnteredCupboard += HandlePlayerEnteredCupboard;
-        PlayerNoises.OnNoiseEmitted += HandlePlayerNoise;
+        GameController.OnNoiseEmitted += HandlePlayerNoise;
 
         patrolBehaviour = new PatrolBehaviour(
             movement,
@@ -128,7 +128,7 @@ public class EnemyBehaviour : MonoBehaviour
     void OnDestroy()
     {
         PlayerController.OnPlayerEnteredCupboard -= HandlePlayerEnteredCupboard;
-        PlayerNoises.OnNoiseEmitted -= HandlePlayerNoise;
+        GameController.OnNoiseEmitted -= HandlePlayerNoise;
         patrolBehaviour?.Dispose();
         chaseBehaviour?.Dispose();
     }
@@ -297,16 +297,13 @@ public class EnemyBehaviour : MonoBehaviour
         chaseBehaviour.OnPlayerHiddenInCupboard(cupboard, player);
     }
 
-    private void HandlePlayerNoise(Transform noiseSource, Vector3 noisePosition, float hearingRange, bool isSprinting)
+    private void HandlePlayerNoise(Vector3 noisePosition, float hearingRange)
     {
         if (chaseBehaviour == null)
             return;
 
         if (player == null)
             TryAssignPlayer();
-
-        if (noiseSource == null || player == null || noiseSource != player)
-            return;
 
         if (playerController != null && playerController.IsHidden)
             return;

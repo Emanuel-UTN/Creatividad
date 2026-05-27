@@ -12,14 +12,14 @@ public class PuzzleManager : MonoBehaviour
     private List<MazeRoom> availableRooms = new List<MazeRoom>();
     private List<PuzzleBase> activePuzzles = new List<PuzzleBase>();
 
-    public void GeneratePuzzles(List<MazeRoom> rooms, SpawnUtils spawnUtils)
+    public int GeneratePuzzles(List<MazeRoom> rooms, SpawnUtils spawnUtils)
     {
         availableRooms = rooms;
 
         if (availableRooms.Count == 0)
         {
             Debug.LogWarning("No hay habitaciones para colocar puzzles.");
-            return;
+            return 0;
         }
 
         int puzzleCount = Random.Range(1, Mathf.Min(puzzleMaxCount, availableRooms.Count) + 1);
@@ -31,6 +31,8 @@ public class PuzzleManager : MonoBehaviour
 
             CreateRandomPuzzle(spawnUtils);
         }
+
+        return puzzleCount;
     }
 
     void CreateRandomPuzzle(SpawnUtils spawnUtils)

@@ -537,8 +537,6 @@ MonoBehaviour:
   player: {fileID: 0}
   enemies: []
   enemy: {fileID: 0}
-  doorPrefab: {fileID: 0}
-  doorKeyPrefab: {fileID: 0}
 --- !u!114 &131963270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -558,6 +556,7 @@ MonoBehaviour:
   cellPrefab: {fileID: 0}
   exitPrefab: {fileID: 0}
   roomPrefab: {fileID: 0}
+  doorPrefab: {fileID: 0}
   floorMaterial: {fileID: 0}
   numberOfRooms: 3
   roomSize: 3
@@ -578,6 +577,7 @@ MonoBehaviour:
   spawnEntries: []
   wallInset: 0.6
   groundClearance: 0.02
+  minimumSpawnSeparation: 0.15
 --- !u!114 &131963272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2894,6 +2894,7 @@ MonoBehaviour:
   flashlightBatteryText: {fileID: 0}
   flashlightBatteryPanel: {fileID: 0}
   keyCountText: {fileID: 0}
+  interactionPoint: {fileID: 0}
 --- !u!1 &2023121837
 GameObject:
   m_ObjectHideFlags: 0

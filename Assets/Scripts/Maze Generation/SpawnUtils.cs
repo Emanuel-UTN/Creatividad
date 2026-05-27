@@ -53,8 +53,6 @@ public class SpawnUtils : MonoBehaviour
         if (spawnSlotsBuffer.Count == 0)
             return;
 
-        occupiedSpawnPositionsBuffer.Clear();
-
         for (int i = 0; i < spawnEntries.Count; i++)
         {
             SpawnEntry entry = spawnEntries[i];
@@ -85,12 +83,21 @@ public class SpawnUtils : MonoBehaviour
         BuildSpawnSlots(eligibleCellsBuffer, spawnSlotsBuffer);
 
         List<GameObject> spawnedObjects = new List<GameObject>();
-        List<Vector3> occupiedSpawnPositions = new List<Vector3>();
-        CollectSpawnedPositions(occupiedSpawnPositions);
+        RegisterExistingSpawnPositions();
 
-        spawnedObjects.AddRange(SpawnObjectsFromSlots(prefab, count, spawnSlotsBuffer, occupiedSpawnPositions));
+        spawnedObjects.AddRange(SpawnObjectsFromSlots(prefab, count, spawnSlotsBuffer, occupiedSpawnPositionsBuffer));
 
         return spawnedObjects;
+    }
+
+    public bool TryReserveSpawnPosition(Vector3 position)
+    {
+        return TryReserveSpawnPosition(position, occupiedSpawnPositionsBuffer);
+    }
+
+    public bool IsSpawnPositionOccupied(Vector3 position)
+    {
+        return IsTooCloseToOccupiedPosition(position, occupiedSpawnPositionsBuffer);
     }
 
     private List<GameObject> SpawnObjectsFromSlots(GameObject prefab, int count, List<SpawnSlot> availableSlots, List<Vector3> occupiedSpawnPositions)
@@ -110,7 +117,7 @@ public class SpawnUtils : MonoBehaviour
             GameObject spawnedObject = Instantiate(prefab, slot.spawnPosition, rotation, spawnedRoot);
             AlignSpawnToGround(spawnedObject, slot.cell.transform.position.y + groundClearance);
             spawnedObjects.Add(spawnedObject);
-            occupiedSpawnPositions.Add(spawnedObject.transform.position);
+            RegisterSpawnedPosition(spawnedObject.transform.position, occupiedSpawnPositions);
         }
 
         return spawnedObjects;
@@ -243,6 +250,18 @@ public class SpawnUtils : MonoBehaviour
         return false;
     }
 
+    private bool TryReserveSpawnPosition(Vector3 position, List<Vector3> occupiedSpawnPositions)
+    {
+        if (occupiedSpawnPositions == null)
+            return false;
+
+        if (IsTooCloseToOccupiedPosition(position, occupiedSpawnPositions))
+            return false;
+
+        occupiedSpawnPositions.Add(position);
+        return true;
+    }
+
     private float GetSpawnSlotScore(SpawnSlot slot, List<Vector3> occupiedSpawnPositions)
     {
         if (occupiedSpawnPositions == null || occupiedSpawnPositions.Count == 0)
@@ -277,17 +296,34 @@ public class SpawnUtils : MonoBehaviour
         return true;
     }
 
-    private void CollectSpawnedPositions(List<Vector3> occupiedSpawnPositions)
+    private void ResetOccupiedSpawnPositions()
     {
-        occupiedSpawnPositions.Clear();
+        occupiedSpawnPositionsBuffer.Clear();
+    }
 
+    private void RegisterExistingSpawnPositions()
+    {
         if (spawnedRoot == null)
             return;
 
         for (int i = 0; i < spawnedRoot.childCount; i++)
         {
-            occupiedSpawnPositions.Add(spawnedRoot.GetChild(i).position);
+            RegisterSpawnedPosition(spawnedRoot.GetChild(i).position, occupiedSpawnPositionsBuffer);
         }
+    }
+
+    private void RegisterSpawnedPosition(Vector3 position, List<Vector3> occupiedSpawnPositions)
+    {
+        if (occupiedSpawnPositions == null)
+            return;
+
+        for (int i = 0; i < occupiedSpawnPositions.Count; i++)
+        {
+            if ((position - occupiedSpawnPositions[i]).sqrMagnitude <= 0.0001f)
+                return;
+        }
+
+        occupiedSpawnPositions.Add(position);
     }
 
     private bool HasAnyWall(MazeCell cell)

@@ -24,6 +24,7 @@ public class MazeGenerator : MonoBehaviour
     public GameObject cellPrefab;
     public GameObject exitPrefab;
     public GameObject roomPrefab;
+    public GameObject doorPrefab;
 
     [Header("Materiales")]
     public Material floorMaterial;
@@ -47,11 +48,14 @@ public class MazeGenerator : MonoBehaviour
         GenerateMaze();
         spawnUtils = GetComponent<SpawnUtils>();
 
-        GetComponent<PuzzleManager>().GeneratePuzzles(rooms, spawnUtils);
-
+        int keyCount = GetComponent<PuzzleManager>().GeneratePuzzles(rooms, spawnUtils);
+        
         if (spawnUtils != null)
             spawnUtils.Spawn();
+
         GameController.gameController.Initialize();
+
+        InstantiateDoor(keyCount);
     }
 
     void GenerateMaze()
@@ -211,6 +215,7 @@ public class MazeGenerator : MonoBehaviour
             {
                 MazeRoom newRoom = new GameObject($"Room_{roomsCreated + 1}").AddComponent<MazeRoom>();
                 newRoom.origin = new Vector2Int(randomX, randomZ);
+                newRoom.transform.position = new Vector3((randomX + roomSize / 2f) * cellSize, 0, (randomZ + roomSize / 2f) * cellSize);
                 newRoom.size = roomSize;
 
                 for (int x = randomX; x < randomX + roomSize; x++)
@@ -257,5 +262,128 @@ public class MazeGenerator : MonoBehaviour
                 roomsCreated++;
             }
         }
+    }
+
+    private void InstantiateDoor(int keyCount)
+    {
+        if (doorPrefab == null || MazeController.Grid == null)
+            return;
+
+        if (spawnUtils == null)
+            spawnUtils = GetComponent<SpawnUtils>();
+
+        // Buscar un borde cuyo slot esté libre antes de colocar la puerta.
+        MazeCell borderCell = GetRandomFreeBorderCell(out string borderDirection, out Vector3 reservedSlotPosition);
+        if (borderCell == null)
+            return;
+
+        if (spawnUtils != null)
+        {
+            if (!spawnUtils.TryReserveSpawnPosition(reservedSlotPosition))
+                return;
+        }
+
+        borderCell.SetWall(doorPrefab, borderDirection, keyCount); // Abrir el muro del borde para colocar la puerta
+    }
+
+    private MazeCell GetRandomFreeBorderCell(out string borderDirection, out Vector3 reservedSlotPosition)
+    {
+        borderDirection = "North"; // Por defecto
+        reservedSlotPosition = Vector3.zero;
+        
+        int width = MazeController.Width;
+        int height = MazeController.Height;
+
+        int maxAttempts = Mathf.Max(1, width * height * 4);
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            MazeCell borderCell = GetRandomBorderCellCandidate(out borderDirection);
+            if (borderCell == null)
+                continue;
+
+            GameObject borderWall = GetWallObject(borderCell, borderDirection);
+            if (borderWall == null || !borderWall.activeSelf)
+                continue;
+
+            reservedSlotPosition = GetBorderWallSpawnPosition(borderCell, borderDirection);
+            if (spawnUtils != null && spawnUtils.IsSpawnPositionOccupied(reservedSlotPosition))
+                continue;
+
+            return borderCell;
+        }
+
+        return null;
+    }
+
+    private MazeCell GetRandomBorderCellCandidate(out string borderDirection)
+    {
+        borderDirection = "North";
+
+        int width = MazeController.Width;
+        int height = MazeController.Height;
+
+        // Elegir aleatoriamente cuál borde (0: Norte, 1: Sur, 2: Este, 3: Oeste)
+        int randomBorder = Random.Range(0, 4);
+        int x, z;
+
+        switch (randomBorder)
+        {
+            case 0: // Borde Norte (z = 0)
+                x = Random.Range(0, width);
+                z = 0;
+                borderDirection = "South";
+                break;
+            case 1: // Borde Sur (z = height - 1)
+                x = Random.Range(0, width);
+                z = height - 1;
+                borderDirection = "North";
+                break;
+            case 2: // Borde Este (x = 0)
+                x = 0;
+                z = Random.Range(0, height);
+                borderDirection = "West";
+                break;
+            default: // Borde Oeste (x = width - 1)
+                x = width - 1;
+                z = Random.Range(0, height);
+                borderDirection = "East";
+                break;
+        }
+
+        return MazeController.Grid[x, z];
+    }
+
+    private GameObject GetWallObject(MazeCell cell, string direction)
+    {
+        if (cell == null)
+            return null;
+
+        switch (direction)
+        {
+            case "North": return cell.wallNorth;
+            case "South": return cell.wallSouth;
+            case "East": return cell.wallEast;
+            case "West": return cell.wallWest;
+            default: return null;
+        }
+    }
+
+    private Vector3 GetBorderWallSpawnPosition(MazeCell cell, string borderDirection)
+    {
+        Vector3 wallDirection = Vector3.zero;
+
+        switch (borderDirection)
+        {
+            case "North": wallDirection = Vector3.forward; break;
+            case "South": wallDirection = Vector3.back; break;
+            case "East": wallDirection = Vector3.right; break;
+            case "West": wallDirection = Vector3.left; break;
+        }
+
+        float offset = Mathf.Max(0.1f, (cellSize * 0.5f) - (spawnUtils != null ? spawnUtils.wallInset : 0.6f));
+        Vector3 position = cell.transform.position + wallDirection.normalized * offset;
+        position.y = cell.transform.position.y;
+        return position;
     }
 }
