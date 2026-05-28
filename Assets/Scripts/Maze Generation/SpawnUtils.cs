@@ -40,14 +40,14 @@ public class SpawnUtils : MonoBehaviour
         public Vector3 spawnPosition;
     }
 
-    public void Spawn()
+    public void Spawn(List<MazeCell> eligibleCells = null)
     {
         if (MazeController.Grid == null || MazeController.Grid.Length == 0)
             return;
 
         EnsureSpawnRoot();
         ClearSpawnedRoot();
-        BuildEligibleWallCells(MazeController.Grid, eligibleCellsBuffer);
+        BuildEligibleWallCells(eligibleCells, eligibleCellsBuffer);
         BuildSpawnSlots(eligibleCellsBuffer, spawnSlotsBuffer);
 
         if (spawnSlotsBuffer.Count == 0)
@@ -67,18 +67,14 @@ public class SpawnUtils : MonoBehaviour
         }
     }
 
-    public List<GameObject> SpawnObjects(GameObject prefab, int count, bool buildElegibleCells = false)
+    public List<GameObject> SpawnObjects(GameObject prefab, int count, List<MazeCell> eligibleCells = null)
     {
         if (prefab == null || count <= 0)
             return new List<GameObject>();
 
         EnsureSpawnRoot();
 
-        if (buildElegibleCells)
-            BuildEligibleWallCells(MazeController.Grid, eligibleCellsBuffer);        
-
-        if (eligibleCellsBuffer.Count == 0)
-            BuildEligibleWallCells(MazeController.Grid, eligibleCellsBuffer);
+        BuildEligibleWallCells(eligibleCells, eligibleCellsBuffer);
 
         BuildSpawnSlots(eligibleCellsBuffer, spawnSlotsBuffer);
 
@@ -107,17 +103,22 @@ public class SpawnUtils : MonoBehaviour
         if (prefab == null || count <= 0 || availableSlots == null || availableSlots.Count == 0)
             return spawnedObjects;
 
-        for (int spawnIndex = 0; spawnIndex < count && availableSlots.Count > 0; spawnIndex++)
+        int spawnedCount = 0;
+        while (spawnedCount < count && availableSlots.Count > 0)
         {
             int slotIndex = SelectBestSpawnSlotIndex(availableSlots, occupiedSpawnPositions);
             SpawnSlot slot = availableSlots[slotIndex];
             availableSlots.RemoveAt(slotIndex);
 
-            Quaternion rotation = Quaternion.LookRotation(-slot.wallDirection, Vector3.up);
-            GameObject spawnedObject = Instantiate(prefab, slot.spawnPosition, rotation, spawnedRoot);
-            AlignSpawnToGround(spawnedObject, slot.cell.transform.position.y + groundClearance);
+            GameObject spawnedObject = slot.cell != null
+                ? slot.cell.TrySpawnInFrontOfWall(prefab, slot.wallDirection, wallInset, groundClearance, spawnedRoot, occupiedSpawnPositions)
+                : null;
+
+            if (spawnedObject == null)
+                continue;
+
             spawnedObjects.Add(spawnedObject);
-            RegisterSpawnedPosition(spawnedObject.transform.position, occupiedSpawnPositions);
+            spawnedCount++;
         }
 
         return spawnedObjects;
@@ -144,15 +145,30 @@ public class SpawnUtils : MonoBehaviour
         }
     }
 
-    private void BuildEligibleWallCells(MazeCell[,] grid, List<MazeCell> eligibleCells)
+    private void BuildEligibleWallCells(List<MazeCell> sourceCells, List<MazeCell> eligibleCells)
     {
         eligibleCells.Clear();
 
-        for (int x = 0; x < grid.GetLength(0); x++)
+        if (sourceCells != null && sourceCells.Count > 0)
         {
-            for (int z = 0; z < grid.GetLength(1); z++)
+            for (int i = 0; i < sourceCells.Count; i++)
             {
-                MazeCell candidate = grid[x, z];
+                MazeCell candidate = sourceCells[i];
+                if (candidate != null && HasAnyWall(candidate))
+                    eligibleCells.Add(candidate);
+            }
+
+            return;
+        }
+
+        if (MazeController.Grid == null)
+            return;
+
+        for (int x = 0; x < MazeController.Grid.GetLength(0); x++)
+        {
+            for (int z = 0; z < MazeController.Grid.GetLength(1); z++)
+            {
+                MazeCell candidate = MazeController.Grid[x, z];
                 if (candidate != null && HasAnyWall(candidate))
                     eligibleCells.Add(candidate);
             }
@@ -359,63 +375,4 @@ public class SpawnUtils : MonoBehaviour
         return position;
     }
 
-    private void AlignSpawnToGround(GameObject spawnedObject, float groundY)
-    {
-        if (spawnedObject == null)
-            return;
-
-        if (!TryGetSpawnBounds(spawnedObject, out Bounds bounds))
-            return;
-
-        float deltaY = groundY - bounds.min.y;
-        if (Mathf.Abs(deltaY) <= 0.0001f)
-            return;
-
-        spawnedObject.transform.position += Vector3.up * deltaY;
-    }
-
-    private bool TryGetSpawnBounds(GameObject spawnedObject, out Bounds bounds)
-    {
-        Renderer[] renderers = spawnedObject.GetComponentsInChildren<Renderer>();
-        Collider[] colliders = spawnedObject.GetComponentsInChildren<Collider>();
-
-        bool hasBounds = false;
-        bounds = default;
-
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            Renderer renderer = renderers[i];
-            if (renderer == null)
-                continue;
-
-            if (!hasBounds)
-            {
-                bounds = renderer.bounds;
-                hasBounds = true;
-            }
-            else
-            {
-                bounds.Encapsulate(renderer.bounds);
-            }
-        }
-
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            Collider collider = colliders[i];
-            if (collider == null)
-                continue;
-
-            if (!hasBounds)
-            {
-                bounds = collider.bounds;
-                hasBounds = true;
-            }
-            else
-            {
-                bounds.Encapsulate(collider.bounds);
-            }
-        }
-
-        return hasBounds;
-    }
 }

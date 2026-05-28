@@ -9,9 +9,13 @@ public class GameController : MonoBehaviour
     public static GameController gameController;
     public static bool IsPaused { get; private set; }
     public static bool IsGodModeEnabled { get; private set; }
+    [Header("GameObjects")]
     public GameObject player;
     public GameObject[] enemies;
     public GameObject enemy;
+
+    [Header("Actions")]
+    public bool resetGame = false;
 
     private MazeGenerator mazeGenerator;
     private AudioManager audioManager;
@@ -42,6 +46,16 @@ public class GameController : MonoBehaviour
 
         audioManager.SetPlayer(player.transform);
         audioManager.SetEnemy(enemy.transform);
+    }
+
+    void Update()
+    {
+        if (resetGame)
+        {
+            resetGame = false;
+            ResetRuntimeState();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reinicia la escena actual
+        }
     }
 
     public void PlayerWin(){

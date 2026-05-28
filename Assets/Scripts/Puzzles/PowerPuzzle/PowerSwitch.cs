@@ -2,13 +2,15 @@ using UnityEngine;
 
 public class PowerSwitch : PuzzleObject
 {
+    PowerPuzzle puzzle;
+
     private bool activated = false;
 
-    public override void Initialize(PowerPuzzle owner)
+    public void Initialize(PowerPuzzle owner)
     {
-        base.Initialize(owner);
+        puzzle = owner;
 
-        transform.position += Vector3.up * 1.25f - transform.forward * 0.35f;
+        transform.position += Vector3.up * 1.25f + transform.forward * 0.05f;
     }
 
     public override void Interact()

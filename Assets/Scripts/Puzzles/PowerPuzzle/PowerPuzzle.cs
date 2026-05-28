@@ -17,6 +17,12 @@ public class PowerPuzzle : PuzzleBase
     private List<GameObject> spawnedSwitches = new List<GameObject>();
     private int activatedSwitches = 0;
 
+    public override void Initialize(MazeRoom room, SpawnUtils spawnUtils)
+    {
+        room.roomType = RoomType.PowerPuzzle;
+        base.Initialize(room, spawnUtils);
+    }
+
     public override void StartPuzzle()
     {
         audioSource = GetComponent<AudioSource>();
@@ -26,7 +32,7 @@ public class PowerPuzzle : PuzzleBase
 
     void SpawnGenerator()
     {
-        Vector3 center = GetRoomCenter();
+        Vector3 center = room.GetCenter();
         MazeCell cell = MazeController.GetCellByPosition(center);
         if (cell == null)
         {
@@ -48,7 +54,7 @@ public class PowerPuzzle : PuzzleBase
         if (spawnUtils == null || switchPrefab == null)
             return;
         
-        spawnUtils.SpawnObjects(switchPrefab, switchCount, true).ForEach(s => {
+        spawnUtils.SpawnObjects(switchPrefab, switchCount).ForEach(s => {
             spawnedSwitches.Add(s);
             s.transform.SetParent(transform);
             s.GetComponent<PowerSwitch>().Initialize(this);
@@ -81,20 +87,8 @@ public class PowerPuzzle : PuzzleBase
 
     protected void SpawnKey()
     {
-        Vector3 center = GetRoomCenter();
+        Vector3 center = room.GetCenter();
 
         base.SpawnKey(center + Vector3.forward * 2f);
-    }
-
-    Vector3 GetRoomCenter()
-    {
-        Vector3 total = Vector3.zero;
-
-        foreach(MazeCell cell in room.cells)
-        {
-            total += cell.transform.position;
-        }
-
-        return total / room.cells.Count;
     }
 }

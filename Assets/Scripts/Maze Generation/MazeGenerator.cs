@@ -82,9 +82,9 @@ public class MazeGenerator : MonoBehaviour
             }
         }
 
-        GenerateDFS(0, 0);
-
         GenerateRooms();
+
+        GenerateDFS(0, 0);
 
         if (exitPrefab != null)
         {
@@ -229,6 +229,7 @@ public class MazeGenerator : MonoBehaviour
                         if (grid[x, z] != null)
                         {
                             newRoom.cells.Add(grid[x, z]);
+                            grid[x, z].visited = true; // Marcar como visitado para evitar que el DFS lo modifique
 
                             // Remover pared al norte
                             if (z + 1 < randomZ + roomSize){
@@ -247,6 +248,33 @@ public class MazeGenerator : MonoBehaviour
                                 grid[x, z].RemoveWall("West");
                                 MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x - 1, z));
                             }
+                        }
+                    }
+                }
+
+                int countDoors = Random.Range(1, 4);
+                while (countDoors > 0)
+                {
+                    int doorX = Random.Range(randomX, randomX + roomSize);
+                    int doorZ = Random.Range(randomZ, randomZ + roomSize);
+                    MazeCell cell = grid[doorX, doorZ];
+                    if (cell != null)
+                    {
+                        List<Vector2Int> possibleDirections = new List<Vector2Int>();
+                        if (doorZ + 1 < height && !usedCells.Contains(new Vector2Int(doorX, doorZ + 1)))
+                            possibleDirections.Add(new Vector2Int(doorX, doorZ + 1));
+                        if (doorZ - 1 >= 0 && !usedCells.Contains(new Vector2Int(doorX, doorZ - 1)))
+                            possibleDirections.Add(new Vector2Int(doorX, doorZ - 1));
+                        if (doorX + 1 < width && !usedCells.Contains(new Vector2Int(doorX + 1, doorZ)))
+                            possibleDirections.Add(new Vector2Int(doorX + 1, doorZ));
+                        if (doorX - 1 >= 0 && !usedCells.Contains(new Vector2Int(doorX - 1, doorZ)))
+                            possibleDirections.Add(new Vector2Int(doorX - 1, doorZ));
+
+                        if (possibleDirections.Count > 0)
+                        {
+                            Vector2Int direction = possibleDirections[Random.Range(0, possibleDirections.Count)];
+                            RemoveWallBetween(new Vector2Int(doorX, doorZ), direction);
+                            countDoors--;
                         }
                     }
                 }
@@ -283,7 +311,7 @@ public class MazeGenerator : MonoBehaviour
                 return;
         }
 
-        borderCell.SetWall(doorPrefab, borderDirection, keyCount); // Abrir el muro del borde para colocar la puerta
+        borderCell.SetDoor(doorPrefab, borderDirection, keyCount); // Abrir el muro del borde para colocar la puerta
     }
 
     private MazeCell GetRandomFreeBorderCell(out string borderDirection, out Vector3 reservedSlotPosition)

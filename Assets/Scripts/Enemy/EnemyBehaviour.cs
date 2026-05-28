@@ -92,6 +92,9 @@ public class EnemyBehaviour : MonoBehaviour
         if (player == null)
             TryAssignPlayer();
 
+        if (movement == null || patrolBehaviour == null || chaseBehaviour == null)
+            return;
+
         if (stunTimer > 0f)
         {
             stunTimer -= deltaTime;
