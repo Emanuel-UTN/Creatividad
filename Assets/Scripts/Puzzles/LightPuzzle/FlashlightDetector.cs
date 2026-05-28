@@ -13,15 +13,6 @@ public class FlashlightDetector : MonoBehaviour
             Debug.LogError("FlashlightDetector requires a Light component.");
     }
 
-    void OnDrawGizmos()
-    {
-        if (lightSource == null)
-            return;
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(transform.position, transform.position + transform.forward * range);
-    }
-
     void Update()
     {
         if (lightSource == null || !lightSource.enabled)

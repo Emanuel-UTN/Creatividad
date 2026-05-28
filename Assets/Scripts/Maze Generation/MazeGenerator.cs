@@ -44,6 +44,9 @@ public class MazeGenerator : MonoBehaviour
 
     void Start()
     {
+        if (cellPrefab == null)
+            return;
+        
         MazeController.CellSize = cellSize;
         GenerateMaze();
         spawnUtils = GetComponent<SpawnUtils>();

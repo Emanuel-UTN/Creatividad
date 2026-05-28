@@ -70,11 +70,10 @@ public class PlayerController : MonoBehaviour
         if (GameController.IsPaused)
             return;
         
-        RaycastHit hit;
-        if (CanInteractWithPuzzleObject(out hit) && hit.collider != null)
+        if (CanInteractWithPuzzleObject(out RaycastHit hit) && hit.collider != null)
         {
             PlayerUI.playerUI?.SetInteractionPointActive(true);
-            if (interactAction != null && interactAction.WasPressedThisFrame())
+            if (interactAction != null && interactAction.IsPressed())
                 hit.collider.GetComponent<PuzzleObject>()?.Interact();   
         }else{
             PlayerUI.playerUI?.SetInteractionPointActive(false);
