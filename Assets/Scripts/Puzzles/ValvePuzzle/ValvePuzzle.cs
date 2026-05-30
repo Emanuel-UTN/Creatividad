@@ -22,8 +22,12 @@ public class ValvePuzzle : PuzzleBase
 
     void SpawnVault()
     {
-        vaultPrefab = Instantiate(vaultPrefab, room.GetCenter(), Quaternion.identity, transform);
+        vaultPrefab = SpawnCenter(vaultPrefab);
+        SpawnClues();
+    }
 
+    void SpawnClues()
+    {
         Shuffle(cluePrefabs);
 
         for (int i = 0; i < cluePrefabs.Count; i++)
@@ -105,17 +109,5 @@ public class ValvePuzzle : PuzzleBase
         // Vapor
         // Sonido
         // Alarma
-    }
-
-    void Shuffle<T>(List<T> list)
-    {
-        for (int i = 0; i < list.Count; i++)
-        {
-            int rnd = Random.Range(i, list.Count);
-
-            T temp = list[i];
-            list[i] = list[rnd];
-            list[rnd] = temp;
-        }
     }
 }

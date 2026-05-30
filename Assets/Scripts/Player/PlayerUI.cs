@@ -32,6 +32,9 @@ public class PlayerUI : MonoBehaviour
     [Header("Interaction Point")]
     public RawImage interactionPoint;
 
+    [Header("Sample")]
+    public TMP_Text sampleTypeText;
+
     void Start()
     {
         if (playerUI == null)
@@ -195,5 +198,11 @@ public class PlayerUI : MonoBehaviour
     {
         if (interactionPoint != null)
             interactionPoint.enabled = active;
+    }
+
+    public void UpdateSampleType(SampleType? sampleType)
+    {
+        if (sampleTypeText != null)
+            sampleTypeText.text = sampleType.HasValue ? $"Sample: {sampleType.Value}" : "";
     }
 }

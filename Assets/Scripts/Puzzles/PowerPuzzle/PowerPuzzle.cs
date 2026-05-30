@@ -32,21 +32,7 @@ public class PowerPuzzle : PuzzleBase
 
     void SpawnGenerator()
     {
-        Vector3 center = room.GetCenter();
-        MazeCell cell = MazeController.GetCellByPosition(center);
-        if (cell == null)
-        {
-            Instantiate(generatorPrefab, center, Quaternion.identity, transform);
-            return;
-        }
-
-        Vector2Int position = MazeController.GetCellCoordinates(cell);
-        List<Vector2Int> neighbors = new List<Vector2Int>(cell.neighbors);
-
-        foreach (Vector2Int neighbor in neighbors)
-            MazeController.CellsNeighbors(position, neighbor, false);
-
-        generatorPrefab = Instantiate(generatorPrefab, center, Quaternion.identity, transform);
+        generatorPrefab = SpawnCenter(generatorPrefab);
     }
 
     void SpawnSwitches()

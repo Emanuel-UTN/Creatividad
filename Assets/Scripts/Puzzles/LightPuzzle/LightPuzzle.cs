@@ -60,7 +60,7 @@ public class LightPuzzle : PuzzleBase
 
     void SpawnKey()
     {
-        Vector3 pos = lockerPrefab.transform.position + lockerPrefab.transform.forward * 1.5f + Vector3.up;
+        Vector3 pos = lockerPrefab.transform.position + lockerPrefab.transform.forward * 1.5f;
         base.SpawnKey(pos);
     }
 }

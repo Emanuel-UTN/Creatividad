@@ -45,6 +45,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private SampleType? currentSampleType;
+    public SampleType? CurrentSampleType
+    {
+        get => currentSampleType;
+        set
+        {
+            currentSampleType = value;
+            PlayerUI.playerUI?.UpdateSampleType(currentSampleType);
+        }
+    }
+
     void Awake()
     {
         if (playerController == null)

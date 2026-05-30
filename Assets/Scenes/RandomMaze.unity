@@ -532,6 +532,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1709454180 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8552503234457411324, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
+  m_PrefabInstance: {fileID: 4754651932103008241}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &1890285996
 GameObject:
   m_ObjectHideFlags: 0
@@ -693,6 +704,7 @@ MonoBehaviour:
   - {fileID: 4987223175574402080, guid: 96159ea2c12dd5e49ae2f4256b27d4a0, type: 3}
   - {fileID: 2502600179617750726, guid: 572b1906e3bf3414295648be668ec862, type: 3}
   - {fileID: 5234758267728800193, guid: f3fef0a454f93c646991c0d4d49be842, type: 3}
+  - {fileID: 3896296387506048013, guid: 577bfca04fe6bdf4786139adb9475403, type: 3}
   puzzleMaxCount: 5
 --- !u!1001 &4754651932103008241
 PrefabInstance:
@@ -794,6 +806,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8413566852167761319, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
+      propertyPath: sampleTypeText
+      value: 
+      objectReference: {fileID: 1709454180}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
