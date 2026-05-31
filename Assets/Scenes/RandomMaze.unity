@@ -705,6 +705,7 @@ MonoBehaviour:
   - {fileID: 2502600179617750726, guid: 572b1906e3bf3414295648be668ec862, type: 3}
   - {fileID: 5234758267728800193, guid: f3fef0a454f93c646991c0d4d49be842, type: 3}
   - {fileID: 3896296387506048013, guid: 577bfca04fe6bdf4786139adb9475403, type: 3}
+  - {fileID: 844040115276768105, guid: aea4677a8bb695e46b064ecf5e015a61, type: 3}
   puzzleMaxCount: 5
 --- !u!1001 &4754651932103008241
 PrefabInstance:

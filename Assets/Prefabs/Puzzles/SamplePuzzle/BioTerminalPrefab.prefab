@@ -1252,7 +1252,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2396566314107335544}
   m_Layer: 0
-  m_Name: TerminalPrefab
+  m_Name: BioTerminalPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
