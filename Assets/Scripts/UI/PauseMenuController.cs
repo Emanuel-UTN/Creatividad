@@ -1,7 +1,10 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseMenuController : MonoBehaviour
 {
+    [SerializeField] private string menuSceneName = "Menu Scene";
+
     public void TogglePause()
     {
         if (GameController.IsPaused)
@@ -23,7 +26,7 @@ public class PauseMenuController : MonoBehaviour
         GUI.color = previousColor;
 
         float panelWidth = Mathf.Clamp(Screen.width * 0.28f, 320f, 460f);
-        float panelHeight = 260f;
+        float panelHeight = 320f;
         Rect panelRect = new Rect((Screen.width - panelWidth) * 0.5f, (Screen.height - panelHeight) * 0.5f, panelWidth, panelHeight);
 
         GUI.Box(panelRect, string.Empty);
@@ -60,6 +63,10 @@ public class PauseMenuController : MonoBehaviour
             ResumeGame();
 
         buttonY += 56f;
+        if (GUI.Button(new Rect(buttonX, buttonY, buttonWidth, buttonHeight), "Volver al menu", buttonStyle))
+            ReturnToMainMenu();
+
+        buttonY += 56f;
         string godModeText = GameController.IsGodModeEnabled ? "GodMode: ON" : "GodMode: OFF";
         if (GUI.Button(new Rect(buttonX, buttonY, buttonWidth, buttonHeight), godModeText, buttonStyle))
             ToggleGodMode();
@@ -86,5 +93,11 @@ public class PauseMenuController : MonoBehaviour
     private void ToggleGodMode()
     {
         GameController.SetGodModeEnabled(!GameController.IsGodModeEnabled);
+    }
+
+    private void ReturnToMainMenu()
+    {
+        GameController.ResetRuntimeState();
+        SceneManager.LoadScene(menuSceneName);
     }
 }
