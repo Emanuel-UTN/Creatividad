@@ -191,6 +191,9 @@ public class TutorialUI : MonoBehaviour
 
     private void HideTutorial()
     {
+        if (canvasGroup == null)
+            return;
+
         canvasGroup.interactable = false;
         StartCoroutine(FadeOut(fadeOutDuration));
 
@@ -206,6 +209,9 @@ public class TutorialUI : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (currentActionReference != null && currentActionReference.action != null)
+            currentActionReference.action.performed -= OnActionPerformed;
+
         UnsubscribeEnabledActions();
     }
 

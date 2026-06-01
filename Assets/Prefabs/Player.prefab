@@ -332,6 +332,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13d532ac4148d344cacfa4bebbadd075, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  interactionRange: 2
+  interactionMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &9066317190631719063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -800,6 +804,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4543401437352771106}
   - component: {fileID: 8224291937188639575}
+  - component: {fileID: 3732116406106378982}
   - component: {fileID: 6458010089474898834}
   - component: {fileID: 1148204966124947876}
   m_Layer: 0
@@ -849,6 +854,19 @@ MonoBehaviour:
   enableBlink: 1
   blinkDuration: 0.35
   blinkInterval: 5
+--- !u!114 &3732116406106378982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7081448716749988358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: add9f6fddaf83fb43a23747936c2a02b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlashlightDetector
+  range: 15
 --- !u!108 &6458010089474898834
 Light:
   m_ObjectHideFlags: 0

@@ -1,9 +1,16 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(PlayerFlashlightController))]
 public class PlayerController : MonoBehaviour
 {
+    [Header("Puzzles Interactions")]
+    public float interactionRange = 2f;
+    public LayerMask interactionMask = Physics.DefaultRaycastLayers;
+    private InputAction interactAction;
+    private InputAction pauseAction;
+
     public static event System.Action<Cupboard, bool> OnPlayerEnteredCupboard;
     public static event System.Action<Cupboard, bool> OnPlayerExitedCupboard;
     public static event System.Action<float> OnFlashlightBatteryChanged
@@ -38,6 +45,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private SampleType? currentSampleType;
+    public SampleType? CurrentSampleType
+    {
+        get => currentSampleType;
+        set
+        {
+            currentSampleType = value;
+            PlayerUI.playerUI?.UpdateSampleType(currentSampleType);
+        }
+    }
+
     void Awake()
     {
         if (playerController == null)
@@ -47,13 +65,47 @@ public class PlayerController : MonoBehaviour
 
         playerMovement = GetComponent<PlayerMovement>();
         flashlightController = GetComponent<PlayerFlashlightController>();
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        interactAction = playerInput.actions.FindAction("Interact", false);
+        pauseAction = playerInput.actions.FindAction("Pause", false);
+    }
+
+    void Update()
+    {
+        if (pauseAction != null && pauseAction.WasPressedThisFrame())
+        {
+            GameController.gameController?.GetComponent<PauseMenuController>()?.TogglePause();
+            return;
+        }
+
+        if (GameController.IsPaused)
+            return;
+        
+        if (CanInteractWithPuzzleObject(out RaycastHit hit) && hit.collider != null)
+        {
+            PlayerUI.playerUI?.SetInteractionPointActive(true);
+            if (interactAction != null && interactAction.IsPressed())
+                hit.collider.GetComponent<PuzzleObject>()?.Interact();   
+        }else{
+            PlayerUI.playerUI?.SetInteractionPointActive(false);
+
+            if (interactAction != null && interactAction.WasPressedThisFrame())
+                TryInteractWithCupboard();
+        }
+    }
+
+    private bool CanInteractWithPuzzleObject(out RaycastHit hit)
+    {
+        Transform camera = GetComponentInChildren<Camera>().transform;
+        Vector3 origin = camera.position;
+        Vector3 direction = camera.forward;
+        return Physics.Raycast(origin, direction, out hit, interactionRange, interactionMask);
     }
 
     void OnDestroy()
     {
         if (playerController == this)
             playerController = null;
-
     }
 
     public void SetNearbyCupboard(Cupboard cupboard)

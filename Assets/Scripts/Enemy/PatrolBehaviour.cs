@@ -212,10 +212,7 @@ public class PatrolBehaviour : Behaviour
     {
         cellToCoords.Clear();
 
-        if (GameController.gameController == null)
-            return;
-
-        MazeCell[,] grid = GameController.gameController.Grid();
+        MazeCell[,] grid = MazeController.Grid;
         if (grid == null)
             return;
 
@@ -235,10 +232,8 @@ public class PatrolBehaviour : Behaviour
 
     private MazeCell TryGetCell(Vector2Int coords)
     {
-        if (GameController.gameController == null)
-            return null;
 
-        MazeCell[,] grid = GameController.gameController.Grid();
+        MazeCell[,] grid = MazeController.Grid;
         if (grid == null)
             return null;
 
@@ -248,15 +243,15 @@ public class PatrolBehaviour : Behaviour
         if (coords.x < 0 || coords.y < 0 || coords.x >= width || coords.y >= height)
             return null;
 
-        return GameController.gameController.Cell(coords.x, coords.y);
+        return MazeController.Cell(coords.x, coords.y);
     }
 
     private MazeCell GetCellByEnemyPosition()
     {
-        if (GameController.gameController == null)
+        if (MazeController.Grid == null)
             return null;
 
-        MazeCell byPosition = GameController.gameController.GetCellByPosition(enemyTransform.position);
+        MazeCell byPosition = MazeController.GetCellByPosition(enemyTransform.position);
         if (byPosition != null)
             return byPosition;
 

@@ -47,8 +47,6 @@ public class PlayerMovement : MonoBehaviour
     private InputAction jumpAction;
     private InputAction sprintAction;
     private InputAction crouchAction;
-    private InputAction interactAction;
-    private InputAction pauseAction;
 
     private float verticalVelocity;
     private float pitch;
@@ -86,8 +84,6 @@ public class PlayerMovement : MonoBehaviour
         jumpAction = playerInput.actions["Jump"];
         sprintAction = playerInput.actions.FindAction("Sprint", false);
         crouchAction = playerInput.actions.FindAction("Crouch", false);
-        interactAction = playerInput.actions.FindAction("Interact", false);
-        pauseAction = playerInput.actions.FindAction("Pause", false);
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -101,17 +97,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (pauseAction != null && pauseAction.WasPressedThisFrame())
-        {
-            GameController.gameController?.GetComponent<PauseMenuController>()?.TogglePause();
-            return;
-        }
-
         if (GameController.IsPaused)
             return;
-
-        if (interactAction != null && interactAction.WasPressedThisFrame() && playerController != null)
-            playerController.TryInteractWithCupboard();
 
         float dt = Time.deltaTime;
         Vector2 look = lookAction.ReadValue<Vector2>();

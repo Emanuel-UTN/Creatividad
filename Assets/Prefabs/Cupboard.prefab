@@ -167,8 +167,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.5, y: 1, z: 3}
-  m_Center: {x: 0, y: 0, z: 2.5}
+  m_Size: {x: 1.5, y: 1, z: 2.5}
+  m_Center: {x: 0, y: 0, z: 2}
 --- !u!114 &4046786639862685944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205,6 +205,7 @@ MonoBehaviour:
   message: esconderte en el armario
   showOnStart: 0
   hideOnInput: 1
+  nextTutorial: {fileID: 0}
 --- !u!82 &4744370411706614710
 AudioSource:
   m_ObjectHideFlags: 0

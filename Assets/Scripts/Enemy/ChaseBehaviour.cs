@@ -394,6 +394,13 @@ public class ChaseBehaviour : Behaviour
             pathCellIndex = 0;
             pathTarget.position = pathCells[pathCellIndex].transform.position;
         }
+        else if (enemyCell != null && TryBuildPathToClosestReachableCell(enemyCell, noisePosition))
+        {
+            pathCellIndex = 0;
+            pathTarget.position = pathCells[pathCellIndex].transform.position;
+            if (pathCells.Count > 0)
+                noiseTarget.position = pathCells[pathCells.Count - 1].transform.position;
+        }
 
         state = ChaseState.GoToNoise;
     }
@@ -420,7 +427,7 @@ public class ChaseBehaviour : Behaviour
             return null;
         }
 
-        MazeCell cell = GameController.gameController.GetCellByPosition(position);
+        MazeCell cell = MazeController.GetCellByPosition(position);
         return cell;
     }
 
@@ -443,7 +450,7 @@ public class ChaseBehaviour : Behaviour
         for (int i = 0; i < currentCell.neighbors.Count; i++)
         {
             Vector2Int coords = currentCell.neighbors[i];
-            MazeCell neighbor = GameController.gameController != null ? GameController.gameController.Cell(coords.x, coords.y) : null;
+            MazeCell neighbor = MazeController.Cell(coords.x, coords.y);
             if (neighbor == null)
                 continue;
 
@@ -504,7 +511,7 @@ public class ChaseBehaviour : Behaviour
             for (int i = 0; i < current.neighbors.Count; i++)
             {
                 Vector2Int coords = current.neighbors[i];
-                MazeCell neighbor = GameController.gameController != null ? GameController.gameController.Cell(coords.x, coords.y) : null;
+                MazeCell neighbor = MazeController.Cell(coords.x, coords.y);
                 if (neighbor == null || pathVisited.Contains(neighbor))
                     continue;
 
@@ -533,6 +540,53 @@ public class ChaseBehaviour : Behaviour
             pathCells.Add(reversedPathBuffer[i]);
 
         return pathCells.Count > 0;
+    }
+
+    private bool TryBuildPathToClosestReachableCell(MazeCell startCell, Vector3 targetPosition)
+    {
+        if (MazeController.Grid == null || MazeController.Width <= 0 || MazeController.Height <= 0)
+            return false;
+
+        List<MazeCell> bestPath = null;
+        MazeCell bestCell = null;
+        float bestDistance = float.MaxValue;
+
+        for (int x = 0; x < MazeController.Width; x++)
+        {
+            for (int z = 0; z < MazeController.Height; z++)
+            {
+                MazeCell candidate = MazeController.Cell(x, z);
+                if (candidate == null || candidate == startCell)
+                    continue;
+
+                float candidateDistance = (candidate.transform.position - targetPosition).sqrMagnitude;
+                if (candidateDistance >= bestDistance)
+                    continue;
+
+                if (!TryBuildPath(startCell, candidate))
+                    continue;
+
+                bestDistance = candidateDistance;
+                bestCell = candidate;
+
+                if (bestPath == null)
+                    bestPath = new List<MazeCell>();
+
+                bestPath.Clear();
+                bestPath.AddRange(pathCells);
+            }
+        }
+
+        if (bestCell == null || bestPath == null || bestPath.Count == 0)
+        {
+            pathCells.Clear();
+            return false;
+        }
+
+        pathCells.Clear();
+        pathCells.AddRange(bestPath);
+        targetNoiseCell = bestCell;
+        return true;
     }
 
     private void BeginSearch()

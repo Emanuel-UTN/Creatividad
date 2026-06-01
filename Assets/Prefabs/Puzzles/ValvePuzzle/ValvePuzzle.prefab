@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5234758267728800193
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8518002286253631247}
+  - component: {fileID: 1160314330153205215}
+  m_Layer: 0
+  m_Name: ValvePuzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8518002286253631247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5234758267728800193}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 20.7911, y: 1.16334, z: 1.80978}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1160314330153205215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5234758267728800193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53ed8d790f5b4334dbfd32e60de745c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ValvePuzzle
+  keyPrefab: {fileID: 3458335907545275384, guid: 1df5f4f0cd25ebb45a4fbe7a446b0d43, type: 3}
+  valvePrefab: {fileID: 1955506915073472934, guid: 9005af4c99fbada4ca1385204f7b1247, type: 3}
+  vaultPrefab: {fileID: 7240514805360478992, guid: d9a1dc85a8e4c3945bbeb807ce6d63be, type: 3}
+  cluePrefabs:
+  - {fileID: 7167626108225325127, guid: 26b5736f36bdfe84dab2cfc9b260a705, type: 3}
+  - {fileID: 5530364934360997744, guid: 2bff881936aacc24aa5cc63d0fa4fea4, type: 3}
+  - {fileID: 8503127944022864848, guid: 603ee998645e0b34eb6714d144ba220a, type: 3}
+  valveCount: 3

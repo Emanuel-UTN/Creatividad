@@ -4,19 +4,20 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(MazeGenerator))]
 public class GameController : MonoBehaviour
 {
+    public static event System.Action<Vector3, float> OnNoiseEmitted;
+
     public static GameController gameController;
     public static bool IsPaused { get; private set; }
     public static bool IsGodModeEnabled { get; private set; }
+    [Header("GameObjects")]
     public GameObject player;
     public GameObject[] enemies;
     public GameObject enemy;
 
-    [Header("Escape")]
-    public GameObject doorPrefab;
-    public GameObject doorKeyPrefab;
+    [Header("Actions")]
+    public bool resetGame = false;
 
     private MazeGenerator mazeGenerator;
-    private MazeCell[,] grid;
     private AudioManager audioManager;
 
     void Awake()
@@ -38,101 +39,23 @@ public class GameController : MonoBehaviour
             gameObject.AddComponent<PauseMenuController>();
     }
 
-    public void Initialize(MazeCell [,] grid) {
-        this.grid = grid;
+    public void Initialize() {
         mazeGenerator = GetComponent<MazeGenerator>();
-        player = Instantiate(player, grid[0,0].transform.position, Quaternion.identity);
-        enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], grid[mazeGenerator.width - 1, mazeGenerator.height - 1].transform.position, Quaternion.identity);
-        InstantiateDoorAndKey();
+        player = Instantiate(player, MazeController.Grid[0,0].transform.position, Quaternion.identity);
+        enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], MazeController.Grid[mazeGenerator.width - 1, mazeGenerator.height - 1].transform.position, Quaternion.identity);
 
         audioManager.SetPlayer(player.transform);
         audioManager.SetEnemy(enemy.transform);
     }
 
-    public MazeCell[,] Grid()
+    void Update()
     {
-        return grid;
-    }
-
-    public MazeCell Cell(int x, int z)
-    {
-        return grid[x,z];
-    }
-
-    public MazeCell GetCellByPosition(Vector3 position)
-    {
-        if (grid == null || mazeGenerator == null)
-            return null;
-
-        float size = Mathf.Max(0.0001f, mazeGenerator.cellSize);
-
-        int x = Mathf.RoundToInt(position.x / size);
-        int z = Mathf.RoundToInt(position.z / size);
-
-        int maxX = grid.GetLength(0) - 1;
-        int maxZ = grid.GetLength(1) - 1;
-
-        x = Mathf.Clamp(x, 0, maxX);
-        z = Mathf.Clamp(z, 0, maxZ);
-
-        return grid[x, z];
-    }
-
-    private void InstantiateDoorAndKey()
-    {
-        if (doorPrefab == null || doorKeyPrefab == null || grid == null || mazeGenerator == null)
-            return;
-
-        // Seleccionar una celda aleatoria del borde del laberinto
-        MazeCell borderCell = GetRandomBorderCell(out string borderDirection);
-        if (borderCell == null)
-            return;
-
-        // Generar número aleatorio de candados (1-5)
-        int lockCount = Random.Range(1, 6);
-
-        borderCell.SetWall(doorPrefab, borderDirection, lockCount); // Abrir el muro del borde para colocar la puerta
-
-        // Instanciar las llaves distribuidas aleatoriamente en el mapa
-        InstantiateKeysRandomly(lockCount);
-    }
-
-    private MazeCell GetRandomBorderCell(out string borderDirection)
-    {
-        borderDirection = "North"; // Por defecto
-        
-        int width = grid.GetLength(0);
-        int height = grid.GetLength(1);
-
-        // Elegir aleatoriamente cuál borde (0: Norte, 1: Sur, 2: Este, 3: Oeste)
-        int randomBorder = Random.Range(0, 4);
-        int x, z;
-
-        switch (randomBorder)
+        if (resetGame)
         {
-            case 0: // Borde Norte (z = 0)
-                x = Random.Range(0, width);
-                z = 0;
-                borderDirection = "South";
-                break;
-            case 1: // Borde Sur (z = height - 1)
-                x = Random.Range(0, width);
-                z = height - 1;
-                borderDirection = "North";
-                break;
-            case 2: // Borde Este (x = 0)
-                x = 0;
-                z = Random.Range(0, height);
-                borderDirection = "West";
-                break;
-            default: // Borde Oeste (x = width - 1)
-                x = width - 1;
-                z = Random.Range(0, height);
-                borderDirection = "East";
-                break;
+            resetGame = false;
+            ResetRuntimeState();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reinicia la escena actual
         }
-
-        return grid[x, z];
     }
 
     public void PlayerWin(){
@@ -142,36 +65,22 @@ public class GameController : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reinicia la escena actual
     }
 
-    private void InstantiateKeysRandomly(int keyCount)
-    {
-        int width = grid.GetLength(0);
-        int height = grid.GetLength(1);
-
-        for (int i = 0; i < keyCount; i++)
-        {
-            // Seleccionar una celda aleatoria del mapa
-            int randomX = Random.Range(0, width);
-            int randomZ = Random.Range(0, height);
-            MazeCell randomCell = grid[randomX, randomZ];
-
-            if (randomCell != null)
-            {
-                // Instanciar la llave en la posición de la celda
-                Vector3 keyPosition = randomCell.transform.position + Vector3.up * 0.5f;
-                GameObject key = Instantiate(doorKeyPrefab, keyPosition, Quaternion.identity);
-                key.transform.rotation = Quaternion.Euler(90, 0, 0); // Asegura que la llave esté orientada correctamente
-            }
-        }
-    }
-
     public void OpenDoor(float timeToOpen) {
         StartClock(timeToOpen);
         
         if (enemy == null || player == null)
             return;
 
-        float distance = Vector3.Distance(player.transform.position, enemy.transform.position);
-        player.GetComponent<PlayerNoises>()?.AlertEnemiesInRange(distance, false);
+        AlertEnemy(player.transform.position);
+    }
+
+    public void AlertEnemy(Vector3 position, float alertRadius = 0f)
+    {
+        if (enemy == null || player == null)
+            return;
+
+        float distance = (alertRadius == 0f) ? Vector3.Distance(enemy.transform.position, position) : alertRadius;
+        OnNoiseEmitted?.Invoke(position, distance);
     }
 
     public void StartClock(float time)

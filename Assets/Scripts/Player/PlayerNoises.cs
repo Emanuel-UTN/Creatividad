@@ -13,8 +13,6 @@ public class PlayerNoises : MonoBehaviour
         public float expiresAt;
     }
 
-    public static event System.Action<Transform, Vector3, float, bool> OnNoiseEmitted;
-
     [Header("Hearing Ranges")]
     public float walkHearingRange = 6f;
     public float sprintHearingRange = 12f;
@@ -70,12 +68,12 @@ public class PlayerNoises : MonoBehaviour
             return;
 
         RegisterNoiseGizmo(transform.position, hearingRange, isSprinting);
-        AlertEnemiesInRange(hearingRange, isSprinting);
+        AlertEnemiesInRange(hearingRange);
     }
 
-    public void AlertEnemiesInRange(float range, bool isSprinting)
+    public void AlertEnemiesInRange(float range)
     {
-        OnNoiseEmitted?.Invoke(transform, transform.position, range, isSprinting);
+        GameController.gameController.AlertEnemy(transform.position, range);
     }
 
     public void PlayFootstepAndEmit(bool isSprinting)

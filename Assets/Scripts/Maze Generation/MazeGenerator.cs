@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(SpawnUtils))]
+[RequireComponent(typeof(PuzzleManager))]
 public class MazeGenerator : MonoBehaviour
 {
     private static readonly Vector2Int[] NeighborDirections =
@@ -23,6 +24,7 @@ public class MazeGenerator : MonoBehaviour
     public GameObject cellPrefab;
     public GameObject exitPrefab;
     public GameObject roomPrefab;
+    public GameObject doorPrefab;
 
     [Header("Materiales")]
     public Material floorMaterial;
@@ -35,17 +37,28 @@ public class MazeGenerator : MonoBehaviour
     public bool useMainRoom = true;
     public int mainRoomSize = 5;
 
-    private MazeCell[,] grid;
+    private MazeCell[,] grid { get { return MazeController.Grid; } set { MazeController.Grid = value; } }
+    private List<MazeRoom> rooms = new List<MazeRoom>();
     private SpawnUtils spawnUtils;
     private readonly List<Vector2Int> neighborBuffer = new List<Vector2Int>(4);
 
     void Start()
     {
+        if (cellPrefab == null)
+            return;
+        
+        MazeController.CellSize = cellSize;
         GenerateMaze();
         spawnUtils = GetComponent<SpawnUtils>();
+
+        int keyCount = GetComponent<PuzzleManager>().GeneratePuzzles(rooms, spawnUtils);
+        
         if (spawnUtils != null)
-            spawnUtils.Spawn(grid, cellSize);
-        GameController.gameController.Initialize(grid);
+            spawnUtils.Spawn();
+
+        GameController.gameController.Initialize();
+
+        InstantiateDoor(keyCount);
     }
 
     void GenerateMaze()
@@ -72,9 +85,9 @@ public class MazeGenerator : MonoBehaviour
             }
         }
 
-        GenerateDFS(0, 0);
-
         GenerateRooms();
+
+        GenerateDFS(0, 0);
 
         if (exitPrefab != null)
         {
@@ -131,8 +144,7 @@ public class MazeGenerator : MonoBehaviour
         if (dz == 1)  { grid[a.x, a.y].RemoveWall("North"); grid[b.x, b.y].RemoveWall("South"); }
         if (dz == -1) { grid[a.x, a.y].RemoveWall("South"); grid[b.x, b.y].RemoveWall("North"); }
 
-        grid[a.x, a.y].neighbors.Add(b);
-        grid[b.x, b.y].neighbors.Add(a);
+        MazeController.CellsNeighbors(a, b);
     }
 
     void GenerateRooms()
@@ -158,23 +170,19 @@ public class MazeGenerator : MonoBehaviour
                     {
                         if (z + 1 < centerZ + mainRoomSize){
                             grid[x, z].RemoveWall("North");
-                            grid[x, z].neighbors.Add(new Vector2Int(x, z + 1));
-                            grid[x, z + 1].neighbors.Add(new Vector2Int(x, z));
+                            MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x, z + 1));
                         }
                         if (z - 1 >= centerZ){
                             grid[x, z].RemoveWall("South");
-                            grid[x, z].neighbors.Add(new Vector2Int(x, z - 1));
-                            grid[x, z - 1].neighbors.Add(new Vector2Int(x, z));
+                            MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x, z - 1));
                         }
                         if (x + 1 < centerX + mainRoomSize){
                             grid[x, z].RemoveWall("East");
-                            grid[x, z].neighbors.Add(new Vector2Int(x + 1, z));
-                            grid[x + 1, z].neighbors.Add(new Vector2Int(x, z));
+                            MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x + 1, z));
                         }
                         if (x - 1 >= centerX){
                             grid[x, z].RemoveWall("West");
-                            grid[x, z].neighbors.Add(new Vector2Int(x - 1, z));
-                            grid[x - 1, z].neighbors.Add(new Vector2Int(x, z));
+                            MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x - 1, z));
                         }
                     }
                 }
@@ -208,46 +216,73 @@ public class MazeGenerator : MonoBehaviour
 
             if (canPlace)
             {
-                // Marcar células como usadas
-                for (int x = randomX; x < randomX + roomSize; x++)
-                {
-                    for (int z = randomZ; z < randomZ + roomSize; z++)
-                    {
-                        usedCells.Add(new Vector2Int(x, z));
-                    }
-                }
+                MazeRoom newRoom = new GameObject($"Room_{roomsCreated + 1}").AddComponent<MazeRoom>();
+                newRoom.origin = new Vector2Int(randomX, randomZ);
+                newRoom.transform.position = new Vector3((randomX + roomSize / 2f) * cellSize, 0, (randomZ + roomSize / 2f) * cellSize);
+                newRoom.size = roomSize;
 
-                // Remover paredes internas de la sala
                 for (int x = randomX; x < randomX + roomSize; x++)
                 {
                     for (int z = randomZ; z < randomZ + roomSize; z++)
                     {
+                        // Marcar celdas como usadas
+                        usedCells.Add(new Vector2Int(x, z));
+
+                        // Remover paredes internas de la sala
                         if (grid[x, z] != null)
                         {
+                            newRoom.cells.Add(grid[x, z]);
+                            grid[x, z].visited = true; // Marcar como visitado para evitar que el DFS lo modifique
+
                             // Remover pared al norte
                             if (z + 1 < randomZ + roomSize){
                                 grid[x, z].RemoveWall("North");
-                                grid[x, z].neighbors.Add(new Vector2Int(x, z + 1));
-                                grid[x, z + 1].neighbors.Add(new Vector2Int(x, z));
+                                MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x, z + 1));
                             }// Remover pared al sur
                             if (z - 1 >= randomZ){
                                 grid[x, z].RemoveWall("South");
-                                grid[x, z].neighbors.Add(new Vector2Int(x, z - 1));
-                                grid[x, z - 1].neighbors.Add(new Vector2Int(x, z));
+                                MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x, z - 1));
                             }// Remover pared al este
                             if (x + 1 < randomX + roomSize){
                                 grid[x, z].RemoveWall("East");
-                                grid[x, z].neighbors.Add(new Vector2Int(x + 1, z));
-                                grid[x + 1, z].neighbors.Add(new Vector2Int(x, z));
+                                MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x + 1, z));
                             }// Remover pared al oeste
                             if (x - 1 >= randomX){
                                 grid[x, z].RemoveWall("West");
-                                grid[x, z].neighbors.Add(new Vector2Int(x - 1, z));
-                                grid[x - 1, z].neighbors.Add(new Vector2Int(x, z));
+                                MazeController.CellsNeighbors(new Vector2Int(x, z), new Vector2Int(x - 1, z));
                             }
                         }
                     }
                 }
+
+                int countDoors = Random.Range(1, 4);
+                while (countDoors > 0)
+                {
+                    int doorX = Random.Range(randomX, randomX + roomSize);
+                    int doorZ = Random.Range(randomZ, randomZ + roomSize);
+                    MazeCell cell = grid[doorX, doorZ];
+                    if (cell != null)
+                    {
+                        List<Vector2Int> possibleDirections = new List<Vector2Int>();
+                        if (doorZ + 1 < height && !usedCells.Contains(new Vector2Int(doorX, doorZ + 1)))
+                            possibleDirections.Add(new Vector2Int(doorX, doorZ + 1));
+                        if (doorZ - 1 >= 0 && !usedCells.Contains(new Vector2Int(doorX, doorZ - 1)))
+                            possibleDirections.Add(new Vector2Int(doorX, doorZ - 1));
+                        if (doorX + 1 < width && !usedCells.Contains(new Vector2Int(doorX + 1, doorZ)))
+                            possibleDirections.Add(new Vector2Int(doorX + 1, doorZ));
+                        if (doorX - 1 >= 0 && !usedCells.Contains(new Vector2Int(doorX - 1, doorZ)))
+                            possibleDirections.Add(new Vector2Int(doorX - 1, doorZ));
+
+                        if (possibleDirections.Count > 0)
+                        {
+                            Vector2Int direction = possibleDirections[Random.Range(0, possibleDirections.Count)];
+                            RemoveWallBetween(new Vector2Int(doorX, doorZ), direction);
+                            countDoors--;
+                        }
+                    }
+                }
+
+                rooms.Add(newRoom);
 
                 // Instanciar el prefab de la sala si existe
                 if (roomPrefab != null)
@@ -258,5 +293,128 @@ public class MazeGenerator : MonoBehaviour
                 roomsCreated++;
             }
         }
+    }
+
+    private void InstantiateDoor(int keyCount)
+    {
+        if (doorPrefab == null || MazeController.Grid == null)
+            return;
+
+        if (spawnUtils == null)
+            spawnUtils = GetComponent<SpawnUtils>();
+
+        // Buscar un borde cuyo slot esté libre antes de colocar la puerta.
+        MazeCell borderCell = GetRandomFreeBorderCell(out string borderDirection, out Vector3 reservedSlotPosition);
+        if (borderCell == null)
+            return;
+
+        if (spawnUtils != null)
+        {
+            if (!spawnUtils.TryReserveSpawnPosition(reservedSlotPosition))
+                return;
+        }
+
+        borderCell.SetDoor(doorPrefab, borderDirection, keyCount); // Abrir el muro del borde para colocar la puerta
+    }
+
+    private MazeCell GetRandomFreeBorderCell(out string borderDirection, out Vector3 reservedSlotPosition)
+    {
+        borderDirection = "North"; // Por defecto
+        reservedSlotPosition = Vector3.zero;
+        
+        int width = MazeController.Width;
+        int height = MazeController.Height;
+
+        int maxAttempts = Mathf.Max(1, width * height * 4);
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            MazeCell borderCell = GetRandomBorderCellCandidate(out borderDirection);
+            if (borderCell == null)
+                continue;
+
+            GameObject borderWall = GetWallObject(borderCell, borderDirection);
+            if (borderWall == null || !borderWall.activeSelf)
+                continue;
+
+            reservedSlotPosition = GetBorderWallSpawnPosition(borderCell, borderDirection);
+            if (spawnUtils != null && spawnUtils.IsSpawnPositionOccupied(reservedSlotPosition))
+                continue;
+
+            return borderCell;
+        }
+
+        return null;
+    }
+
+    private MazeCell GetRandomBorderCellCandidate(out string borderDirection)
+    {
+        borderDirection = "North";
+
+        int width = MazeController.Width;
+        int height = MazeController.Height;
+
+        // Elegir aleatoriamente cuál borde (0: Norte, 1: Sur, 2: Este, 3: Oeste)
+        int randomBorder = Random.Range(0, 4);
+        int x, z;
+
+        switch (randomBorder)
+        {
+            case 0: // Borde Norte (z = 0)
+                x = Random.Range(0, width);
+                z = 0;
+                borderDirection = "South";
+                break;
+            case 1: // Borde Sur (z = height - 1)
+                x = Random.Range(0, width);
+                z = height - 1;
+                borderDirection = "North";
+                break;
+            case 2: // Borde Este (x = 0)
+                x = 0;
+                z = Random.Range(0, height);
+                borderDirection = "West";
+                break;
+            default: // Borde Oeste (x = width - 1)
+                x = width - 1;
+                z = Random.Range(0, height);
+                borderDirection = "East";
+                break;
+        }
+
+        return MazeController.Grid[x, z];
+    }
+
+    private GameObject GetWallObject(MazeCell cell, string direction)
+    {
+        if (cell == null)
+            return null;
+
+        switch (direction)
+        {
+            case "North": return cell.wallNorth;
+            case "South": return cell.wallSouth;
+            case "East": return cell.wallEast;
+            case "West": return cell.wallWest;
+            default: return null;
+        }
+    }
+
+    private Vector3 GetBorderWallSpawnPosition(MazeCell cell, string borderDirection)
+    {
+        Vector3 wallDirection = Vector3.zero;
+
+        switch (borderDirection)
+        {
+            case "North": wallDirection = Vector3.forward; break;
+            case "South": wallDirection = Vector3.back; break;
+            case "East": wallDirection = Vector3.right; break;
+            case "West": wallDirection = Vector3.left; break;
+        }
+
+        float offset = Mathf.Max(0.1f, (cellSize * 0.5f) - (spawnUtils != null ? spawnUtils.wallInset : 0.6f));
+        Vector3 position = cell.transform.position + wallDirection.normalized * offset;
+        position.y = cell.transform.position.y;
+        return position;
     }
 }

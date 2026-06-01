@@ -57,7 +57,7 @@ public class EnemyBehaviour : MonoBehaviour
         staminaComponent = GetComponent<StaminaComponent>();
         EnsureValidStaminaSetup();
         PlayerController.OnPlayerEnteredCupboard += HandlePlayerEnteredCupboard;
-        PlayerNoises.OnNoiseEmitted += HandlePlayerNoise;
+        GameController.OnNoiseEmitted += HandlePlayerNoise;
 
         patrolBehaviour = new PatrolBehaviour(
             movement,
@@ -91,6 +91,9 @@ public class EnemyBehaviour : MonoBehaviour
 
         if (player == null)
             TryAssignPlayer();
+
+        if (movement == null || patrolBehaviour == null || chaseBehaviour == null)
+            return;
 
         if (stunTimer > 0f)
         {
@@ -128,17 +131,14 @@ public class EnemyBehaviour : MonoBehaviour
     void OnDestroy()
     {
         PlayerController.OnPlayerEnteredCupboard -= HandlePlayerEnteredCupboard;
-        PlayerNoises.OnNoiseEmitted -= HandlePlayerNoise;
+        GameController.OnNoiseEmitted -= HandlePlayerNoise;
         patrolBehaviour?.Dispose();
         chaseBehaviour?.Dispose();
     }
 
     private void RefreshCellPosition()
     {
-        if (GameController.gameController == null)
-            return;
-
-        MazeCell current = GameController.gameController.GetCellByPosition(transform.position);
+        MazeCell current = MazeController.GetCellByPosition(transform.position);
         if (current != null)
             cellPosition = current;
     }
@@ -300,16 +300,13 @@ public class EnemyBehaviour : MonoBehaviour
         chaseBehaviour.OnPlayerHiddenInCupboard(cupboard, player);
     }
 
-    private void HandlePlayerNoise(Transform noiseSource, Vector3 noisePosition, float hearingRange, bool isSprinting)
+    private void HandlePlayerNoise(Vector3 noisePosition, float hearingRange)
     {
         if (chaseBehaviour == null)
             return;
 
         if (player == null)
             TryAssignPlayer();
-
-        if (noiseSource == null || player == null || noiseSource != player)
-            return;
 
         if (playerController != null && playerController.IsHidden)
             return;
