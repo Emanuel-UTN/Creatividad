@@ -94,7 +94,8 @@ public class TerminalPuzzle : PuzzleBase
     public void Deactivate()
     {
         currentActivatedNode = -1;
-        terminalsToActivate.ForEach(node => node.Deactivate());
+        if (terminalsToActivate != null && terminalsToActivate.Count > 0)
+            terminalsToActivate.ForEach(node => node.Deactivate());
     }
 
     void CompletePuzzle()

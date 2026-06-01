@@ -918,7 +918,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 7.5, y: 7.5}
+  m_SizeDelta: {x: 12.5, y: 12.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6899372412516840261
 CanvasRenderer:
@@ -948,7 +948,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 0}
+  m_Texture: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1098,7 +1098,7 @@ MonoBehaviour:
   flashlightBatteryPanel: {fileID: 0}
   keyCountText: {fileID: 1519700172659382618}
   interactionPoint: {fileID: 7683957464228552359}
-  sampleTypeText: {fileID: 0}
+  sampleTypeText: {fileID: 8552503234457411324}
 --- !u!1 &8957279640459054111
 GameObject:
   m_ObjectHideFlags: 0

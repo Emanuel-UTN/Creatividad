@@ -52,14 +52,16 @@ public class StaminaComponent : MonoBehaviour
 
     public bool ResolveSprint(bool sprintRequestedAndMoving, bool blocked, float deltaTime)
     {
-        bool canSprint = sprintRequestedAndMoving && !blocked && HasStamina;
+        if (sprintRequestedAndMoving){
+            bool canSprint = !blocked && HasStamina;
 
-        if (canSprint)
-            Consume(deltaTime);
-        else
-            Regenerate(deltaTime);
-
-        return canSprint;
+            if (canSprint)
+                Consume(deltaTime);
+            return canSprint;
+        }
+        
+        Regenerate(deltaTime);
+        return false;
     }
 
     public void SetStamina(float value)

@@ -57,8 +57,6 @@ public class PlayerUI : MonoBehaviour
 
         keyCountText.text = "Keys: 0";
 
-        interactionPoint.enabled = false;
-
         TryAssignPlayerController(true);
     }
 
@@ -197,7 +195,7 @@ public class PlayerUI : MonoBehaviour
     public void SetInteractionPointActive(bool active)
     {
         if (interactionPoint != null)
-            interactionPoint.enabled = active;
+            interactionPoint.rectTransform.sizeDelta = active ? new Vector2(15f, 15f) : new Vector2(10f, 10f);
     }
 
     public void UpdateSampleType(SampleType? sampleType)
