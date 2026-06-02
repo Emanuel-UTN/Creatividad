@@ -57,7 +57,7 @@ public class MazeCell : MonoBehaviour
                     case "East":  rotation = Quaternion.Euler(0, 270, 0); break;
                     case "West":  rotation = Quaternion.Euler(0, 90, 0); break;
                 }
-                GameObject doorInstance = Instantiate(doorPrefab, position, rotation, transform);
+                GameObject doorInstance = Instantiate(doorPrefab, position + Vector3.up * 1.5f, rotation, transform);
                 Door doorScript = doorInstance.GetComponent<Door>();
                 if (doorScript != null)
                 {

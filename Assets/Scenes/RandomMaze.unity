@@ -627,7 +627,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpawnUtils
   spawnEntries:
-  - prefab: {fileID: 5108500865681255252, guid: 5127648af9f61864a93e606422ab0d1a, type: 3}
+  - prefab: {fileID: 8076561751786028043, guid: 44ebb02d2d190fa4880f6325b3fa01dc, type: 3}
     minAmount: 6
     maxAmount: 10
   - prefab: {fileID: 700100000000000001, guid: 6dd59c8b21144dd8b2f8eb293041d7f1, type: 3}

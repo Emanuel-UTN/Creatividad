@@ -41,7 +41,7 @@ public class GameController : MonoBehaviour
 
     public void Initialize() {
         mazeGenerator = GetComponent<MazeGenerator>();
-        player = Instantiate(player, MazeController.Grid[0,0].transform.position, Quaternion.identity);
+        player = Instantiate(player, MazeController.Grid[0,0].transform.position + Vector3.up * 0.5f, Quaternion.identity);
         enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], MazeController.Grid[mazeGenerator.width - 1, mazeGenerator.height - 1].transform.position, Quaternion.identity);
 
         audioManager.SetPlayer(player.transform);

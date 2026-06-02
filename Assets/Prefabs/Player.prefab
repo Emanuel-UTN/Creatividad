@@ -368,8 +368,8 @@ MonoBehaviour:
   crouchSpeedMultiplier: 0.45
   crouchHeightMultiplier: 0.6
   crouchCameraDrop: 0.55
-  gravity: -20
-  jumpHeight: 1.75
+  gravity: -15
+  jumpHeight: 1
   groundCheck: {fileID: 7125207446131838776}
   groundDistance: 0.4
   groundMask:
