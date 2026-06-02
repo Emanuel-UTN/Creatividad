@@ -22,11 +22,14 @@ public class LightReceiver : MonoBehaviour
 
     public Renderer emissiveRenderer;
 
-    public void Initialize(LightPuzzle owner)
+    public void Initialize(LightPuzzle owner, bool offset = true)
     {
         puzzle = owner;
         lightSource = GetComponent<Light>();
 
+        if (!offset)
+            return;
+                
         float offsetY = Random.Range(0f, 1.8f);
         transform.parent.position += Vector3.up * offsetY; // Elevar el receptor para que no esté pegado al suelo
     }
@@ -96,7 +99,8 @@ public class LightReceiver : MonoBehaviour
         if (emissiveRenderer != null)
             emissiveRenderer.material.SetColor("_EmissionColor", activatedColor * 5f);
         
-        puzzle.ActivateReceiver(this);
+        if (puzzle != null)
+            puzzle.ActivateReceiver(this);
 
         // Sonido
         // Particulas

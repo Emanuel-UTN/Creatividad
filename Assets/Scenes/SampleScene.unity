@@ -1525,6 +1525,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CellPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 5355057069295689831, guid: 2c5d71f51c8419642ae19ba1986c7640, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6024906715235419300, guid: 2c5d71f51c8419642ae19ba1986c7640, type: 3}
       propertyPath: m_LocalPosition.x
       value: 19.983301

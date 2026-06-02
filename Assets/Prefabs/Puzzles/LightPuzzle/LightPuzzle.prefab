@@ -46,5 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LightPuzzle
   keyPrefab: {fileID: 3458335907545275384, guid: 1df5f4f0cd25ebb45a4fbe7a446b0d43, type: 3}
   receiverPrefab: {fileID: 42871362536618952, guid: e651518195f179e4aaee795febb212fd, type: 3}
+  examplePrefab: {fileID: 3413816796553597394, guid: ddee9c63d7c702140b03e3333b55ae41, type: 3}
   lockerPrefab: {fileID: 230802198856166452, guid: a27a59503f9c3ac469b699d3bb73959f, type: 3}
   receiverCount: 3

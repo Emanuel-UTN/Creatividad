@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class LightPuzzle : PuzzleBase
 {
     public GameObject receiverPrefab;
+    public GameObject examplePrefab;
     public GameObject lockerPrefab;
 
     [Header("Configuración")]
@@ -38,6 +39,8 @@ public class LightPuzzle : PuzzleBase
 
         lockerPrefab = spawnUtils.SpawnObjects(lockerPrefab, 1, room.cells)[0];
         lockerPrefab.transform.parent = transform;
+
+        spawnUtils.SpawnObjects(examplePrefab, 1, room.cells)[0].transform.parent = transform; // Ejemplo visual para el jugador
     }
 
     public void ActivateReceiver(LightReceiver receiver)
