@@ -6,6 +6,13 @@ public class ValvePuzzle : PuzzleBase
     public GameObject valvePrefab;
     public GameObject vaultPrefab;
     public List<GameObject> cluePrefabs = new List<GameObject>(3);
+    
+    [Header("Tuberías")]
+    public GameObject pipeSegmentPrefab;
+    public GameObject pipeCornerPrefab;
+    public GameObject pipeJunctionPrefab;
+    public float pipeCeilingHeight = 3.1f;
+    public float pipeWallInset = 0.35f;
     private Color[] clueColors = new Color[] { Color.red, Color.green, Color.blue };
 
     [Header("Configuración")]
@@ -16,13 +23,24 @@ public class ValvePuzzle : PuzzleBase
 
     public override void StartPuzzle()
     {
+        correctOrder.Clear();
+        currentStep = 0;
+
         SpawnValves();
         SpawnVault();
+        SpawnPipeNetwork();
+
+        MazeCell cell = MazeController.GetCellByPosition(room.GetCenter());
+        Vector2Int position = MazeController.GetCellCoordinates(cell);
+        List<Vector2Int> neighbors = new List<Vector2Int>(cell.neighbors);
+
+        foreach (Vector2Int neighbor in neighbors)
+            MazeController.CellsNeighbors(position, neighbor, false);
     }
 
     void SpawnVault()
     {
-        vaultPrefab = SpawnCenter(vaultPrefab);
+        vaultPrefab = Instantiate(vaultPrefab, room.GetCenter(), Quaternion.identity, transform);
         SpawnClues();
     }
 
@@ -58,6 +76,20 @@ public class ValvePuzzle : PuzzleBase
         });
 
         Shuffle(correctOrder);
+    }
+
+    void SpawnPipeNetwork()
+    {
+        ValvePipeNetwork.Build(
+            transform,
+            room,
+            vaultPrefab,
+            correctOrder,
+            pipeSegmentPrefab,
+            pipeCornerPrefab,
+            pipeJunctionPrefab,
+            pipeCeilingHeight,
+            pipeWallInset);
     }
 
     public void ActivateValve(int valveIndex)

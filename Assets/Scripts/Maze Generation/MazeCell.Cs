@@ -98,6 +98,11 @@ public class MazeCell : MonoBehaviour
         if (occupiedSpawnPositions != null)
             RegisterSpawnedPosition(spawnedObject.transform.position, occupiedSpawnPositions);
 
+        MazeSpawnAnchor spawnAnchor = spawnedObject.GetComponent<MazeSpawnAnchor>();
+        if (spawnAnchor == null)
+            spawnAnchor = spawnedObject.AddComponent<MazeSpawnAnchor>();
+        spawnAnchor.Initialize(this, wallForward.normalized);
+
         return spawnedObject;
     }
 

@@ -51,4 +51,9 @@ MonoBehaviour:
   - {fileID: 7167626108225325127, guid: 26b5736f36bdfe84dab2cfc9b260a705, type: 3}
   - {fileID: 5530364934360997744, guid: 2bff881936aacc24aa5cc63d0fa4fea4, type: 3}
   - {fileID: 8503127944022864848, guid: 603ee998645e0b34eb6714d144ba220a, type: 3}
+  pipeSegmentPrefab: {fileID: 5599059889401958084, guid: 9eb75fd0dbb512646a84885a75af0de7, type: 3}
+  pipeCornerPrefab: {fileID: 8549024184722862295, guid: 5332c8bd130cacb41afd7ee901fb350b, type: 3}
+  pipeJunctionPrefab: {fileID: 483076708888243446, guid: 034b9dfe8f414064f8143cb4e220d66a, type: 3}
+  pipeCeilingHeight: 3.1
+  pipeWallInset: 0.35
   valveCount: 3
