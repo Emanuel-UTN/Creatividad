@@ -39,6 +39,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 356847458365356596, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: noisesClips.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 356847458365356596, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: 'noisesClips.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 74332d24de9985b42aeedaed5d03d79e, type: 3}
+    - target: {fileID: 356847458365356596, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
+      propertyPath: 'noisesClips.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 967d27b9c68257244975faaf829df12c, type: 3}
     - target: {fileID: 781131125439351914, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
       propertyPath: m_Name
       value: Enemy Cabra Variant Variant

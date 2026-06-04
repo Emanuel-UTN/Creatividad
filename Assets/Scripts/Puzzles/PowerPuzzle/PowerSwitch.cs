@@ -6,6 +6,8 @@ public class PowerSwitch : PuzzleObject
 
     private bool activated = false;
 
+    public AudioClip activationSound;
+
     public void Initialize(PowerPuzzle owner)
     {
         puzzle = owner;
@@ -24,7 +26,11 @@ public class PowerSwitch : PuzzleObject
         puzzle.ActivateSwitch();
 
         // Sonido
+        if (activationSound != null)
+            AudioSource.PlayClipAtPoint(activationSound, transform.position);
+
         // Luces
         // Animación
+        GetComponent<Animation>()?.Play("SwitchActivate");
     }
 }

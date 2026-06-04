@@ -22,6 +22,7 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Sources")]
     public AudioSource sourceA;
     public AudioSource sourceB;
+    public AudioSource backgroundNoiseSource;
 
     [Header("Musica")]
     public AudioClip ambientClip;
@@ -41,6 +42,12 @@ public class AudioManager : MonoBehaviour
     [Header("Estado")]
     public bool killerIsChasing = false;
 
+    [Header("Sonidos de fondo")]
+    public AudioClip[] backgroundNoise;
+    public float backgroundNoiseIntervalMin = 20f;
+    public float backgroundNoiseIntervalMax = 35f;
+    private float backgroundNoiseTimer;
+
     private MusicState currentState;
     private AudioSource activeSource;
     private AudioSource inactiveSource;
@@ -54,6 +61,8 @@ public class AudioManager : MonoBehaviour
         inactiveSource = sourceB;
 
         ChangeMusic(MusicState.Ambient, true);
+
+        backgroundNoiseTimer = Random.Range(backgroundNoiseIntervalMin, backgroundNoiseIntervalMax);
     }
 
     // Update is called once per frame
@@ -64,6 +73,9 @@ public class AudioManager : MonoBehaviour
 
     void UpdateMusicState()
     {
+        if (GameController.IsPaused)
+            return;
+
         if (player == null || enemy == null)
             return;
 
@@ -86,6 +98,23 @@ public class AudioManager : MonoBehaviour
         else
         {
             ChangeMusic(MusicState.Ambient);
+        }
+
+        BackgroundNoiseUpdate();
+    }
+
+    void BackgroundNoiseUpdate()
+    {
+        if (backgroundNoise.Length == 0)
+                return;
+        
+        backgroundNoiseTimer -= Time.deltaTime;
+        if (backgroundNoiseTimer <= 0f)
+        {
+            backgroundNoiseTimer = Random.Range(backgroundNoiseIntervalMin, backgroundNoiseIntervalMax);
+
+            int randomIndex = Random.Range(0, backgroundNoise.Length);
+            backgroundNoiseSource.PlayOneShot(backgroundNoise[randomIndex]);
         }
     }
 
