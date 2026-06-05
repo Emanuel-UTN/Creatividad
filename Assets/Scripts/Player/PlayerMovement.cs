@@ -79,11 +79,14 @@ public class PlayerMovement : MonoBehaviour
         if (cameraPivot != null)
             standingCameraLocalPosition = cameraPivot.localPosition;
         
-        moveAction = playerInput.actions["Move"];
-        lookAction = playerInput.actions["Look"];
-        jumpAction = playerInput.actions["Jump"];
-        sprintAction = playerInput.actions.FindAction("Sprint", false);
-        crouchAction = playerInput.actions.FindAction("Crouch", false);
+        if (playerInput != null && playerInput.actions != null)
+        {
+            moveAction = playerInput.actions.FindAction("Move", false) ?? playerInput.actions["Move"];
+            lookAction = playerInput.actions.FindAction("Look", false) ?? playerInput.actions["Look"];
+            jumpAction = playerInput.actions.FindAction("Jump", false) ?? playerInput.actions["Jump"];
+            sprintAction = playerInput.actions.FindAction("Sprint", false);
+            crouchAction = playerInput.actions.FindAction("Crouch", false);
+        }
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -101,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
             return;
 
         float dt = Time.deltaTime;
-        Vector2 look = lookAction.ReadValue<Vector2>();
+        Vector2 look = lookAction != null ? lookAction.ReadValue<Vector2>() : Vector2.zero;
         float mouseX = look.x * lookSensitivity;
         float mouseY = look.y * lookSensitivity;
 
@@ -125,12 +128,12 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded && verticalVelocity < 0f)
             verticalVelocity = -2f;
 
-        if (jumpAction.WasPressedThisFrame() && isGrounded)
+        if (jumpAction != null && jumpAction.WasPressedThisFrame() && isGrounded)
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
         verticalVelocity += gravity * dt;
 
-        Vector2 moveInput = moveAction.ReadValue<Vector2>();
+        Vector2 moveInput = moveAction != null ? moveAction.ReadValue<Vector2>() : Vector2.zero;
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
         if (move.sqrMagnitude > 1f)
             move.Normalize();
@@ -142,7 +145,7 @@ public class PlayerMovement : MonoBehaviour
         bool shouldTrySprint = sprintRequested && isMoving && !isCrouching;
 
         bool isHidden = playerController != null && playerController.IsHidden;
-        isSprinting = GameController.IsGodModeEnabled
+        isSprinting = GameController.IsCreativoEnabled
             ? shouldTrySprint && !isHidden
             : staminaComponent != null
                 ? staminaComponent.ResolveSprint(shouldTrySprint, isHidden, dt)

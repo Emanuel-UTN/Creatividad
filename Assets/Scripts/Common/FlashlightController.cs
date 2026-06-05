@@ -43,7 +43,10 @@ public class FlashlightController : MonoBehaviour
     {
         initialRotation = transform.localRotation;
         initialPosition = transform.localPosition;
-        lookAction = GetComponentInParent<PlayerInput>().actions["Look"];
+        
+        PlayerInput input = GetComponentInParent<PlayerInput>();
+        lookAction = (input != null && input.actions != null) ? input.actions.FindAction("Look", false) : null;
+        
         flashlight = GetComponent<Light>();
         nextBlinkTime = Time.time + Random.Range(blinkInterval/2, blinkInterval * 1.5f);
     }
@@ -51,6 +54,9 @@ public class FlashlightController : MonoBehaviour
     void Update()
     {
         // Movimiento
+        if (lookAction == null)
+            return;
+
         Vector2 look = lookAction.ReadValue<Vector2>();
 
         Quaternion targetRotation = initialRotation * Quaternion.Euler(-look.y * rotationAmount, look.x * rotationAmount, 0f);

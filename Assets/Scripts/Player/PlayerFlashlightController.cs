@@ -36,8 +36,8 @@ public class PlayerFlashlightController : MonoBehaviour
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-        flashlightAction = playerInput != null ? playerInput.actions.FindAction("Flashlight", false) : null;
-        flashBoostAction = playerInput != null ? playerInput.actions.FindAction("Attack", false) : null;
+        flashlightAction = (playerInput != null && playerInput.actions != null) ? playerInput.actions.FindAction("Flashlight", false) : null;
+        flashBoostAction = (playerInput != null && playerInput.actions != null) ? playerInput.actions.FindAction("Attack", false) : null;
 
         flashlightBattery = Mathf.Max(0f, maxFlashlightBattery);
 
@@ -169,7 +169,7 @@ public class PlayerFlashlightController : MonoBehaviour
             return;
         }
 
-        if (GameController.IsGodModeEnabled)
+        if (GameController.IsCreativoEnabled)
         {
             if (!CanUseFlashlight())
                 ForceFlashlightOff();

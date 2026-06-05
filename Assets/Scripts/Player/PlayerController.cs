@@ -67,8 +67,11 @@ public class PlayerController : MonoBehaviour
         playerMovement = GetComponent<PlayerMovement>();
         flashlightController = GetComponent<PlayerFlashlightController>();
         PlayerInput playerInput = GetComponent<PlayerInput>();
-        interactAction = playerInput.actions.FindAction("Interact", false);
-        pauseAction = playerInput.actions.FindAction("Pause", false);
+        if (playerInput != null && playerInput.actions != null)
+        {
+            interactAction = playerInput.actions.FindAction("Interact", false);
+            pauseAction = playerInput.actions.FindAction("Pause", false);
+        }
         playerCamera = GetComponentInChildren<Camera>();
     }
 
@@ -205,7 +208,7 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (GameController.IsPaused || GameController.IsGodModeEnabled)
+        if (GameController.IsPaused || GameController.IsCreativoEnabled)
             return;
 
         Debug.Log($"Player takes {damage} damage.");
