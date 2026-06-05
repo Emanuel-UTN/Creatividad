@@ -108,3 +108,4 @@ InitTestScene*.unity*
 
 # Web
 /NoTeVaAGustar-web/
+.DS_Store

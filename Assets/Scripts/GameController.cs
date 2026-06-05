@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour
 
     public static GameController gameController;
     public static bool IsPaused { get; private set; }
-    public static bool IsGodModeEnabled { get; private set; }
+    public static bool IsCreativoEnabled { get; private set; }
     [Header("GameObjects")]
     public GameObject player;
     public GameObject[] enemies;
@@ -26,7 +26,7 @@ public class GameController : MonoBehaviour
         {
             gameController = this;
             SetPaused(false);
-            SetGodModeEnabled(false);
+            SetCreativoEnabled(false);
         }
         else if (gameController != this)
         {
@@ -104,15 +104,15 @@ public class GameController : MonoBehaviour
         IsPaused = paused;
     }
 
-    public static void SetGodModeEnabled(bool enabled)
+    public static void SetCreativoEnabled(bool enabled)
     {
-        IsGodModeEnabled = enabled;
+        IsCreativoEnabled = enabled;
     }
 
     public static void ResetRuntimeState()
     {
         SetPaused(false);
-        SetGodModeEnabled(false);
+        SetCreativoEnabled(false);
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

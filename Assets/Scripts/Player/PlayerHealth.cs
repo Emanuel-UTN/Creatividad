@@ -18,7 +18,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (GameController.IsPaused || GameController.IsGodModeEnabled)
+        if (GameController.IsPaused || GameController.IsCreativoEnabled)
             return;
 
         currentHealth -= damage;

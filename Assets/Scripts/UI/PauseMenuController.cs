@@ -67,9 +67,9 @@ public class PauseMenuController : MonoBehaviour
             ReturnToMainMenu();
 
         buttonY += 56f;
-        string godModeText = GameController.IsGodModeEnabled ? "GodMode: ON" : "GodMode: OFF";
-        if (GUI.Button(new Rect(buttonX, buttonY, buttonWidth, buttonHeight), godModeText, buttonStyle))
-            ToggleGodMode();
+        string CreativoText = GameController.IsCreativoEnabled ? "Creativo: ON" : "Creativo: OFF";
+        if (GUI.Button(new Rect(buttonX, buttonY, buttonWidth, buttonHeight), CreativoText, buttonStyle))
+            ToggleCreativo();
 
         GUI.Label(new Rect(panelRect.x, panelRect.yMax - 40f, panelRect.width, 24f), "ESC para pausar o reanudar", infoStyle);
     }
@@ -90,9 +90,9 @@ public class PauseMenuController : MonoBehaviour
         Cursor.visible = false;
     }
 
-    private void ToggleGodMode()
+    private void ToggleCreativo()
     {
-        GameController.SetGodModeEnabled(!GameController.IsGodModeEnabled);
+        GameController.SetCreativoEnabled(!GameController.IsCreativoEnabled);
     }
 
     private void ReturnToMainMenu()
