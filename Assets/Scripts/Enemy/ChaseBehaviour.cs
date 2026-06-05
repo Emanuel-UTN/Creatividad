@@ -544,49 +544,79 @@ public class ChaseBehaviour : Behaviour
 
     private bool TryBuildPathToClosestReachableCell(MazeCell startCell, Vector3 targetPosition)
     {
-        if (MazeController.Grid == null || MazeController.Width <= 0 || MazeController.Height <= 0)
-            return false;
-
-        List<MazeCell> bestPath = null;
-        MazeCell bestCell = null;
-        float bestDistance = float.MaxValue;
-
-        for (int x = 0; x < MazeController.Width; x++)
-        {
-            for (int z = 0; z < MazeController.Height; z++)
-            {
-                MazeCell candidate = MazeController.Cell(x, z);
-                if (candidate == null || candidate == startCell)
-                    continue;
-
-                float candidateDistance = (candidate.transform.position - targetPosition).sqrMagnitude;
-                if (candidateDistance >= bestDistance)
-                    continue;
-
-                if (!TryBuildPath(startCell, candidate))
-                    continue;
-
-                bestDistance = candidateDistance;
-                bestCell = candidate;
-
-                if (bestPath == null)
-                    bestPath = new List<MazeCell>();
-
-                bestPath.Clear();
-                bestPath.AddRange(pathCells);
-            }
-        }
-
-        if (bestCell == null || bestPath == null || bestPath.Count == 0)
+        if (startCell == null || MazeController.Grid == null || MazeController.Width <= 0 || MazeController.Height <= 0)
         {
             pathCells.Clear();
             return false;
         }
 
+        // Run a single BFS traversal starting from startCell.
+        // During the traversal, we track the reachable cell closest to targetPosition.
+        pathOpenSet.Clear();
+        pathCameFrom.Clear();
+        pathVisited.Clear();
+        reversedPathBuffer.Clear();
+
+        pathOpenSet.Enqueue(startCell);
+        pathVisited.Add(startCell);
+
+        MazeCell bestCell = null;
+        float bestDistance = float.MaxValue;
+
+        while (pathOpenSet.Count > 0)
+        {
+            MazeCell current = pathOpenSet.Dequeue();
+            if (current != startCell)
+            {
+                float distance = (current.transform.position - targetPosition).sqrMagnitude;
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    bestCell = current;
+                }
+            }
+
+            if (current.neighbors == null)
+                continue;
+
+            for (int i = 0; i < current.neighbors.Count; i++)
+            {
+                Vector2Int coords = current.neighbors[i];
+                MazeCell neighbor = MazeController.Cell(coords.x, coords.y);
+                if (neighbor == null || pathVisited.Contains(neighbor))
+                    continue;
+
+                pathVisited.Add(neighbor);
+                pathCameFrom[neighbor] = current;
+                pathOpenSet.Enqueue(neighbor);
+            }
+        }
+
+        if (bestCell == null)
+        {
+            pathCells.Clear();
+            return false;
+        }
+
+        // Reconstruct path from bestCell back to startCell
         pathCells.Clear();
-        pathCells.AddRange(bestPath);
+        MazeCell step = bestCell;
+        while (step != startCell)
+        {
+            reversedPathBuffer.Add(step);
+            if (!pathCameFrom.TryGetValue(step, out MazeCell previous))
+            {
+                pathCells.Clear();
+                return false;
+            }
+            step = previous;
+        }
+
+        for (int i = reversedPathBuffer.Count - 1; i >= 0; i--)
+            pathCells.Add(reversedPathBuffer[i]);
+
         targetNoiseCell = bestCell;
-        return true;
+        return pathCells.Count > 0;
     }
 
     private void BeginSearch()
