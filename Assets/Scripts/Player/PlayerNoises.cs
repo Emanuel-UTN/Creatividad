@@ -33,7 +33,9 @@ public class PlayerNoises : MonoBehaviour
     public AudioClip[] footstepClips;
     public AudioClip[] sprintFootstepClips;
     private float footstepTimer;
+#if UNITY_EDITOR
     private readonly List<NoiseGizmoSample> noiseGizmoSamples = new List<NoiseGizmoSample>();
+#endif
 
     void Awake()
     {
@@ -67,7 +69,9 @@ public class PlayerNoises : MonoBehaviour
         if (hearingRange <= 0f)
             return;
 
+#if UNITY_EDITOR
         RegisterNoiseGizmo(transform.position, hearingRange, isSprinting);
+#endif
         AlertEnemiesInRange(hearingRange);
     }
 
@@ -105,6 +109,7 @@ public class PlayerNoises : MonoBehaviour
         footstepTimer = Mathf.Max(0.05f, interval);
     }
 
+#if UNITY_EDITOR
     private void RegisterNoiseGizmo(Vector3 position, float range, bool isSprinting)
     {
         NoiseGizmoSample sample = new NoiseGizmoSample
@@ -142,4 +147,5 @@ public class PlayerNoises : MonoBehaviour
             Gizmos.DrawLine(sample.position, sample.position + Vector3.up * 1.25f);
         }
     }
+#endif
 }
