@@ -51,6 +51,7 @@ public class LowHealthEffects : MonoBehaviour
     private LensDistortion distortion;
     private ColorAdjustments colorAdjustments;
     private DepthOfField depthOfField;
+    private float lastAppliedHealthPercent = -1f;
 
 
     void Start()
@@ -72,20 +73,27 @@ public class LowHealthEffects : MonoBehaviour
     void Update()
     {
         float intensity = 1f - healthPercent;
+        bool healthChanged = !Mathf.Approximately(healthPercent, lastAppliedHealthPercent);
 
         // Vignette
         if (enableVignette)
         {
-            float vignetteBase = Mathf.Lerp(0f, vignetteIntensity, intensity);
-
-            if(enablePulse && healthPercent < 0.5f)
+            if (healthPercent < 0.5f && enablePulse)
+            {
+                // Pulse is active, update every frame
+                float vignetteBase = Mathf.Lerp(0f, vignetteIntensity, intensity);
                 vignetteBase += Mathf.Sin(Time.time * pulseSpeed) * pulseStrength * intensity;
-
-            vignette.intensity.value = vignetteBase;
+                vignette.intensity.value = vignetteBase;
+            }
+            else if (healthChanged)
+            {
+                // No pulse, only update when health changes
+                vignette.intensity.value = Mathf.Lerp(0f, vignetteIntensity, intensity);
+            }
         }
 
-        // Aberración Cromática
-        if (enableChromatic)
+        // Aberración Cromática - only update when health changes
+        if (enableChromatic && healthChanged)
         {
             chromatic.intensity.value = Mathf.Lerp(0f, chromaticIntensity, intensity);
         }
@@ -93,46 +101,49 @@ public class LowHealthEffects : MonoBehaviour
         // Distorsión
         if (enableDistortion)
         {
-            float distortionBase = Mathf.Lerp(0f, distortionIntensity, intensity);
-
             if (healthPercent < 0.5f)
+            {
+                // Distortion pulse is active, update every frame
+                float distortionBase = Mathf.Lerp(0f, distortionIntensity, intensity);
                 distortionBase += Mathf.Sin(Time.time * 3f) * .05f;
-
-            distortion.intensity.value = distortionBase;
+                distortion.intensity.value = distortionBase;
+            }
+            else if (healthChanged)
+            {
+                // Only update when health changes
+                distortion.intensity.value = Mathf.Lerp(0f, distortionIntensity, intensity);
+            }
         }
 
-        // Ajuste de Color
-        if (enableColorAdjustments)
+        // Ajuste de Color - only update when health changes
+        if (enableColorAdjustments && healthChanged)
         {
-            // Saturación
             colorAdjustments.saturation.value = Mathf.Lerp(0f, colorAdjustmentSaturation, intensity);
-
-            // Post Exposure
             colorAdjustments.postExposure.value = Mathf.Lerp(0f, colorAdjustmentPostExposure, intensity);
         }
 
-        // Audio
-        if (heartbeatAudio)
+        // Audio - only update when health changes
+        if (heartbeatAudio && healthChanged)
         {
             heartbeatAudio.volume = Mathf.Lerp(0f, 1f, intensity);
             heartbeatAudio.pitch = Mathf.Lerp(1f, 1.3f, intensity);
         }
 
-        // Respiración
-        if (camTransform == null)
-            return;
-        
-        if (enableBreathing && healthPercent < 0.5f)
+        // Respiración / Camara
+        if (camTransform != null)
         {
-            float breath = 
-                Mathf.Sin(Time.time * breathingSpeed)
-                * breathingAmount
-                * intensity;
-
-            camTransform.localPosition = originalCamPos + Vector3.up * breath;
-        } else {
-            camTransform.localPosition = originalCamPos;
+            if (enableBreathing && healthPercent < 0.5f)
+            {
+                float breath = Mathf.Sin(Time.time * breathingSpeed) * breathingAmount * intensity;
+                camTransform.localPosition = originalCamPos + Vector3.up * breath;
+            }
+            else if (healthChanged || lastAppliedHealthPercent < 0.5f)
+            {
+                camTransform.localPosition = originalCamPos;
+            }
         }
+
+        lastAppliedHealthPercent = healthPercent;
     }
 
     public void SetHealth(float current, float max)
