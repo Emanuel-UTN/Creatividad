@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     private Cupboard nearbyCupboard;
     private Cupboard currentCupboard;
     private EnemyBehaviour enemyBehaviour;
+    private Camera playerCamera;
 
     public bool IsHidden => currentCupboard != null;
     public float CurrentFlashlightBattery => flashlightController != null ? flashlightController.CurrentFlashlightBattery : 0f;
@@ -68,6 +69,7 @@ public class PlayerController : MonoBehaviour
         PlayerInput playerInput = GetComponent<PlayerInput>();
         interactAction = playerInput.actions.FindAction("Interact", false);
         pauseAction = playerInput.actions.FindAction("Pause", false);
+        playerCamera = GetComponentInChildren<Camera>();
     }
 
     void Update()
@@ -96,10 +98,19 @@ public class PlayerController : MonoBehaviour
 
     private bool CanInteractWithPuzzleObject(out RaycastHit hit)
     {
-        Transform camera = GetComponentInChildren<Camera>().transform;
-        Vector3 origin = camera.position;
-        Vector3 direction = camera.forward;
-        return Physics.Raycast(origin, direction, out hit, interactionRange, interactionMask);
+        if (playerCamera == null)
+            playerCamera = GetComponentInChildren<Camera>();
+
+        if (playerCamera != null)
+        {
+            Transform cameraTransform = playerCamera.transform;
+            Vector3 origin = cameraTransform.position;
+            Vector3 direction = cameraTransform.forward;
+            return Physics.Raycast(origin, direction, out hit, interactionRange, interactionMask);
+        }
+
+        hit = default;
+        return false;
     }
 
     void OnDestroy()
