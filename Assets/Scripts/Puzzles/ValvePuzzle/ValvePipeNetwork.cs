@@ -76,6 +76,32 @@ public static class ValvePipeNetwork
         GameObject networkRoot = new GameObject("ValvePipeNetwork");
         networkRoot.transform.SetParent(parent, false);
 
+        // Build list of cells to exclude from rendering standard ceiling pipes
+        HashSet<Vector2Int> excludeCells = new HashSet<Vector2Int>();
+        
+        // 1. Exclude all room cells (so room ceiling remains clean)
+        if (room.cells != null)
+        {
+            for (int i = 0; i < room.cells.Count; i++)
+            {
+                if (room.cells[i] != null)
+                    excludeCells.Add(MazeController.GetCellCoordinates(room.cells[i]));
+            }
+        }
+
+        // 2. Exclude all valve cells (where players interact with valves)
+        for (int i = 0; i < valves.Count; i++)
+        {
+            Valve valve = valves[i];
+            if (valve == null)
+                continue;
+
+            MazeSpawnAnchor anchor = valve.GetComponentInParent<MazeSpawnAnchor>();
+            MazeCell targetCell = anchor != null ? anchor.SourceCell : null;
+            if (targetCell != null)
+                excludeCells.Add(MazeController.GetCellCoordinates(targetCell));
+        }
+
         RenderGraph(
             networkRoot.transform,
             graph,
@@ -83,7 +109,8 @@ public static class ValvePipeNetwork
             elbowPipePrefab,
             junctionPipePrefab,
             ceilingHeightOffset,
-            wallInset);
+            wallInset,
+            excludeCells);
     }
 
     private static void ClearExistingNetwork(Transform parent)
@@ -219,11 +246,15 @@ public static class ValvePipeNetwork
         GameObject elbowPipePrefab,
         GameObject junctionPipePrefab,
         float ceilingHeightOffset,
-        float wallInset)
+        float wallInset,
+        HashSet<Vector2Int> excludeCells)
     {
         foreach (KeyValuePair<Vector2Int, HashSet<Vector2Int>> entry in graph.Adjacency)
         {
             Vector2Int cellCoords = entry.Key;
+            if (excludeCells != null && excludeCells.Contains(cellCoords))
+                continue;
+
             HashSet<Vector2Int> neighbors = entry.Value;
 
             MazeCell cell = MazeController.Cell(cellCoords.x, cellCoords.y);
@@ -304,8 +335,15 @@ public static class ValvePipeNetwork
 
     private static int GetStraightQuarterTurns(Vector2Int[] directions)
     {
-        if (directions.Length < 2)
+        if (directions.Length == 0)
             return 0;
+
+        if (directions.Length == 1)
+        {
+            if (directions[0] == North || directions[0] == South)
+                return 0;
+            return 1;
+        }
 
         if ((directions[0] == North && directions[1] == South) || (directions[0] == South && directions[1] == North))
             return 0;
