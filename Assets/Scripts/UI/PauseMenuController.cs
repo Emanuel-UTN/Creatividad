@@ -5,6 +5,31 @@ public class PauseMenuController : MonoBehaviour
 {
     [SerializeField] private string menuSceneName = "Menu Scene";
 
+    private float globalVolume = 0.75f;
+    private float mouseSensitivity = 0.1f;
+
+    private void Awake()
+    {
+        globalVolume = PlayerPrefs.GetFloat("GlobalVolume", 0.75f);
+        AudioListener.volume = globalVolume;
+
+        mouseSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", 0.1f);
+    }
+
+    private void Start()
+    {
+        ApplySensitivity();
+    }
+
+    private void ApplySensitivity()
+    {
+        PlayerMovement movement = FindAnyObjectByType<PlayerMovement>();
+        if (movement != null)
+        {
+            movement.lookSensitivity = mouseSensitivity;
+        }
+    }
+
     public void TogglePause()
     {
         if (GameController.IsPaused)
@@ -26,7 +51,7 @@ public class PauseMenuController : MonoBehaviour
         GUI.color = previousColor;
 
         float panelWidth = Mathf.Clamp(Screen.width * 0.28f, 320f, 460f);
-        float panelHeight = 320f;
+        float panelHeight = 440f;
         Rect panelRect = new Rect((Screen.width - panelWidth) * 0.5f, (Screen.height - panelHeight) * 0.5f, panelWidth, panelHeight);
 
         GUI.Box(panelRect, string.Empty);
@@ -35,6 +60,13 @@ public class PauseMenuController : MonoBehaviour
         {
             alignment = TextAnchor.MiddleCenter,
             fontSize = 30,
+            fontStyle = FontStyle.Bold,
+            normal = { textColor = Color.white }
+        };
+
+        GUIStyle labelStyle = new GUIStyle(GUI.skin.label)
+        {
+            fontSize = 18,
             fontStyle = FontStyle.Bold,
             normal = { textColor = Color.white }
         };
@@ -54,24 +86,51 @@ public class PauseMenuController : MonoBehaviour
 
         GUI.Label(new Rect(panelRect.x, panelRect.y + 16f, panelRect.width, 40f), "PAUSA", titleStyle);
 
-        float buttonWidth = panelRect.width - 40f;
-        float buttonX = panelRect.x + 20f;
-        float buttonY = panelRect.y + 70f;
-        float buttonHeight = 44f;
+        float itemWidth = panelRect.width - 40f;
+        float itemX = panelRect.x + 20f;
+        float itemY = panelRect.y + 70f;
+        float itemHeight = 44f;
 
-        if (GUI.Button(new Rect(buttonX, buttonY, buttonWidth, buttonHeight), "Continuar", buttonStyle))
+        // --- SLIDER VOLUMEN ---
+        GUI.Label(new Rect(itemX, itemY, itemWidth, 24f), $"Volumen: {Mathf.RoundToInt(globalVolume * 100f)}%", labelStyle);
+        itemY += 26f;
+        float newVolume = GUI.HorizontalSlider(new Rect(itemX, itemY + 8f, itemWidth, 20f), globalVolume, 0f, 1f);
+        if (!Mathf.Approximately(newVolume, globalVolume))
+        {
+            globalVolume = newVolume;
+            AudioListener.volume = globalVolume;
+            PlayerPrefs.SetFloat("GlobalVolume", globalVolume);
+            PlayerPrefs.Save();
+        }
+        itemY += 34f;
+
+        // --- SLIDER SENSIBILIDAD ---
+        GUI.Label(new Rect(itemX, itemY, itemWidth, 24f), $"Sensibilidad: {mouseSensitivity:F2}", labelStyle);
+        itemY += 26f;
+        float newSens = GUI.HorizontalSlider(new Rect(itemX, itemY + 8f, itemWidth, 20f), mouseSensitivity, 0.02f, 0.5f);
+        if (!Mathf.Approximately(newSens, mouseSensitivity))
+        {
+            mouseSensitivity = newSens;
+            PlayerPrefs.SetFloat("MouseSensitivity", mouseSensitivity);
+            PlayerPrefs.Save();
+            ApplySensitivity();
+        }
+        itemY += 44f;
+
+        // --- BOTONES ---
+        if (GUI.Button(new Rect(itemX, itemY, itemWidth, itemHeight), "Continuar", buttonStyle))
             ResumeGame();
 
-        buttonY += 56f;
-        if (GUI.Button(new Rect(buttonX, buttonY, buttonWidth, buttonHeight), "Volver al menu", buttonStyle))
+        itemY += 56f;
+        if (GUI.Button(new Rect(itemX, itemY, itemWidth, itemHeight), "Volver al menu", buttonStyle))
             ReturnToMainMenu();
 
-        buttonY += 56f;
+        itemY += 56f;
         string CreativoText = GameController.IsCreativoEnabled ? "Creativo: ON" : "Creativo: OFF";
-        if (GUI.Button(new Rect(buttonX, buttonY, buttonWidth, buttonHeight), CreativoText, buttonStyle))
+        if (GUI.Button(new Rect(itemX, itemY, itemWidth, itemHeight), CreativoText, buttonStyle))
             ToggleCreativo();
 
-        GUI.Label(new Rect(panelRect.x, panelRect.yMax - 40f, panelRect.width, 24f), "ESC para pausar o reanudar", infoStyle);
+        GUI.Label(new Rect(panelRect.x, panelRect.yMax - 30f, panelRect.width, 24f), "ESC para pausar o reanudar", infoStyle);
     }
 
     private void PauseGame()

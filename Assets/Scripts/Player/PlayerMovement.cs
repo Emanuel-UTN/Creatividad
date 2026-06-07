@@ -36,6 +36,14 @@ public class PlayerMovement : MonoBehaviour
     public float shakeMagnitude = .06f;
     public float shakeSpeed = 25f;
 
+    [Header("Head Bobbing")]
+    public bool useHeadBob = true;
+    public float bobFrequencyWalk = 12f;
+    public float bobFrequencyRun = 16f;
+    public float bobAmountWalk = 0.05f;
+    public float bobAmountRun = 0.10f;
+    private float bobTimer = 0f;
+
     private float currentShakeTime;
 
     private CharacterController controller;
@@ -99,6 +107,9 @@ public class PlayerMovement : MonoBehaviour
     {
         if (GameController.gameController != null)
             GameController.gameController.player = gameObject;
+
+        // Load mouse sensitivity setting
+        lookSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", lookSensitivity);
     }
 
     void Update()
@@ -247,6 +258,32 @@ public class PlayerMovement : MonoBehaviour
         if (cameraPivot == null)
             return;
 
+        Vector3 basePos = standingCameraLocalPosition;
+        if (isCrouching)
+            basePos += Vector3.down * crouchCameraDrop;
+
+        // Apply Head Bobbing
+        Vector3 bobOffset = Vector3.zero;
+        if (useHeadBob && isMoving && isGrounded && !movementLocked)
+        {
+            float speedFactor = isSprinting ? bobFrequencyRun : bobFrequencyWalk;
+            bobTimer += dt * speedFactor;
+
+            float bobAmount = isSprinting ? bobAmountRun : bobAmountWalk;
+            if (isCrouching)
+                bobAmount *= 0.5f;
+
+            bobOffset.y = Mathf.Sin(bobTimer) * bobAmount;
+            bobOffset.x = Mathf.Cos(bobTimer * 0.5f) * bobAmount * 0.5f;
+        }
+        else
+        {
+            // Reset bobTimer slowly when not moving
+            bobTimer = Mathf.Lerp(bobTimer, 0f, dt * 5f);
+        }
+
+        Vector3 targetPos = basePos + bobOffset;
+
         if (currentShakeTime > 0f)
         {
             currentShakeTime -= dt;
@@ -255,18 +292,10 @@ public class PlayerMovement : MonoBehaviour
 
             Vector3 randomOffset = Random.insideUnitSphere * shakeMagnitude * strength;
 
-            Vector3 basePos = standingCameraLocalPosition;
-            if (isCrouching)
-                basePos += Vector3.down * crouchCameraDrop;
-
-            cameraPivot.localPosition = basePos + randomOffset;
+            cameraPivot.localPosition = targetPos + randomOffset;
         }
         else
         {
-            Vector3 targetPos = standingCameraLocalPosition;
-            if (isCrouching)
-                targetPos += Vector3.down * crouchCameraDrop;
-            
             cameraPivot.localPosition = Vector3.Lerp(cameraPivot.localPosition, targetPos, dt * shakeSpeed);
         }
     }
