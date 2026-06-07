@@ -46,7 +46,13 @@ public class PlayerFlashlightController : MonoBehaviour
             baseLightIntensity = flashlight.intensity;
             baseLightRange = flashlight.range;
             if (flashlight.shadows == LightShadows.None)
+            {
+                #if UNITY_WEBGL
+                flashlight.shadows = LightShadows.Hard;
+                #else
                 flashlight.shadows = LightShadows.Soft;
+                #endif
+            }
         }
 
         if (flashlightAction != null)

@@ -27,6 +27,14 @@ public class GameController : MonoBehaviour
             gameController = this;
             SetPaused(false);
             SetCreativoEnabled(false);
+
+            // Limit framerate to reduce CPU usage, especially in WebGL
+            #if UNITY_WEBGL
+            QualitySettings.vSyncCount = 1;
+            Application.targetFrameRate = 60;
+            #else
+            Application.targetFrameRate = 60; // Keep it capped at 60 to prevent unnecessary CPU/GPU usage
+            #endif
         }
         else if (gameController != this)
         {
