@@ -20,6 +20,7 @@ public class PlayerUI : MonoBehaviour
     [Header("Flashlight Battery")]
     public Slider flashlightBatterySlider;
     public Image flashlightBatteryImage;
+    public TMP_Text batteryCountText;
 
     private StaminaComponent staminaComponent;
     private float nextLookupTime;
@@ -56,6 +57,7 @@ public class PlayerUI : MonoBehaviour
         }
 
         keyCountText.text = "0";
+        batteryCountText.text = "0";
 
         TryAssignPlayerController(true);
     }
@@ -154,5 +156,11 @@ public class PlayerUI : MonoBehaviour
     {
         if (sampleTypeText != null)
             sampleTypeText.text = sampleType.HasValue ? $"Sample: {sampleType.Value}" : "";
+    }
+
+    public void UpdateBatteryCount(int count)
+    {
+        if (batteryCountText != null)
+            batteryCountText.text = $"{count}";
     }
 }

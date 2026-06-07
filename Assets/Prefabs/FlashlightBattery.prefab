@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 700100000000000002}
   - component: {fileID: 700100000000000003}
   - component: {fileID: 700100000000000005}
+  - component: {fileID: 8759693775505829743}
   m_Layer: 0
   m_Name: FlashlightBattery
   m_TagString: Untagged
@@ -72,6 +73,23 @@ MonoBehaviour:
   rotationSpeed: 90
   bobAmplitude: 0.12
   bobFrequency: 2
+--- !u!114 &8759693775505829743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 700100000000000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a05a3c5d0af0ff48ae8b89d72983217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialTrigger
+  actionReference: {fileID: 4516468436147417883, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  message: para usar la bateria y recargar la linterna
+  showOnStart: 0
+  hideOnInput: 0
+  nextTutorial: {fileID: 0}
 --- !u!1 &700100000000000006
 GameObject:
   m_ObjectHideFlags: 0

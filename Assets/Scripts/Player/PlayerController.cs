@@ -8,9 +8,13 @@ public class PlayerController : MonoBehaviour
     [Header("Puzzles Interactions")]
     public float interactionRange = 2f;
     public LayerMask interactionMask = Physics.DefaultRaycastLayers;
+
+    // Actions
     private InputAction interactAction;
     private InputAction pauseAction;
+    private InputAction rechargeAction;
 
+    // Events
     public static event System.Action<Cupboard, bool> OnPlayerEnteredCupboard;
     public static event System.Action<Cupboard, bool> OnPlayerExitedCupboard;
     public static event System.Action<float> OnFlashlightBatteryChanged
@@ -34,6 +38,8 @@ public class PlayerController : MonoBehaviour
     public float MaxFlashlightBattery => flashlightController != null ? flashlightController.MaxFlashlightBattery : 0f;
     public float FlashlightBatteryNormalized => flashlightController != null ? flashlightController.FlashlightBatteryNormalized : 0f;
     
+
+    // Inventory
     private int keyCount = 0;
     public int KeyCount
     {
@@ -57,6 +63,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private int batteryCount = 0;
+    private float batteryAmount = 0f;
+
     void Awake()
     {
         if (playerController == null)
@@ -71,6 +80,7 @@ public class PlayerController : MonoBehaviour
         {
             interactAction = playerInput.actions.FindAction("Interact", false);
             pauseAction = playerInput.actions.FindAction("Pause", false);
+            rechargeAction = playerInput.actions.FindAction("Recharge", false);
         }
         playerCamera = GetComponentInChildren<Camera>();
     }
@@ -97,6 +107,9 @@ public class PlayerController : MonoBehaviour
             if (interactAction != null && interactAction.WasPressedThisFrame())
                 TryInteractWithCupboard();
         }
+
+        if (rechargeAction != null && rechargeAction.WasPressedThisFrame())
+            UseBattery();
     }
 
     private bool CanInteractWithPuzzleObject(out RaycastHit hit)
@@ -203,7 +216,22 @@ public class PlayerController : MonoBehaviour
 
     public bool AddFlashlightBattery(float amount)
     {
-        return flashlightController != null && flashlightController.AddFlashlightBattery(amount);
+        batteryAmount = amount;
+        batteryCount++;
+        PlayerUI.playerUI?.UpdateBatteryCount(batteryCount);
+        return true;
+    }
+
+    void UseBattery()
+    {
+        if (batteryCount <= 0 || flashlightController == null)
+            return;
+
+        if (!flashlightController.AddFlashlightBattery(batteryAmount))
+            return;
+
+        batteryCount--;
+        PlayerUI.playerUI?.UpdateBatteryCount(batteryCount);
     }
 
     public void TakeDamage(float damage)

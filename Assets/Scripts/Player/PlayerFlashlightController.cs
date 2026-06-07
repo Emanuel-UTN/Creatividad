@@ -113,6 +113,9 @@ public class PlayerFlashlightController : MonoBehaviour
     {
         if (amount <= 0f || maxFlashlightBattery <= 0f)
             return false;
+        
+        if (flashlightBattery + amount > maxFlashlightBattery)
+            return false;
 
         float previousBattery = flashlightBattery;
         flashlightBattery = Mathf.Clamp(flashlightBattery + amount, 0f, maxFlashlightBattery);

@@ -733,8 +733,8 @@ MonoBehaviour:
     minAmount: 6
     maxAmount: 10
   - prefab: {fileID: 700100000000000001, guid: 6dd59c8b21144dd8b2f8eb293041d7f1, type: 3}
-    minAmount: 2
-    maxAmount: 5
+    minAmount: 4
+    maxAmount: 7
   wallInset: 0.6
   groundClearance: 0.02
   minimumSpawnSeparation: 0.15
@@ -771,7 +771,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 458630115754547188, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
       propertyPath: m_fontSize
-      value: 30
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 690377880445223314, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
       propertyPath: m_Pivot.x

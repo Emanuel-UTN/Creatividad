@@ -10,6 +10,7 @@ public class TutorialUI : MonoBehaviour
 
     [Header("Fade Out")]
     public float fadeOutDuration = 0.5f;
+    public float displayDuration = 3f; // Tiempo que el tutorial se muestra antes de empezar a desvanecerse automáticamente
 
     [Header("UI")]
     public TextMeshProUGUI textUI;
@@ -61,9 +62,10 @@ public class TutorialUI : MonoBehaviour
         canvasGroup.interactable = true;
 
         if (hideOnInput)
-        {
             actionReference.action.performed += OnActionPerformed;
-        }
+        else
+            Invoke(nameof(HideTutorial), displayDuration);
+        
 
         // Subscribe to enabled actions to detect device changes and update sprite dynamically
         SubscribeToEnabledActions();
