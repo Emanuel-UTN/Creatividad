@@ -246,15 +246,47 @@ public class PlayerFlashlightController : MonoBehaviour
             return;
         }
 
+        float targetIntensity = baseLightIntensity;
+        float targetRange = baseLightRange;
+
         if (isBoostingFlashlight && flashlightBattery > 0.001f)
         {
-            flashlight.intensity = baseLightIntensity * Mathf.Max(1f, boostedIntensityMultiplier);
-            flashlight.range = baseLightRange * Mathf.Max(1f, boostedRangeMultiplier);
-            return;
+            targetIntensity *= Mathf.Max(1f, boostedIntensityMultiplier);
+            targetRange *= Mathf.Max(1f, boostedRangeMultiplier);
         }
 
-        flashlight.intensity = baseLightIntensity;
-        flashlight.range = baseLightRange;
+        // Apply flickering based on low battery or enemy proximity
+        float flickerIntensityFactor = 1.0f;
+        
+        // 1. Low battery flicker (below 15%)
+        float normBattery = FlashlightBatteryNormalized;
+        if (normBattery > 0f && normBattery <= 0.15f)
+        {
+            float intensity = (0.15f - normBattery) / 0.15f; // 0 to 1
+            if (Random.value < intensity * 0.4f)
+            {
+                flickerIntensityFactor = Random.Range(0f, 0.4f);
+            }
+        }
+
+        // 2. Enemy proximity flicker (within 12 meters)
+        UpdateEnemyReference();
+        if (enemyBehaviour != null)
+        {
+            float sqrDist = (enemyBehaviour.transform.position - transform.position).sqrMagnitude;
+            if (sqrDist <= 144f) // 12m * 12m
+            {
+                float dist = Mathf.Sqrt(sqrDist);
+                float proximityFactor = (12f - dist) / 12f; // 0 to 1
+                if (Random.value < proximityFactor * 0.5f)
+                {
+                    flickerIntensityFactor = Mathf.Min(flickerIntensityFactor, Random.Range(0.1f, 0.5f));
+                }
+            }
+        }
+
+        flashlight.intensity = targetIntensity * flickerIntensityFactor;
+        flashlight.range = targetRange;
     }
 
     private void TryStunEnemyWithFlashlight()
