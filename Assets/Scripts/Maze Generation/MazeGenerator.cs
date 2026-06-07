@@ -61,7 +61,7 @@ public class MazeGenerator : MonoBehaviour
         GameController.gameController.Initialize();
 
         // Initialize dynamic fog
-        FogManager fogManager = FindFirstObjectByType<FogManager>();
+        FogManager fogManager = FindAnyObjectByType<FogManager>();
         if (fogManager == null)
         {
             fogManager = gameObject.AddComponent<FogManager>();

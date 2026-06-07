@@ -110,14 +110,7 @@ public class DustParticles : MonoBehaviour
                 mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
             }
 
-            // Assign standard soft particle texture if possible
-            Texture2D defaultParticleTex = Resources.GetBuiltinResource<Texture2D>("Default-Particle.png");
-            if (defaultParticleTex != null)
-            {
-                mat.mainTexture = defaultParticleTex;
-                if (mat.HasProperty("_BaseMap"))
-                    mat.SetTexture("_BaseMap", defaultParticleTex);
-            }
+            // The shader will naturally use its default built-in soft particle texture if we don't override it.
 
             particleRenderer.material = mat;
         }
