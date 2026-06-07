@@ -26,6 +26,13 @@ public class PlayerMovement : MonoBehaviour
     public float minPitch = -80f;
     public float maxPitch = 80f;
 
+    [Header("Mouse Smoothing")]
+    public bool smoothMouse = true;
+    [Range(5f, 40f)]
+    public float mouseSmoothingDecay = 18f;
+    private float smoothMouseX = 0f;
+    private float smoothMouseY = 0f;
+
     [Header("Camara en escondite")]
     public float hiddenYawLimit = 55f;
     public float hiddenMinPitch = -30f;
@@ -117,14 +124,39 @@ public class PlayerMovement : MonoBehaviour
         if (GameController.IsPaused)
             return;
 
+        // Re-lock cursor on click in WebGL/Browser if it gets unlocked during gameplay
+        if (Cursor.lockState != CursorLockMode.Locked && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
         float dt = Time.deltaTime;
         Vector2 look = lookAction != null ? lookAction.ReadValue<Vector2>() : Vector2.zero;
         
+        float targetMouseX = look.x * lookSensitivity;
+        float targetMouseY = look.y * lookSensitivity;
+
         // WebGL/Browser Pointer Lock delta spike mitigation during lag spikes:
         // Clamping the maximum rotation per frame prevents the camera from snapping wildly.
         float maxRotationPerFrame = 20f; 
-        float mouseX = Mathf.Clamp(look.x * lookSensitivity, -maxRotationPerFrame, maxRotationPerFrame);
-        float mouseY = Mathf.Clamp(look.y * lookSensitivity, -maxRotationPerFrame, maxRotationPerFrame);
+        targetMouseX = Mathf.Clamp(targetMouseX, -maxRotationPerFrame, maxRotationPerFrame);
+        targetMouseY = Mathf.Clamp(targetMouseY, -maxRotationPerFrame, maxRotationPerFrame);
+
+        if (smoothMouse)
+        {
+            float lerpFactor = 1f - Mathf.Exp(-mouseSmoothingDecay * dt);
+            smoothMouseX = Mathf.Lerp(smoothMouseX, targetMouseX, lerpFactor);
+            smoothMouseY = Mathf.Lerp(smoothMouseY, targetMouseY, lerpFactor);
+        }
+        else
+        {
+            smoothMouseX = targetMouseX;
+            smoothMouseY = targetMouseY;
+        }
+
+        float mouseX = smoothMouseX;
+        float mouseY = smoothMouseY;
 
         if (movementLocked)
         {
