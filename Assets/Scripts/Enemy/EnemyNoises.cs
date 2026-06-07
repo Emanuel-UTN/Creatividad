@@ -14,6 +14,13 @@ public class EnemyNoises : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        if (audioSource != null)
+        {
+            audioSource.spatialBlend = 1.0f; // Force 3D spatial sound
+            audioSource.rolloffMode = AudioRolloffMode.Logarithmic;
+            audioSource.minDistance = 2f;
+            audioSource.maxDistance = 25f;
+        }
         ResetNoiseTimer();
     }
 

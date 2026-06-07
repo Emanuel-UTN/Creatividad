@@ -55,7 +55,7 @@ public class PlayerNoises : MonoBehaviour
     {
         AudioClip clip = null;
         if (isSprinting && sprintFootstepClips != null && sprintFootstepClips.Length > 0)
-            clip = footstepClips[Random.Range(0, footstepClips.Length)];
+            clip = sprintFootstepClips[Random.Range(0, sprintFootstepClips.Length)];
         else if (footstepClips != null && footstepClips.Length > 0)
             clip = footstepClips[Random.Range(0, footstepClips.Length)];
         
