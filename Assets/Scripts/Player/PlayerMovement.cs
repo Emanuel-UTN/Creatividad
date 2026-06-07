@@ -119,8 +119,12 @@ public class PlayerMovement : MonoBehaviour
 
         float dt = Time.deltaTime;
         Vector2 look = lookAction != null ? lookAction.ReadValue<Vector2>() : Vector2.zero;
-        float mouseX = look.x * lookSensitivity;
-        float mouseY = look.y * lookSensitivity;
+        
+        // WebGL/Browser Pointer Lock delta spike mitigation during lag spikes:
+        // Clamping the maximum rotation per frame prevents the camera from snapping wildly.
+        float maxRotationPerFrame = 20f; 
+        float mouseX = Mathf.Clamp(look.x * lookSensitivity, -maxRotationPerFrame, maxRotationPerFrame);
+        float mouseY = Mathf.Clamp(look.y * lookSensitivity, -maxRotationPerFrame, maxRotationPerFrame);
 
         if (movementLocked)
         {
