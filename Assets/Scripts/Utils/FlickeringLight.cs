@@ -106,7 +106,7 @@ public class FlickeringLight : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void InitializeSceneLights()
     {
-        Light[] allLights = Object.FindObjectsByType<Light>(FindObjectsSortMode.None);
+        Light[] allLights = Object.FindObjectsByType<Light>();
         foreach (Light l in allLights)
         {
             if (l == null)

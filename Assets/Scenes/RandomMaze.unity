@@ -765,6 +765,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 221152569188843381, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 458630115754547188, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
+      propertyPath: m_fontSize
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 690377880445223314, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -845,6 +853,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2692086613678446509, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2692086613678446509, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4827495238398642509, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
       propertyPath: m_Name
       value: UI
@@ -856,6 +872,10 @@ PrefabInstance:
     - target: {fileID: 7052319124168014367, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8443317716045621106, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -18,13 +18,13 @@ public class PlayerUI : MonoBehaviour
     public Image staminaFillImage;
 
     [Header("Flashlight Battery")]
-    public TMP_Text flashlightBatteryText;
-    public Image flashlightBatteryPanel;
+    public Slider flashlightBatterySlider;
+    public Image flashlightBatteryImage;
 
     private StaminaComponent staminaComponent;
     private float nextLookupTime;
     private float lastNormalizedValue = -1f;
-    private int lastBatteryPercentage = -1;
+    private float lastBatteryPercentage = -1f;
 
     [Header("Key Count")]
     [SerializeField] private TMP_Text keyCountText;
@@ -47,75 +47,17 @@ public class PlayerUI : MonoBehaviour
             return;
         }
 
-        EnsureBatteryUIExists();
-
         if (staminaSlider != null)
         {
             staminaSlider.minValue = 0f;
             staminaSlider.maxValue = 1f;
+
+            staminaFillImage.color = new Color(1f, 1f, 1f, 0f);
         }
 
-        keyCountText.text = "Keys: 0";
+        keyCountText.text = "0";
 
         TryAssignPlayerController(true);
-    }
-
-    private void EnsureBatteryUIExists()
-    {
-        if (flashlightBatteryText != null && flashlightBatteryPanel != null)
-            return;
-
-        if (staminaSlider == null)
-            return;
-
-        RectTransform staminaRect = staminaSlider.GetComponent<RectTransform>();
-        if (staminaRect == null || staminaRect.parent == null)
-            return;
-
-        GameObject panelObject = new GameObject("FlashlightBatteryPanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        panelObject.layer = staminaSlider.gameObject.layer;
-
-        RectTransform panelRect = panelObject.GetComponent<RectTransform>();
-        panelRect.SetParent(staminaRect.parent, false);
-        panelRect.anchorMin = new Vector2(0f, 0f);
-        panelRect.anchorMax = new Vector2(0f, 0f);
-        panelRect.pivot = new Vector2(0f, 0.5f);
-        panelRect.anchoredPosition = staminaRect.anchoredPosition + new Vector2(42f, -58f);
-        panelRect.sizeDelta = new Vector2(150f, 42f);
-        panelRect.localRotation = Quaternion.identity;
-        panelRect.localScale = Vector3.one;
-
-        Image panelImage = panelObject.GetComponent<Image>();
-        panelImage.color = FlashlightPanelColor;
-        panelImage.raycastTarget = false;
-
-        GameObject textObject = new GameObject("FlashlightBatteryText", typeof(RectTransform), typeof(TextMeshProUGUI));
-        textObject.layer = staminaSlider.gameObject.layer;
-
-        RectTransform textRect = textObject.GetComponent<RectTransform>();
-        textRect.SetParent(panelRect, false);
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.pivot = new Vector2(0.5f, 0.5f);
-        textRect.offsetMin = new Vector2(10f, 4f);
-        textRect.offsetMax = new Vector2(-10f, -4f);
-
-        TextMeshProUGUI batteryText = textObject.GetComponent<TextMeshProUGUI>();
-        TMP_Text referenceText = FindAnyObjectByType<TMP_Text>();
-        if (referenceText != null)
-        {
-            batteryText.font = referenceText.font;
-            batteryText.fontSharedMaterial = referenceText.fontSharedMaterial;
-        }
-
-        batteryText.fontSize = 24f;
-        batteryText.color = FlashlightTextColor;
-        batteryText.alignment = TextAlignmentOptions.Center;
-        batteryText.raycastTarget = false;
-        batteryText.text = "BAT 100%";
-
-        flashlightBatteryPanel = panelImage;
-        flashlightBatteryText = batteryText;
     }
 
     void Update()
@@ -123,11 +65,15 @@ public class PlayerUI : MonoBehaviour
         if (!HasValidPlayerController())
             TryAssignPlayerController(false);
 
+        UpdateBatteryUI();
+        UpdateStaminaUI();        
+    }
+
+    void UpdateStaminaUI()
+    {
         if (staminaComponent == null)
-        {
-            UpdateBatteryUI();
             return;
-        }
+        
 
         float normalized = staminaComponent.StaminaNormalized;
         if (!Mathf.Approximately(normalized, lastNormalizedValue))
@@ -141,7 +87,10 @@ public class PlayerUI : MonoBehaviour
                 staminaFillImage.fillAmount = normalized;
         }
 
-        UpdateBatteryUI();
+        if (normalized > 0.90)
+                staminaFillImage.color = new Color(1f, 1f, 1f, Mathf.Lerp(staminaFillImage.color.a, 0f, Time.deltaTime * 5f));
+            else
+                staminaFillImage.color = new Color(1f, 1f, 1f, Mathf.Lerp(staminaFillImage.color.a, 1f, Time.deltaTime * 5f));
     }
 
     private void UpdateBatteryUI()
@@ -149,14 +98,17 @@ public class PlayerUI : MonoBehaviour
         if (playerController == null)
             return;
 
-        int batteryPercentage = Mathf.RoundToInt(playerController.FlashlightBatteryNormalized * 100f);
+        float batteryPercentage = playerController.FlashlightBatteryNormalized;
         if (batteryPercentage == lastBatteryPercentage)
             return;
 
         lastBatteryPercentage = batteryPercentage;
 
-        if (flashlightBatteryText != null)
-            flashlightBatteryText.text = $"BAT {batteryPercentage}%";
+        if (flashlightBatterySlider != null)
+            flashlightBatterySlider.value = batteryPercentage;
+
+        if (flashlightBatteryImage != null)
+            flashlightBatteryImage.color = Color.Lerp(Color.red, Color.green, batteryPercentage);
     }
 
     private bool HasValidPlayerController()
@@ -189,13 +141,13 @@ public class PlayerUI : MonoBehaviour
     public void UpdateKeyCount(int count)
     {
         if (keyCountText != null)
-            keyCountText.text = $"Keys: {count}";
+            keyCountText.text = $"{count}";
     }
 
     public void SetInteractionPointActive(bool active)
     {
         if (interactionPoint != null)
-            interactionPoint.rectTransform.sizeDelta = active ? new Vector2(15f, 15f) : new Vector2(10f, 10f);
+            interactionPoint.rectTransform.sizeDelta = active ? new Vector2(17.5f, 17.5f) : new Vector2(10f, 10f);
     }
 
     public void UpdateSampleType(SampleType? sampleType)
