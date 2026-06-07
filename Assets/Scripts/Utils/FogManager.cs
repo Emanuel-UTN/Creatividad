@@ -5,7 +5,7 @@ public class FogManager : MonoBehaviour
     public static FogManager Instance { get; private set; }
 
     [Header("Fog Configuration")]
-    public bool enableDynamicFog = true;
+    public bool enableDynamicFog = false;
     public FogMode fogMode = FogMode.Linear;
 
     [Header("Initial Fog Range (Linear)")]
@@ -32,6 +32,12 @@ public class FogManager : MonoBehaviour
         new Color(0.05f, 0.05f, 0.05f, 1f)   // Graveyard Ash Grey
     };
 
+    [Header("Ambient Configuration")]
+    [Tooltip("If true, the ambient light color will match the selected fog color multiplied by ambientLightMultiplier. Otherwise, it uses customAmbientColor.")]
+    public bool matchAmbientToFog = false;
+    public float ambientLightMultiplier = 1.8f;
+    public Color customAmbientColor = new Color(0.18f, 0.18f, 0.21f, 1f); // Good dark visibility color
+
     private float currentFogStart;
     private float currentFogEnd;
     private float initialFogEnd;
@@ -55,7 +61,7 @@ public class FogManager : MonoBehaviour
     {
         if (!enableDynamicFog)
         {
-            RenderSettings.fog = false;
+            // Do not override Unity's static scene lighting and fog settings
             return;
         }
 
@@ -77,7 +83,14 @@ public class FogManager : MonoBehaviour
 
         // Optionally match Ambient Light Source to the fog color to keep the environment cohesive
         RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-        RenderSettings.ambientLight = selectedColor * 0.4f; // Sutil ambient light based on fog color
+        if (matchAmbientToFog)
+        {
+            RenderSettings.ambientLight = selectedColor * ambientLightMultiplier;
+        }
+        else
+        {
+            RenderSettings.ambientLight = customAmbientColor;
+        }
 
         // 3. Set starting ranges
         currentFogStart = initialFogStart;
