@@ -53,6 +53,18 @@ public class LowHealthEffects : MonoBehaviour
     private DepthOfField depthOfField;
     private float lastAppliedHealthPercent = -1f;
 
+    private EnemyBehaviour enemyBehaviour;
+
+    private void UpdateEnemyReference()
+    {
+        if (enemyBehaviour != null)
+            return;
+
+        if (GameController.gameController == null || GameController.gameController.enemy == null)
+            return;
+
+        enemyBehaviour = GameController.gameController.enemy.GetComponent<EnemyBehaviour>();
+    }
 
     void Start()
     {
@@ -72,72 +84,100 @@ public class LowHealthEffects : MonoBehaviour
 
     void Update()
     {
-        float intensity = 1f - healthPercent;
-        bool healthChanged = !Mathf.Approximately(healthPercent, lastAppliedHealthPercent);
+        float healthIntensity = 1f - healthPercent;
+        float panicFactor = 0f;
 
-        // Vignette
-        if (enableVignette)
+        UpdateEnemyReference();
+        if (enemyBehaviour != null && PlayerController.playerController != null)
         {
-            if (healthPercent < 0.5f && enablePulse)
+            float sqrDist = (enemyBehaviour.transform.position - PlayerController.playerController.transform.position).sqrMagnitude;
+            float maxPanicDistance = 15f; // start panic at 15 meters
+            float sqrMaxPanicDistance = maxPanicDistance * maxPanicDistance;
+            if (sqrDist < sqrMaxPanicDistance)
             {
-                // Pulse is active, update every frame
-                float vignetteBase = Mathf.Lerp(0f, vignetteIntensity, intensity);
-                vignetteBase += Mathf.Sin(Time.time * pulseSpeed) * pulseStrength * intensity;
-                vignette.intensity.value = vignetteBase;
-            }
-            else if (healthChanged)
-            {
-                // No pulse, only update when health changes
-                vignette.intensity.value = Mathf.Lerp(0f, vignetteIntensity, intensity);
+                float dist = Mathf.Sqrt(sqrDist);
+                panicFactor = 1f - (dist / maxPanicDistance); // 0 to 1
+                panicFactor = Mathf.Clamp01(panicFactor);
             }
         }
 
-        // Aberración Cromática - only update when health changes
-        if (enableChromatic && healthChanged)
+        float fearIntensity = Mathf.Max(healthIntensity, panicFactor);
+
+        // Vignette
+        if (enableVignette && vignette != null)
         {
-            chromatic.intensity.value = Mathf.Lerp(0f, chromaticIntensity, intensity);
+            if (fearIntensity > 0f)
+            {
+                float vignetteBase = Mathf.Lerp(0f, vignetteIntensity, fearIntensity);
+                if (enablePulse)
+                {
+                    vignetteBase += Mathf.Sin(Time.time * pulseSpeed) * pulseStrength * fearIntensity;
+                }
+                vignette.intensity.value = Mathf.Max(0f, vignetteBase);
+            }
+            else
+            {
+                vignette.intensity.value = 0f;
+            }
+        }
+
+        // Aberración Cromática
+        if (enableChromatic && chromatic != null)
+        {
+            chromatic.intensity.value = Mathf.Lerp(0f, chromaticIntensity, fearIntensity);
         }
 
         // Distorsión
-        if (enableDistortion)
+        if (enableDistortion && distortion != null)
         {
-            if (healthPercent < 0.5f)
+            if (fearIntensity > 0f)
             {
-                // Distortion pulse is active, update every frame
-                float distortionBase = Mathf.Lerp(0f, distortionIntensity, intensity);
-                distortionBase += Mathf.Sin(Time.time * 3f) * .05f;
+                float distortionBase = Mathf.Lerp(0f, distortionIntensity, fearIntensity);
+                distortionBase += Mathf.Sin(Time.time * 3f) * .05f * fearIntensity;
                 distortion.intensity.value = distortionBase;
             }
-            else if (healthChanged)
+            else
             {
-                // Only update when health changes
-                distortion.intensity.value = Mathf.Lerp(0f, distortionIntensity, intensity);
+                distortion.intensity.value = 0f;
             }
         }
 
-        // Ajuste de Color - only update when health changes
-        if (enableColorAdjustments && healthChanged)
+        // Ajuste de Color
+        if (enableColorAdjustments && colorAdjustments != null)
         {
-            colorAdjustments.saturation.value = Mathf.Lerp(0f, colorAdjustmentSaturation, intensity);
-            colorAdjustments.postExposure.value = Mathf.Lerp(0f, colorAdjustmentPostExposure, intensity);
+            colorAdjustments.saturation.value = Mathf.Lerp(0f, colorAdjustmentSaturation, fearIntensity);
+            colorAdjustments.postExposure.value = Mathf.Lerp(0f, colorAdjustmentPostExposure, fearIntensity);
         }
 
-        // Audio - only update when health changes
-        if (heartbeatAudio && healthChanged)
+        // Audio (Heartbeat)
+        if (heartbeatAudio)
         {
-            heartbeatAudio.volume = Mathf.Lerp(0f, 1f, intensity);
-            heartbeatAudio.pitch = Mathf.Lerp(1f, 1.3f, intensity);
+            if (fearIntensity > 0.01f)
+            {
+                if (!heartbeatAudio.isPlaying)
+                {
+                    heartbeatAudio.loop = true;
+                    heartbeatAudio.Play();
+                }
+                heartbeatAudio.volume = Mathf.Lerp(0f, 1f, fearIntensity);
+                heartbeatAudio.pitch = Mathf.Lerp(1f, 1.4f, fearIntensity);
+            }
+            else
+            {
+                if (heartbeatAudio.isPlaying)
+                    heartbeatAudio.Stop();
+            }
         }
 
         // Respiración / Camara
         if (camTransform != null)
         {
-            if (enableBreathing && healthPercent < 0.5f)
+            if (enableBreathing && fearIntensity > 0f)
             {
-                float breath = Mathf.Sin(Time.time * breathingSpeed) * breathingAmount * intensity;
+                float breath = Mathf.Sin(Time.time * breathingSpeed) * breathingAmount * fearIntensity;
                 camTransform.localPosition = originalCamPos + Vector3.up * breath;
             }
-            else if (healthChanged || lastAppliedHealthPercent < 0.5f)
+            else
             {
                 camTransform.localPosition = originalCamPos;
             }
