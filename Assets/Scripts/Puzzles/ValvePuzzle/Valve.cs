@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(AudioSource))]
 public class Valve : PuzzleObject
@@ -14,6 +15,13 @@ public class Valve : PuzzleObject
     private AudioSource audioSource;
     public AudioClip turningAudioClip;
     public AudioClip activationAudioClip;
+
+    [Header("Efectos de Vapor")]
+    public ParticleSystem steamParticleSystem;
+    public float interactionSteamEmissionRate = 25f;
+    public float failSteamDuration = 2.5f;
+    public float failSteamEmissionRate = 120f;
+    public AudioClip failAudioClip;
 
     [Header("Configuración")]
     public float requiredInteractionTime = 2.5f;
@@ -35,6 +43,12 @@ public class Valve : PuzzleObject
             audioSource.loop = true;
 
         previousInteractionTime = currentInteractionTime;
+
+        if (steamParticleSystem == null)
+            steamParticleSystem = GetComponentInChildren<ParticleSystem>();
+
+        if (steamParticleSystem == null)
+            CreateDefaultSteamParticles();
     }
 
     public void Initialize(ValvePuzzle puzzle, int index)
@@ -49,7 +63,10 @@ public class Valve : PuzzleObject
     void Update()
     {
         if (activated)
+        {
+            UpdateSteamParticles(false);
             return;
+        }
 
         bool locked = Time.time < lockedUntilTime;
         bool interacting = Time.time - lastInteractionTime <= 0.2f;
@@ -61,6 +78,7 @@ public class Valve : PuzzleObject
 
         UpdateVisuals(locked);
         UpdateTurningSound(Mathf.Abs(currentInteractionTime - previousInteractionTime) > 0.0001f);
+        UpdateSteamParticles(interacting && !locked);
         previousInteractionTime = currentInteractionTime;
     }
 
@@ -157,5 +175,100 @@ public class Valve : PuzzleObject
         StopTurningSound();
         turningAudioPlaying = false;
         transform.localRotation = Quaternion.identity;
+        TriggerFailSteam();
+    }
+
+    void UpdateSteamParticles(bool isInteracting)
+    {
+        if (steamParticleSystem == null)
+            return;
+
+        var emission = steamParticleSystem.emission;
+        if (isInteracting)
+        {
+            if (!steamParticleSystem.isPlaying)
+                steamParticleSystem.Play();
+            emission.rateOverTime = interactionSteamEmissionRate;
+        }
+        else if (Time.time >= lockedUntilTime)
+        {
+            emission.rateOverTime = 0f;
+            if (steamParticleSystem.isPlaying)
+                steamParticleSystem.Stop();
+        }
+    }
+
+    private void CreateDefaultSteamParticles()
+    {
+        GameObject psObj = new GameObject("SteamParticles");
+        psObj.transform.SetParent(transform, false);
+        psObj.transform.localPosition = Vector3.up * 0.4f;
+        psObj.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+
+        ParticleSystem ps = psObj.AddComponent<ParticleSystem>();
+        
+        var main = ps.main;
+        main.loop = true;
+        main.startLifetime = 1.0f;
+        main.startSpeed = 3f;
+        main.startSize = 0.15f;
+        main.startColor = new Color(0.8f, 0.8f, 0.8f, 0.3f);
+        main.gravityModifier = -0.05f;
+        main.playOnAwake = false;
+
+        var emission = ps.emission;
+        emission.rateOverTime = 0f;
+
+        var shape = ps.shape;
+        shape.shapeType = ParticleSystemShapeType.Cone;
+        shape.angle = 15f;
+        shape.radius = 0.05f;
+
+        var colorOverLifetime = ps.colorOverLifetime;
+        colorOverLifetime.enabled = true;
+        Gradient grad = new Gradient();
+        grad.SetKeys(
+            new GradientColorKey[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+            new GradientAlphaKey[] { new GradientAlphaKey(0.4f, 0f), new GradientAlphaKey(0.4f, 0.1f), new GradientAlphaKey(0f, 1f) }
+        );
+        colorOverLifetime.color = new ParticleSystem.MinMaxGradient(grad);
+
+        var sizeOverLifetime = ps.sizeOverLifetime;
+        sizeOverLifetime.enabled = true;
+        AnimationCurve curve = new AnimationCurve();
+        curve.AddKey(0f, 0.5f);
+        curve.AddKey(1f, 2.0f);
+        sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, curve);
+
+        steamParticleSystem = ps;
+    }
+
+    private void TriggerFailSteam()
+    {
+        if (steamParticleSystem != null)
+        {
+            var emission = steamParticleSystem.emission;
+            emission.rateOverTime = failSteamEmissionRate;
+            if (!steamParticleSystem.isPlaying)
+                steamParticleSystem.Play();
+
+            StartCoroutine(StopFailSteamAfterDelay(failSteamDuration));
+        }
+
+        if (audioSource != null && failAudioClip != null)
+        {
+            audioSource.PlayOneShot(failAudioClip);
+        }
+    }
+
+    private IEnumerator StopFailSteamAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (steamParticleSystem != null && !activated)
+        {
+            var emission = steamParticleSystem.emission;
+            emission.rateOverTime = 0f;
+            steamParticleSystem.Stop();
+        }
     }
 }
