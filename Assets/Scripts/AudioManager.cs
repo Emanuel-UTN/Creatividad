@@ -85,13 +85,15 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        float distance = Vector3.Distance(player.position, enemy.position);
+        float sqrDistance = (player.position - enemy.position).sqrMagnitude;
+        float encounterDistSqr = encounterDistance * encounterDistance;
+        float suspenseDistSqr = suspenseDistance * suspenseDistance;
 
-        if (distance <= encounterDistance)
+        if (sqrDistance <= encounterDistSqr)
         {
             ChangeMusic(MusicState.Encounter);
         }
-        else if (distance <= suspenseDistance)
+        else if (sqrDistance <= suspenseDistSqr)
         {
             ChangeMusic(MusicState.Suspense);
         }

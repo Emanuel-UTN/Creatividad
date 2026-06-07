@@ -205,7 +205,7 @@ public class PatrolBehaviour : Behaviour
     {
         Vector3 toDestination = destination - enemyTransform.position;
         toDestination.y = 0f;
-        return toDestination.magnitude <= threshold;
+        return toDestination.sqrMagnitude <= threshold * threshold;
     }
 
     private void BuildCellLookup()

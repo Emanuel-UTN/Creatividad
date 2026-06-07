@@ -33,6 +33,7 @@ public abstract class Behaviour
     {
         Vector3 toDestination = destination - enemyTransform.position;
         toDestination.y = 0f;
-        return toDestination.magnitude <= movement.offset + 0.05f;
+        float threshold = movement.offset + 0.05f;
+        return toDestination.sqrMagnitude <= threshold * threshold;
     }
 }
