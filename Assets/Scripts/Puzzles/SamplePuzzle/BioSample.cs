@@ -27,7 +27,35 @@ public class BioSample : PuzzleObject
 
     public override void Interact()
     {
+        PlayerController player = PlayerController.playerController;
+        if (player == null)
+            return;
+
         Debug.Log($"Picked up sample {sampleType}");
-        PlayerController.playerController.CurrentSampleType = sampleType;
+
+        // Si el jugador ya tiene una muestra cargada, dejarla en el piso
+        if (player.CurrentSampleType.HasValue)
+        {
+            SampleType oldSampleType = player.CurrentSampleType.Value;
+            if (puzzle != null && puzzle.samplePrefab != null)
+            {
+                // Instanciar la muestra vieja un poco delante del jugador
+                Vector3 dropPosition = player.transform.position + player.transform.forward * 0.8f;
+                dropPosition.y = transform.position.y; // Mantener la altura original del suelo de la muestra
+
+                GameObject droppedObj = Instantiate(puzzle.samplePrefab, dropPosition, Quaternion.identity, puzzle.transform);
+                BioSample droppedSample = droppedObj.GetComponent<BioSample>();
+                if (droppedSample != null)
+                {
+                    droppedSample.Initialize(oldSampleType, puzzle);
+                    // Forzar posición exacta después de inicializar (evita el desplazamiento de Initialize)
+                    droppedObj.transform.position = dropPosition;
+                }
+            }
+        }
+
+        // Equipar la nueva muestra y hacer desaparecer esta del suelo
+        player.CurrentSampleType = sampleType;
+        Destroy(gameObject);
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class MazeCell : MonoBehaviour
 {
     public bool visited = false;
+    public bool hasDoor = false;
     public GameObject wallNorth, wallSouth, wallEast, wallWest;
     public GameObject floor;
     [Header("Celdas Vecinas")]
@@ -32,6 +33,7 @@ public class MazeCell : MonoBehaviour
 
     public void SetDoor(GameObject doorPrefab, string direction, int lockCount = 0)
     {
+        hasDoor = true;
         // Si se especifica un número de candados, agregar el componente Door
         if (lockCount > 0)
         {

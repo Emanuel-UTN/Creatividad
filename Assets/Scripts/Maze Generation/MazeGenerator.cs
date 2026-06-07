@@ -53,12 +53,20 @@ public class MazeGenerator : MonoBehaviour
 
         int keyCount = GetComponent<PuzzleManager>().GeneratePuzzles(rooms, spawnUtils);
         
+        InstantiateDoor(keyCount);
+
         if (spawnUtils != null)
             spawnUtils.Spawn();
 
         GameController.gameController.Initialize();
 
-        InstantiateDoor(keyCount);
+        // Initialize dynamic fog
+        FogManager fogManager = FindFirstObjectByType<FogManager>();
+        if (fogManager == null)
+        {
+            fogManager = gameObject.AddComponent<FogManager>();
+        }
+        fogManager.InitializeFog();
     }
 
     void GenerateMaze()

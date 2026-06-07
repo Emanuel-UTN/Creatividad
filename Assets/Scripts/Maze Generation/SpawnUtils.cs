@@ -154,7 +154,7 @@ public class SpawnUtils : MonoBehaviour
             for (int i = 0; i < sourceCells.Count; i++)
             {
                 MazeCell candidate = sourceCells[i];
-                if (candidate != null && HasAnyWall(candidate))
+                if (candidate != null && !candidate.hasDoor && HasAnyWall(candidate))
                     eligibleCells.Add(candidate);
             }
 
@@ -169,7 +169,7 @@ public class SpawnUtils : MonoBehaviour
             for (int z = 0; z < MazeController.Grid.GetLength(1); z++)
             {
                 MazeCell candidate = MazeController.Grid[x, z];
-                if (candidate != null && HasAnyWall(candidate))
+                if (candidate != null && !candidate.hasDoor && HasAnyWall(candidate))
                     eligibleCells.Add(candidate);
             }
         }
