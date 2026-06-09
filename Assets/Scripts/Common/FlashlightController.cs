@@ -16,6 +16,9 @@ public class FlashlightController : MonoBehaviour
 
     [Header("Rotación")]
     public float rotationAmount = 4f;
+    public float maxRotationAngle = 15f;
+    private Vector2 maxRotationAngles;
+    private Vector2 minRotationAngles;
 
     [Header("Breathing")]
     public bool enableBreathing = true;
@@ -43,7 +46,16 @@ public class FlashlightController : MonoBehaviour
     {
         initialRotation = transform.localRotation;
         initialPosition = transform.localPosition;
-        
+
+        maxRotationAngles = new Vector2(
+            initialRotation.eulerAngles.x + maxRotationAngle,
+            initialRotation.eulerAngles.y + maxRotationAngle
+        );
+        minRotationAngles = new Vector2(
+            initialRotation.eulerAngles.x - maxRotationAngle,
+            initialRotation.eulerAngles.y - maxRotationAngle
+        );
+
         PlayerInput input = GetComponentInParent<PlayerInput>();
         lookAction = (input != null && input.actions != null) ? input.actions.FindAction("Look", false) : null;
         
@@ -60,8 +72,16 @@ public class FlashlightController : MonoBehaviour
         Vector2 look = lookAction.ReadValue<Vector2>();
 
         Quaternion targetRotation = initialRotation * Quaternion.Euler(-look.y * rotationAmount, look.x * rotationAmount, 0f);
-
         transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * smoothSpeed);
+
+        float angleX = transform.localRotation.eulerAngles.x;
+        float angleY = transform.localRotation.eulerAngles.y;
+
+        transform.localRotation = Quaternion.Euler(
+            (angleX < 180) ? Mathf.Min(angleX, maxRotationAngles.x) : Mathf.Max(angleX, 360 + minRotationAngles.x),
+            (angleY < 180) ? Mathf.Min(angleY, maxRotationAngles.y) : Mathf.Max(angleY, 360 + minRotationAngles.y),
+            transform.localRotation.eulerAngles.z
+        );
 
         // Breathing
         if (enableBreathing)

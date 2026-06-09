@@ -50,6 +50,9 @@ public class Door : MonoBehaviour
     public void OnTriggerEnter(Collider other) {
         if (!other.CompareTag("Player")) return;
 
+        if (playerInput == null && PlayerController.playerController != null)
+            playerInput = PlayerController.playerController.GetComponent<PlayerInput>();
+
         interactAction = playerInput.actions.FindAction("Interact", false);
         if (interactAction == null) return;
         

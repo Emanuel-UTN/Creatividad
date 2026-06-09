@@ -83,6 +83,9 @@ public class PlayerController : MonoBehaviour
             rechargeAction = playerInput.actions.FindAction("Recharge", false);
         }
         playerCamera = GetComponentInChildren<Camera>();
+
+        if (GetComponent<DustParticles>() == null)
+            gameObject.AddComponent<DustParticles>();
     }
 
     void Update()

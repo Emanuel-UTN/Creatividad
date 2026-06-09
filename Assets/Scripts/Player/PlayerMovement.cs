@@ -105,9 +105,6 @@ public class PlayerMovement : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        if (GetComponent<DustParticles>() == null)
-            gameObject.AddComponent<DustParticles>();
     }
 
     void Start()

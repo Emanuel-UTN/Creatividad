@@ -102,35 +102,4 @@ public class FlickeringLight : MonoBehaviour
         if (!isProximityOff)
             targetLight.intensity = baseIntensity;
     }
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void InitializeSceneLights()
-    {
-        Light[] allLights = Object.FindObjectsByType<Light>();
-        foreach (Light l in allLights)
-        {
-            if (l == null)
-                continue;
-
-            string nameLower = l.name.ToLower();
-            string rootNameLower = l.transform.root.name.ToLower();
-            
-            // Skip player flashlight, UI lights, directional lights
-            if (nameLower.Contains("flashlight") || nameLower.Contains("player") || rootNameLower.Contains("player") || nameLower.Contains("direction") || nameLower.Contains("sun"))
-                continue;
-
-            // Skip puzzle indicators/emitters/receivers
-            if (nameLower.Contains("receiver") || nameLower.Contains("emitter") || nameLower.Contains("clue"))
-                continue;
-
-            // Randomly add FlickeringLight to ~35% of standard scene lights
-            if (Random.value < 0.35f)
-            {
-                if (l.gameObject.GetComponent<FlickeringLight>() == null)
-                {
-                    l.gameObject.AddComponent<FlickeringLight>();
-                }
-            }
-        }
-    }
 }

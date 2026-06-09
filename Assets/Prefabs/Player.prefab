@@ -379,12 +379,19 @@ MonoBehaviour:
   lookSensitivity: 0.1
   minPitch: -80
   maxPitch: 80
+  smoothMouse: 1
+  mouseSmoothingDecay: 18
   hiddenYawLimit: 55
   hiddenMinPitch: -30
   hiddenMaxPitch: 30
   shakeDuration: 0.2
   shakeMagnitude: 0.15
   shakeSpeed: 18
+  useHeadBob: 1
+  bobFrequencyWalk: 12
+  bobFrequencyRun: 16
+  bobAmountWalk: 0.05
+  bobAmountRun: 0.1
 --- !u!114 &3309638646496581838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -454,7 +461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
-  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_Actions: {fileID: 0}
   m_NotificationBehavior: 0
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -845,6 +852,7 @@ MonoBehaviour:
   swayAmount: 2
   smoothSpeed: 0.8
   rotationAmount: 2.5
+  maxRotationAngle: 25
   enableBreathing: 1
   breathingSpeed: 1.5
   breathingAmount: 0.015
@@ -867,6 +875,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlashlightDetector
   range: 15
+  detectionRadius: 0.7
 --- !u!108 &6458010089474898834
 Light:
   m_ObjectHideFlags: 0
