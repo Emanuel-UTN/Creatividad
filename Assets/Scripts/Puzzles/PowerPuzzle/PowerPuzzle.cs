@@ -9,6 +9,7 @@ public class PowerPuzzle : PuzzleBase
 
     [Header("Sounds Effects")]
     public AudioClip puzzleCompleteSound;
+    public AudioClip generatorWorkingSound;
     private AudioSource audioSource;
 
     [Header("Configuración")]
@@ -33,6 +34,7 @@ public class PowerPuzzle : PuzzleBase
     void SpawnGenerator()
     {
         generatorPrefab = SpawnCenter(generatorPrefab);
+        generatorPrefab.transform.position += Vector3.up * .75f;
     }
 
     void SpawnSwitches()
@@ -53,8 +55,6 @@ public class PowerPuzzle : PuzzleBase
 
         Debug.Log($"Interruptores activados: {activatedSwitches}/{switchCount}");
 
-        generatorPrefab.GetComponent<Animator>().SetTrigger("ActivateSwitch");
-
         if(activatedSwitches >= switchCount)
             CompletePuzzle();
     }
@@ -64,11 +64,29 @@ public class PowerPuzzle : PuzzleBase
         Debug.Log("¡Puzzle de energía completado!");
 
         if (puzzleCompleteSound != null)
+        {
             audioSource.PlayOneShot(puzzleCompleteSound);
+            // When the one-shot finishes, start the generator working sound in loop
+            if (generatorWorkingSound != null)
+                Invoke("PlayGeneratorWorking", puzzleCompleteSound.length);
+        }else
+            PlayGeneratorWorking();
 
         GameController.gameController.AlertEnemy(room.cells[room.cells.Count/2].transform.position);
 
+        generatorPrefab.GetComponent<Animation>()?.Play("Working");
+
         SpawnKey();
+    }
+
+    void PlayGeneratorWorking()
+    {
+        if (generatorWorkingSound == null)
+            return;
+
+        audioSource.clip = generatorWorkingSound;
+        audioSource.loop = true;
+        audioSource.Play();
     }
 
     protected void SpawnKey()

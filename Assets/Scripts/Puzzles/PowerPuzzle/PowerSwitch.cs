@@ -12,7 +12,8 @@ public class PowerSwitch : PuzzleObject
     {
         puzzle = owner;
 
-        transform.position += Vector3.up * 1.25f + transform.forward * 0.05f;
+        transform.position += transform.forward * 0.05f;
+        transform.position = new Vector3(transform.position.x, 1.7f, transform.position.z);
     }
 
     public override void Interact()
