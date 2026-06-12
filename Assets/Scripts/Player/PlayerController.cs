@@ -28,6 +28,8 @@ public class PlayerController : MonoBehaviour
 
     private PlayerMovement playerMovement;
     private PlayerFlashlightController flashlightController;
+    private PlayerHealth playerHealth;
+
     private Cupboard nearbyCupboard;
     private Cupboard currentCupboard;
     private EnemyBehaviour enemyBehaviour;
@@ -76,6 +78,8 @@ public class PlayerController : MonoBehaviour
 
         playerMovement = GetComponent<PlayerMovement>();
         flashlightController = GetComponent<PlayerFlashlightController>();
+        playerHealth = GetComponent<PlayerHealth>();
+
         PlayerInput playerInput = GetComponent<PlayerInput>();
         if (playerInput != null && playerInput.actions != null)
         {
@@ -244,10 +248,20 @@ public class PlayerController : MonoBehaviour
             return;
 
         Debug.Log($"Player takes {damage} damage.");
-        PlayerHealth playerHealth = GetComponent<PlayerHealth>();
         if (playerHealth != null)
             playerHealth.TakeDamage(damage);
         if (playerMovement != null)
             playerMovement.DamageShake();
+    }
+
+    public bool RestoreHealth(float amount)
+    {
+        if (GameController.IsPaused || GameController.IsCreativoEnabled)
+            return false;
+
+        if (playerHealth != null)
+            return playerHealth.RestoreHealth(amount);
+
+        return false;
     }
 }

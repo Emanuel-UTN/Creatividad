@@ -104,7 +104,7 @@ public class Door : MonoBehaviour
     private System.Collections.IEnumerator LockFlicker()
     {
         float originalIntensity = 0.75f;
-        float duration = 0.5f;
+        float duration = 1.75f;
         float elapsed = 0f;
 
         while (elapsed < duration)

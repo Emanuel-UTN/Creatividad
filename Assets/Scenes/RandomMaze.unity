@@ -735,6 +735,9 @@ MonoBehaviour:
   - prefab: {fileID: 700100000000000001, guid: 6dd59c8b21144dd8b2f8eb293041d7f1, type: 3}
     minAmount: 4
     maxAmount: 7
+  - prefab: {fileID: 7693422668984988457, guid: 6d417376ab4980049aa15ac15ebd8ca7, type: 3}
+    minAmount: 1
+    maxAmount: 3
   wallInset: 0.6
   groundClearance: 0.02
   minimumSpawnSeparation: 0.15

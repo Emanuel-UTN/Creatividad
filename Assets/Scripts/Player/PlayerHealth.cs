@@ -30,6 +30,20 @@ public class PlayerHealth : MonoBehaviour
         
     }
 
+    public bool RestoreHealth(float amount)
+    {
+        if (GameController.IsPaused || GameController.IsCreativoEnabled)
+            return false;
+
+        if (currentHealth + amount > maxHealth)
+            return false;
+
+        currentHealth += amount;
+        if (lowHealthEffects != null)            
+            lowHealthEffects.SetHealth(currentHealth, maxHealth);
+        return true;
+    }
+
     private void Die()
     {
         // Handle player death (e.g., play animation, reload scene, etc.)
