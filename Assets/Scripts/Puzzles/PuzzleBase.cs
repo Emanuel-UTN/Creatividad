@@ -43,8 +43,7 @@ public abstract class PuzzleBase : MonoBehaviour
         if (keyPrefab == null)
             return;
 
-        GameObject key = Instantiate(keyPrefab, position + Vector3.up * 0.5f, Quaternion.identity);
-        key.transform.rotation = Quaternion.Euler(90, 0, 0);
+        Instantiate(keyPrefab, position + Vector3.up * 0.5f, Quaternion.identity);
     }
 
     protected void Shuffle<T>(List<T> list)

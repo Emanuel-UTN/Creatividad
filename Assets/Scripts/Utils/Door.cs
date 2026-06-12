@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class Door : MonoBehaviour
 {
@@ -13,8 +14,8 @@ public class Door : MonoBehaviour
     public float timeToOpen = 60f;
 
     [Header("Lock Settings")]
-    public GameObject lockPrefab;
-    private GameObject[] locks;
+    public TMP_Text lockText;
+    public Light lockLight;
     private int unlockedLocks = 0;
     [Range(1, 5)]
     public int lockCount = 3;
@@ -35,13 +36,8 @@ public class Door : MonoBehaviour
 
         isInitialized = true;
 
-        locks = new GameObject[this.lockCount];
-        for (int i = 0; i < this.lockCount; i++)
-        {
-            Vector3 offset = new Vector3(0, i < 3 ? i * 0.5f : (i - 2) * - 0.5f, 0.1f);
-            locks[i] = Instantiate(lockPrefab, transform.position + offset, Quaternion.identity, transform);
-            locks[i].transform.localPosition = offset; // Asegura que la posición local se mantenga correcta
-        }
+        if (lockText != null)
+            lockText.text = lockCount.ToString();
 
         if (PlayerController.playerController != null)
             playerInput = PlayerController.playerController.GetComponent<PlayerInput>();
@@ -86,25 +82,40 @@ public class Door : MonoBehaviour
         if (!isPlayerInRange || playerInput == null)
             return;
 
-        if (locks == null || unlockedLocks >= locks.Length)
-            return;
-
         if (unlockedLocks < lockCount)
         {
             if (PlayerController.playerController.KeyCount <= 0) {
-                locks[unlockedLocks].GetComponent<Animator>().SetTrigger("Block Lock");
+                StartCoroutine(LockFlicker());
                 return;
             }
                 
-            locks[unlockedLocks].GetComponent<Collider>().enabled = true;
-            locks[unlockedLocks].GetComponent<Rigidbody>().useGravity = true;
             unlockedLocks++;
             PlayerController.playerController.KeyCount--;
+
+            if (lockText != null)
+                lockText.text = (lockCount - unlockedLocks).ToString();
         }
 
         if (unlockedLocks >= lockCount)
             // All locks are unlocked, open the door
             OpenDoor();
+    }
+
+    private System.Collections.IEnumerator LockFlicker()
+    {
+        float originalIntensity = 0.75f;
+        float duration = 0.5f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float flicker = Mathf.Sin(elapsed * 10f) * 0.5f + 1f;
+            lockLight.intensity = originalIntensity * flicker;
+            yield return null;
+        }
+
+        lockLight.intensity = originalIntensity;
     }
 
     public void OpenDoor() {
@@ -116,6 +127,12 @@ public class Door : MonoBehaviour
 
         if (doorAnimator != null && doorOpen != null)
             Invoke("PlayAnimation", timeToOpen);
+        
+        if (lockText != null)
+            lockText.color = Color.green;
+        
+        if (lockLight != null)
+            lockLight.color = Color.green;
         
         GameController.gameController.OpenDoor(timeToOpen);
     }

@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour
     
 
     // Inventory
+    [SerializeField]
     private int keyCount = 0;
     public int KeyCount
     {

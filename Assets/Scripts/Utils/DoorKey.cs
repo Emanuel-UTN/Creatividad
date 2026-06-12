@@ -15,7 +15,7 @@ public class DoorKey : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Rotate(Vector3.forward, rotationSpeed * Time.deltaTime);
+        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
         transform.localPosition = initialPosition + Vector3.up * Mathf.Sin(Time.time * frequency) * amplitude;
     }
 
