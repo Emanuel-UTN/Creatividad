@@ -7,9 +7,6 @@ public class FlashlightController : MonoBehaviour
 {
     private Light flashlight;
 
-    [Header("Referencias")]
-    public Transform cameraTransform;
-
     [Header("Movimiento")]
     public float swayAmount = 2f;
     public float smoothSpeed = .8f;
@@ -65,24 +62,6 @@ public class FlashlightController : MonoBehaviour
 
     void Update()
     {
-        // Movimiento
-        if (lookAction == null)
-            return;
-
-        Vector2 look = lookAction.ReadValue<Vector2>();
-
-        Quaternion targetRotation = initialRotation * Quaternion.Euler(-look.y * rotationAmount, look.x * rotationAmount, 0f);
-        transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * smoothSpeed);
-
-        float angleX = transform.localRotation.eulerAngles.x;
-        float angleY = transform.localRotation.eulerAngles.y;
-
-        transform.localRotation = Quaternion.Euler(
-            (angleX < 180) ? Mathf.Min(angleX, maxRotationAngles.x) : Mathf.Max(angleX, 360 + minRotationAngles.x),
-            (angleY < 180) ? Mathf.Min(angleY, maxRotationAngles.y) : Mathf.Max(angleY, 360 + minRotationAngles.y),
-            transform.localRotation.eulerAngles.z
-        );
-
         // Breathing
         if (enableBreathing)
         {
@@ -109,6 +88,24 @@ public class FlashlightController : MonoBehaviour
             flashlight.intensity = initialIntensity + Random.Range(-intensityVariance, intensityVariance);
             timer = Random.Range(flickerSpeed * 0.75f, flickerSpeed * 1.25f);
         }
+
+        // Movimiento
+        if (lookAction == null)
+            return;
+
+        Vector2 look = lookAction.ReadValue<Vector2>();
+
+        Quaternion targetRotation = initialRotation * Quaternion.Euler(-look.y * rotationAmount, look.x * rotationAmount, 0f);
+        transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * smoothSpeed);
+
+        float angleX = transform.localRotation.eulerAngles.x;
+        float angleY = transform.localRotation.eulerAngles.y;
+
+        transform.localRotation = Quaternion.Euler(
+            (angleX < 180) ? Mathf.Min(angleX, maxRotationAngles.x) : Mathf.Max(angleX, 360 + minRotationAngles.x),
+            (angleY < 180) ? Mathf.Min(angleY, maxRotationAngles.y) : Mathf.Max(angleY, 360 + minRotationAngles.y),
+            transform.localRotation.eulerAngles.z
+        );
     }
 
     private bool CanBlink()
