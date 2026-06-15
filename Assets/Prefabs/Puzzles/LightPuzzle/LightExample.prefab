@@ -62,6 +62,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlashlightDetector
   range: 10
+  detectionRadius: 0.7
 --- !u!108 &7953215132864984523
 Light:
   m_ObjectHideFlags: 0
@@ -79,8 +80,8 @@ Light:
   m_InnerSpotAngle: 15
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
-    m_Type: 2
-    m_Resolution: -1
+    m_Type: 1
+    m_Resolution: 128
     m_CustomResolution: -1
     m_Strength: 1
     m_Bias: 0.05
@@ -140,7 +141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
   m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
+  m_AdditionalLightsShadowResolutionTier: 0
   m_CustomShadowLayers: 0
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
@@ -200,6 +201,10 @@ PrefabInstance:
     - target: {fileID: 42871362536618952, guid: e651518195f179e4aaee795febb212fd, type: 3}
       propertyPath: m_Name
       value: LightReceiver
+      objectReference: {fileID: 0}
+    - target: {fileID: 1295296355678687776, guid: e651518195f179e4aaee795febb212fd, type: 3}
+      propertyPath: m_AdditionalLightsShadowResolutionTier
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7018218824866792342, guid: e651518195f179e4aaee795febb212fd, type: 3}
       propertyPath: m_LocalPosition.x

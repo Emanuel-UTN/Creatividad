@@ -45,13 +45,15 @@ public class PowerPuzzle : PuzzleBase
         spawnUtils.SpawnObjects(switchPrefab, switchCount).ForEach(s => {
             spawnedSwitches.Add(s);
             s.transform.SetParent(transform);
-            s.GetComponent<PowerSwitch>().Initialize(this);
+            s.GetComponent<PowerSwitch>().Initialize(this, spawnedSwitches.Count - 1);
         });
     }
 
-    public void ActivateSwitch()
+    public void ActivateSwitch(int index)
     {
         activatedSwitches++;
+
+        LabLightingManager.Instance.PowerSector(index);
 
         Debug.Log($"Interruptores activados: {activatedSwitches}/{switchCount}");
 

@@ -141,11 +141,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MazeCell
   visited: 0
+  hasDoor: 0
   wallNorth: {fileID: 7244723707903489790}
   wallSouth: {fileID: 4396145229535775815}
   wallEast: {fileID: 3352728522734310976}
   wallWest: {fileID: 5771730800523297771}
   floor: {fileID: 2006359910191512700}
+  ceiling: {fileID: 5355057069295689831}
   neighbors: []
 --- !u!1 &1908966965210913615
 GameObject:

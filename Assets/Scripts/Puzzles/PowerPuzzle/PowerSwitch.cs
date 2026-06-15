@@ -3,14 +3,16 @@ using UnityEngine;
 public class PowerSwitch : PuzzleObject
 {
     PowerPuzzle puzzle;
+    int index;
 
     private bool activated = false;
 
     public AudioClip activationSound;
 
-    public void Initialize(PowerPuzzle owner)
+    public void Initialize(PowerPuzzle owner, int index)
     {
         puzzle = owner;
+        this.index = index;
 
         transform.position += transform.forward * 0.05f;
         transform.position = new Vector3(transform.position.x, 1.7f, transform.position.z);
@@ -24,7 +26,7 @@ public class PowerSwitch : PuzzleObject
         activated = true;
         Debug.Log("Power switch activated!");
 
-        puzzle.ActivateSwitch();
+        puzzle.ActivateSwitch(index);
 
         // Sonido
         if (activationSound != null)

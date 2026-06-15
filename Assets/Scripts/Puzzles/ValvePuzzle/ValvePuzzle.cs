@@ -21,6 +21,12 @@ public class ValvePuzzle : PuzzleBase
     private List<Valve> correctOrder = new List<Valve>();
     private int currentStep = 0;
 
+    public override void Initialize(MazeRoom room, SpawnUtils spawnUtils)
+    {
+        room.roomType = RoomType.ValvePuzzle;
+        base.Initialize(room, spawnUtils);
+    }
+
     public override void StartPuzzle()
     {
         correctOrder.Clear();

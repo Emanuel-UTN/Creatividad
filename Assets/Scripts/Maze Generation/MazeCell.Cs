@@ -7,6 +7,9 @@ public class MazeCell : MonoBehaviour
     public bool hasDoor = false;
     public GameObject wallNorth, wallSouth, wallEast, wallWest;
     public GameObject floor;
+    public GameObject ceiling;
+    private Light generatedLight;
+
     [Header("Celdas Vecinas")]
     public List<Vector2Int> neighbors = new List<Vector2Int>();
 
@@ -268,4 +271,15 @@ public class MazeCell : MonoBehaviour
         occupiedSpawnPositions.Add(position);
     }
 
+    public LightController CreateLight(GameObject lightPrefab, bool enabled = true)
+    {
+        GameObject obj = Instantiate(lightPrefab, ceiling.transform.position - Vector3.up * 0.3f, Quaternion.Euler(90, 0, 0), transform);
+
+        LightController light = obj.GetComponent<LightController>();
+
+        if (light != null)
+            light.SetLightState(enabled);
+        
+        return light;
+    }
 }

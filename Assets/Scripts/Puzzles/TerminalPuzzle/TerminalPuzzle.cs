@@ -16,6 +16,12 @@ public class TerminalPuzzle : PuzzleBase
     public int numberOfTerminals = 6;
     public int numberOfTerminalsToActivate = 3;
 
+    public override void Initialize(MazeRoom room, SpawnUtils spawnUtils)
+    {
+        room.roomType = RoomType.TerminalPuzzle;
+        base.Initialize(room, spawnUtils);
+    }
+
     public override void StartPuzzle()
     {
         SpawnTerminals();

@@ -14,6 +14,12 @@ public class SamplePuzzle : PuzzleBase
     [Header("Configuración")]
     public int numberOfSamples = 4;
 
+    public override void Initialize(MazeRoom room, SpawnUtils spawnUtils)
+    {
+        room.roomType = RoomType.SamplePuzzle;
+        base.Initialize(room, spawnUtils);
+    }
+
     public override void StartPuzzle()
     {
         SpawnSamples();

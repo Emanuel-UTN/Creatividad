@@ -48,6 +48,7 @@ public class PuzzleManager : MonoBehaviour
         PuzzleBase puzzle = Instantiate(puzzlePrefabs[randomIndex], selectedRoom.transform).GetComponent<PuzzleBase>();
         puzzlePrefabs.RemoveAt(randomIndex);
 
+        LabLightingManager.Instance.ReserveRoom(selectedRoom);
         puzzle.Initialize(selectedRoom, spawnUtils);
         puzzle.StartPuzzle();
         activePuzzles.Add(puzzle);

@@ -7,6 +7,8 @@ public enum RoomType
     PowerPuzzle,
     LightPuzzle,
     ValvePuzzle,
+    SamplePuzzle,
+    TerminalPuzzle,
     SafeRoom,
     ExitRoom
 }
