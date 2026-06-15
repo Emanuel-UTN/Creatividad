@@ -6,6 +6,7 @@ public class ValvePuzzle : PuzzleBase
     public GameObject valvePrefab;
     public GameObject vaultPrefab;
     public List<GameObject> cluePrefabs = new List<GameObject>(3);
+    public GameObject labLightPrefab;
     
     [Header("Tuberías")]
     public GameObject pipeSegmentPrefab;
@@ -35,6 +36,7 @@ public class ValvePuzzle : PuzzleBase
         SpawnValves();
         SpawnVault();
         SpawnPipeNetwork();
+        SpawnLights(labLightPrefab, Quaternion.Euler(90, 0, 0), 3);
 
         MazeCell cell = MazeController.GetCellByPosition(room.GetCenter());
         Vector2Int position = MazeController.GetCellCoordinates(cell);

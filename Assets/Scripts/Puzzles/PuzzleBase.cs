@@ -5,6 +5,7 @@ public abstract class PuzzleBase : MonoBehaviour
 {
     protected MazeRoom room;
     protected SpawnUtils spawnUtils;
+    protected List<LightController> lights = new List<LightController>();
 
     [Header("Prefabs")]
     public GameObject keyPrefab;
@@ -54,6 +55,23 @@ public abstract class PuzzleBase : MonoBehaviour
             T temp = list[i];
             list[i] = list[j];
             list[j] = temp;
+        }
+    }
+
+    protected void SpawnLights(GameObject lightPrefab, Quaternion rotation, int count)
+    {
+        List<int> possibilities = new List<int>();
+        for (int i = 0; i < room.cells.Count; i++)
+            possibilities.Add(i);
+        
+        for (int i = 0; i < count; i++)
+        {
+            int randomIndex = Random.Range(0, possibilities.Count);
+            int cellIndex = possibilities[randomIndex];
+            possibilities.RemoveAt(randomIndex);
+
+            MazeCell cell = room.cells[cellIndex];
+            lights.Add(cell.CreateLight(lightPrefab, rotation));
         }
     }
 }

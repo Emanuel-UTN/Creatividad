@@ -7,12 +7,16 @@ public class SamplePuzzle : PuzzleBase
     private List<BioSample> samples = new List<BioSample>();
     public GameObject capsulePrefab;
     public GameObject terminalPrefab;
+    public GameObject lightAlarmPrefab;
 
     [Header("Materiales")]
     public Material unlockedMaterial;
+    public Material lightAlarmMaterial;
+    private Color lightAlarmColor = Color.red;
 
     [Header("Configuración")]
     public int numberOfSamples = 4;
+    public int numberOfLightAlarms = 3;
 
     public override void Initialize(MazeRoom room, SpawnUtils spawnUtils)
     {
@@ -24,6 +28,7 @@ public class SamplePuzzle : PuzzleBase
     {
         SpawnSamples();
         SpawnCapsule();
+        SpawnLights(lightAlarmPrefab, Quaternion.identity, numberOfLightAlarms);
     }
 
     void SpawnSamples()
@@ -62,5 +67,37 @@ public class SamplePuzzle : PuzzleBase
     void SpawnKey()
     {
         base.SpawnKey(room.GetCenter() + Vector3.forward * 2f);
+    }
+
+    private float flickerIntensityRange;
+    private Material originalOnMaterial;
+    private Color originalLightColor;
+
+    public void TriggerAlarm(float duration)
+    {
+        flickerIntensityRange = lights[0].flickerIntensityRange;
+        originalOnMaterial = lights[0].onMaterial;
+        originalLightColor = lights[0].GetComponent<Light>().color;
+
+        foreach (LightController light in lights)
+        {
+            light.onMaterial = lightAlarmMaterial;
+            light.lightMesh.material = lightAlarmMaterial;
+            light.GetComponent<Light>().color = lightAlarmColor;
+            light.flickerIntensityRange = 5f;
+        }
+
+        Invoke(nameof(StopAlarm), duration);
+    }
+
+    void StopAlarm()
+    {
+        foreach (LightController light in lights)
+        {
+            light.onMaterial = originalOnMaterial;
+            light.lightMesh.material = originalOnMaterial;
+            light.GetComponent<Light>().color = originalLightColor;
+            light.flickerIntensityRange = flickerIntensityRange;
+        }
     }
 }

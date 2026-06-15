@@ -68,12 +68,15 @@ public class LightController : MonoBehaviour
         if (enabled == light.enabled)
             return;
 
+        ChangeLightState(enabled);
+
+        if (!enableFlicker)
+            return;
+
         if (enabled)
             StartCoroutine(Flick());
         else
             StopAllCoroutines();
-
-        ChangeLightState(enabled);
     }
 
     private void ToggleLight()

@@ -48,5 +48,8 @@ MonoBehaviour:
   samplePrefab: {fileID: 1964880445334050365, guid: 7d622d2a71699084abc511e6f5236df4, type: 3}
   capsulePrefab: {fileID: 5657808708939116436, guid: 99f72d56ce7c9164d82491ee7e74be80, type: 3}
   terminalPrefab: {fileID: 7254600801970048156, guid: 285fb90247377814cbeb473f97c4db01, type: 3}
+  lightAlarmPrefab: {fileID: 3768766600503480608, guid: e22d611a31f4e1045a6d5edfa912d6d4, type: 3}
   unlockedMaterial: {fileID: 2100000, guid: 1a66844b6f873d74eae7a78e2d66043b, type: 2}
+  lightAlarmMaterial: {fileID: 2100000, guid: 7a95ce213592d714ca0d6d6463cacbd2, type: 2}
   numberOfSamples: 4
+  numberOfLightAlarms: 3

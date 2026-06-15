@@ -105,7 +105,7 @@ public class LabLightingManager : MonoBehaviour
     {
         int sectorIndex = GetSectorForCell(cell);
 
-        LightController light = cell.CreateLight(lightPrefab, false);
+        LightController light = cell.CreateLight(lightPrefab, Quaternion.Euler(90, 0, 0), false);
 
         if (light == null)
             return;

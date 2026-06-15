@@ -49,14 +49,17 @@ public class BioTerminal : PuzzleObject
         terminalText.text = "Muestra incorrecta. Llamando a la seguridad.";
         terminalText.color = Color.red;
 
-        StartCoroutine(TextFlicker());
+        float alarmDuration = 5f; // Duración del parpadeo en segundos
+
+        puzzle.TriggerAlarm(alarmDuration);
+        StartCoroutine(TextFlicker(alarmDuration));
     }
 
-    private IEnumerator TextFlicker(){
+    private IEnumerator TextFlicker(float duration){
         float elapsedTime = 0f;
         
         isCompleted = true; // Evita que se pueda interactuar mientras el texto parpadea
-        while (elapsedTime < 5f){
+        while (elapsedTime < duration){
             terminalText.color = terminalText.color == Color.red ? Color.white : Color.red;
             yield return new WaitForSeconds(0.5f);
             elapsedTime += 0.5f;

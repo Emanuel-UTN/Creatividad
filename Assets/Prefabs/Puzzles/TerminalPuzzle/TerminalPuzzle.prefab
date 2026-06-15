@@ -47,5 +47,6 @@ MonoBehaviour:
   keyPrefab: {fileID: 3458335907545275384, guid: 1df5f4f0cd25ebb45a4fbe7a446b0d43, type: 3}
   terminalPrefab: {fileID: 5302260333643458480, guid: fdeb23c3a1dd641468009349eacbf119, type: 3}
   centralTerminalPrefab: {fileID: 7194282223121861791, guid: ff40e30f2834da841bb4949e3c480bc6, type: 3}
+  labLightPrefab: {fileID: 5211331495500179481, guid: 53e3ed6cef7a6194ea2897efc6f4c1a8, type: 3}
   numberOfTerminals: 6
   numberOfTerminalsToActivate: 3

@@ -48,8 +48,11 @@ MonoBehaviour:
   keyPrefab: {fileID: 3458335907545275384, guid: 1df5f4f0cd25ebb45a4fbe7a446b0d43, type: 3}
   generatorPrefab: {fileID: 6047983652763505086, guid: 21e94937078c0844880da408be1f28de, type: 3}
   switchPrefab: {fileID: 7810554752417609606, guid: 39622d9f5431a3f43a0426c3eb3a29b5, type: 3}
+  roomLight: {fileID: 683354323701843848, guid: 6e71bb503bb56ea48820b3719117affc, type: 3}
   puzzleCompleteSound: {fileID: 8300000, guid: fe776fab69ee23844acdf0b9482b3c10, type: 3}
   generatorWorkingSound: {fileID: 8300000, guid: 16fa068fcf9decf4b9870b8b9c3302b9, type: 3}
+  poweredColor: {r: 0, g: 1, b: 0, a: 1}
+  poweredMaterial: {fileID: 2100000, guid: afdf809b94073d542a156a7ceb08bfde, type: 2}
   switchCount: 3
 --- !u!82 &8684044371722571198
 AudioSource:

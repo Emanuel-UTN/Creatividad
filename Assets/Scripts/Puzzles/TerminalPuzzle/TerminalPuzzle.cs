@@ -6,6 +6,7 @@ public class TerminalPuzzle : PuzzleBase
 {
     public GameObject terminalPrefab;
     public GameObject centralTerminalPrefab;
+    public GameObject labLightPrefab;
 
     private List<TerminalNode> terminalNodes = new List<TerminalNode>();
     private List<TerminalNode> terminalsToActivate;
@@ -26,6 +27,7 @@ public class TerminalPuzzle : PuzzleBase
     {
         SpawnTerminals();
         SpawnCentralTerminal();
+        SpawnLights(labLightPrefab, Quaternion.Euler(90, 0, 0), 3);
     }
 
     void SpawnTerminals()

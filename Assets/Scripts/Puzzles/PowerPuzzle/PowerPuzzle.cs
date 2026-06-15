@@ -6,11 +6,16 @@ public class PowerPuzzle : PuzzleBase
 {
     public GameObject generatorPrefab;
     public GameObject switchPrefab;
+    public GameObject roomLight;
 
     [Header("Sounds Effects")]
     public AudioClip puzzleCompleteSound;
     public AudioClip generatorWorkingSound;
     private AudioSource audioSource;
+
+    [Header("Lighting")]
+    public Color poweredColor = Color.green;
+    public Material poweredMaterial;
 
     [Header("Configuración")]
     public int switchCount = 3;
@@ -29,6 +34,7 @@ public class PowerPuzzle : PuzzleBase
         audioSource = GetComponent<AudioSource>();
         SpawnGenerator();
         SpawnSwitches();
+        SpawnLights(roomLight, Quaternion.identity, 3);
     }
 
     void SpawnGenerator()
@@ -54,6 +60,12 @@ public class PowerPuzzle : PuzzleBase
         activatedSwitches++;
 
         LabLightingManager.Instance.PowerSector(index);
+
+        LightController light = lights[index];
+        light.onMaterial = poweredMaterial;
+        light.GetComponent<Light>().color = poweredColor;
+        light.lightMesh.material = poweredMaterial;
+            
 
         Debug.Log($"Interruptores activados: {activatedSwitches}/{switchCount}");
 
