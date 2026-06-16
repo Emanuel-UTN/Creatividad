@@ -5,16 +5,19 @@ public class MenuUI : MonoBehaviour
 {
     [Header("Scene")]
     [SerializeField] private string gameSceneName = "RandomMaze";
+    private AsyncOperation loadingOperation;
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        loadingOperation = SceneManager.LoadSceneAsync(gameSceneName);
+        loadingOperation.allowSceneActivation = false;
     }
 
     public void StartGame()
     {
-        SceneManager.LoadScene(gameSceneName);
+        loadingOperation.allowSceneActivation = true;
     }
 
     public void QuitGame()

@@ -57,7 +57,7 @@ public class SamplePuzzle : PuzzleBase
 
     public void CompletePuzzle()
     {
-        capsulePrefab.transform.GetChild(1).GetComponent<MeshRenderer>().material = unlockedMaterial;
+        capsulePrefab.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = unlockedMaterial;
         capsulePrefab.GetComponent<Collider>().enabled = false;
         capsulePrefab.GetComponentInChildren<Light>().color = Color.turquoise;
         
