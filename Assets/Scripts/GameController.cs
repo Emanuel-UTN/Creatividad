@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Video;
 
 [RequireComponent(typeof(MazeGenerator))]
 public class GameController : MonoBehaviour
@@ -9,6 +10,10 @@ public class GameController : MonoBehaviour
     public static GameController gameController;
     public static bool IsPaused { get; private set; }
     public static bool IsCreativoEnabled { get; private set; }
+
+    [SerializeField]
+    private PauseMenuController pauseMenu;
+
     [Header("GameObjects")]
     public GameObject player;
     public GameObject[] enemies;
@@ -43,8 +48,6 @@ public class GameController : MonoBehaviour
         }
 
         audioManager = GetComponentInChildren<AudioManager>();
-        if (GetComponent<PauseMenuController>() == null)
-            gameObject.AddComponent<PauseMenuController>();
     }
 
     public void Initialize() {
@@ -126,5 +129,22 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    public void PlayersDie()
+    {
+        VideoClip deathClip = enemy.GetComponent<EnemyController>().screamerClip;
+        Destroy(enemy);
+        SetPaused(true);
+        if (deathClip != null)
+        {
+            PlayerUI.playerUI.PlayScreamer(deathClip);
+            audioManager.PlayersDeath((float) deathClip.length);
+        }
+    }
+
+    public void TogglePause()
+    {
+        pauseMenu.TogglePause();
     }
 }

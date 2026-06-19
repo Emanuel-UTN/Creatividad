@@ -53,7 +53,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 967d27b9c68257244975faaf829df12c, type: 3}
     - target: {fileID: 781131125439351914, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
       propertyPath: m_Name
-      value: Enemy Cabra Variant Variant
+      value: Enemy Cabra
       objectReference: {fileID: 0}
     - target: {fileID: 2820214097209093906, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}
       propertyPath: offset
@@ -154,6 +154,7 @@ MonoBehaviour:
   attackRange: 2
   attackDamage: 10
   attackCooldown: 2
+  screamerClip: {fileID: 32900000, guid: afd71549664be9040b28af1587b06a0e, type: 3}
 --- !u!4 &3282366315836612136 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4490837707266967847, guid: 7f427cc955f5aed4d8cc173dd8810683, type: 3}

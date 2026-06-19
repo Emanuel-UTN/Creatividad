@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Video;
 
 [RequireComponent(typeof(EnemyBehaviour))]
  [RequireComponent(typeof(Movement))]
@@ -22,6 +23,9 @@ public class EnemyController : MonoBehaviour
     private int runningBoolHash;
     private Vector3 lastPosition;
     private bool walkingState;
+
+    [Header("Screamer")]
+    public VideoClip screamerClip;
 
     void Start()
     {
