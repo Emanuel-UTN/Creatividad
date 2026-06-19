@@ -40,7 +40,9 @@ public class LightPuzzle : PuzzleBase
         lockerPrefab = spawnUtils.SpawnObjects(lockerPrefab, 1, room.cells)[0];
         lockerPrefab.transform.parent = transform;
 
-        spawnUtils.SpawnObjects(examplePrefab, 1, room.cells)[0].transform.parent = transform; // Ejemplo visual para el jugador
+        examplePrefab = spawnUtils.SpawnObjects(examplePrefab, 1, room.cells)[0]; // Ejemplo visual para el jugador
+        examplePrefab.transform.parent = transform;
+        examplePrefab.transform.localPosition -= Vector3.up * .2f;
     }
 
     public void ActivateReceiver(LightReceiver receiver)
