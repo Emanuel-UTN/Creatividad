@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
     public static GameController gameController;
     public static bool IsPaused { get; private set; }
     public static bool IsCreativoEnabled { get; private set; }
+    public static bool IsDead { get; private set; }
 
     [SerializeField]
     private PauseMenuController pauseMenu;
@@ -20,6 +21,7 @@ public class GameController : MonoBehaviour
     public GameObject player;
     public GameObject[] enemies;
     public GameObject enemy;
+    public GameObject cartaPrefab;
 
     [Header("Actions")]
     public bool resetGame = false;
@@ -59,6 +61,12 @@ public class GameController : MonoBehaviour
             player = Instantiate(player, MazeController.Grid[0,0].transform.position + Vector3.up * 0.5f, Quaternion.identity);
             audioManager.SetPlayer(player.transform);
         }
+
+        if (cartaPrefab != null)
+        {
+            Instantiate(cartaPrefab, MazeController.Grid[0,0].transform.position + Vector3.up * 0.5f + Vector3.forward * 1.5f, Quaternion.identity);
+        }
+
         enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], MazeController.Grid[mazeGenerator.width - 1, mazeGenerator.height - 1].transform.position, Quaternion.identity);
         audioManager.SetEnemy(enemy.transform);
 
@@ -130,6 +138,7 @@ public class GameController : MonoBehaviour
     {
         SetPaused(false);
         SetCreativoEnabled(false);
+        IsDead = false;
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -137,18 +146,46 @@ public class GameController : MonoBehaviour
 
     public void PlayersDie()
     {
-        VideoClip deathClip = enemy.GetComponent<EnemyController>().screamerClip;
-        Destroy(enemy);
+        if (IsDead) return;
+        IsDead = true;
+        
+        VideoClip deathClip = null;
+        if (enemy != null)
+        {
+            var enemyController = enemy.GetComponent<EnemyController>();
+            if (enemyController != null)
+                deathClip = enemyController.screamerClip;
+            Destroy(enemy);
+        }
+        
         SetPaused(true);
-        if (deathClip != null)
+        
+        float clipLength = 2f;
+        try {
+            if (deathClip != null)
+                clipLength = (float)deathClip.length;
+        } catch {}
+
+        if (deathClip != null && PlayerUI.playerUI != null)
         {
             PlayerUI.playerUI.PlayScreamer(deathClip);
-            audioManager.PlayersDeath((float) deathClip.length);
+            if (audioManager != null)
+                audioManager.PlayersDeath(clipLength);
+        }
+        else if (PlayerUI.playerUI != null)
+        {
+            PlayerUI.playerUI.ShowDeathMenu();
         }
     }
 
     public void TogglePause()
     {
-        pauseMenu.TogglePause();
+        if (pauseMenu == null)
+            pauseMenu = GetComponent<PauseMenuController>() ?? FindAnyObjectByType<PauseMenuController>();
+
+        if (pauseMenu != null)
+            pauseMenu.TogglePause();
+        else
+            Debug.LogWarning("No PauseMenuController assigned or found.");
     }
 }

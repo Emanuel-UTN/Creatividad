@@ -72,6 +72,9 @@ public class PauseMenuController : MonoBehaviour
 
     public void TogglePause()
     {
+        if (GameController.IsDead)
+            return;
+
         if (GameController.IsPaused)
             ResumeGame();
         else

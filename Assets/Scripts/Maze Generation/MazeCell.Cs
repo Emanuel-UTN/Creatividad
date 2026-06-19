@@ -152,7 +152,7 @@ public class MazeCell : MonoBehaviour
 
     private bool IsTooCloseToOccupiedPosition(Vector3 spawnPosition, List<Vector3> occupiedSpawnPositions)
     {
-        Door[] doors = FindObjectsOfType<Door>();
+        Door[] doors = FindObjectsByType<Door>(FindObjectsSortMode.None);
         for (int i = 0; i < doors.Length; i++)
         {
             if (doors[i] != null)

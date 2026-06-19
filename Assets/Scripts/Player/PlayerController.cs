@@ -95,6 +95,9 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (GameController.IsDead)
+            return;
+
         if (pauseAction != null && pauseAction.WasPressedThisFrame())
         {
             GameController.gameController.TogglePause();
