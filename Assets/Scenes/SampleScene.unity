@@ -508,6 +508,7 @@ MonoBehaviour:
   player: {fileID: 0}
   enemies: []
   enemy: {fileID: 0}
+  cartaPrefab: {fileID: 0}
   resetGame: 0
 --- !u!114 &131963270
 MonoBehaviour:

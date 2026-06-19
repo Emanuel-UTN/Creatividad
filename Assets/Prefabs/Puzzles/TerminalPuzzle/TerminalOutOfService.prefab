@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2650278047751589967}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Box003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 4497596941142904059}
   - component: {fileID: 2294270880356957347}
   - component: {fileID: 2438689780231386298}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Box003_botones_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -138,7 +138,7 @@ GameObject:
   - component: {fileID: 1316578818132000070}
   - component: {fileID: 5297823690058981052}
   - component: {fileID: 111079396348484325}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Box003_tubos_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,7 +226,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3327682544442953860}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: d3d1fcf1d10748d99f18deebe22dac33.fbx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 7199784586374712476}
   - component: {fileID: 244135228345139224}
   - component: {fileID: 8024204109264684036}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Box003_metal_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -348,7 +348,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1973360064522417437}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: RootNode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -382,7 +382,7 @@ GameObject:
   - component: {fileID: 4257804279052851099}
   - component: {fileID: 8299979465910830307}
   - component: {fileID: 5849745644586353818}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Box003_Material #66 Slot #1_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -472,7 +472,7 @@ GameObject:
   - component: {fileID: 1077397847399775131}
   - component: {fileID: 1868161195453548369}
   - component: {fileID: 373979677538718679}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Box003_soporte_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -562,7 +562,7 @@ GameObject:
   - component: {fileID: 1304821365307381507}
   - component: {fileID: 278726820173328468}
   - component: {fileID: 4528982038193926524}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -657,7 +657,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sample text
+  m_text: Terminal Fuera de Servicio
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -666,8 +666,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4279242956
+  m_fontColor: {r: 0.8018868, g: 0.06430225, b: 0.06430225, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -742,9 +742,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8850695539907823648}
   - component: {fileID: 874162694851088005}
-  - component: {fileID: 228558357224820432}
-  m_Layer: 6
-  m_Name: TerminalNodePrefab
+  m_Layer: 0
+  m_Name: TerminalOutOfService
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -788,20 +787,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.1303518, y: 2.6434584, z: 0.6892473}
   m_Center: {x: 0.013035059, y: 1.3099144, z: -0.31810465}
---- !u!114 &228558357224820432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8225016668722302218}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33f68a566ce9c9b4bb50818162d4f5b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TerminalNode
-  codeDisplay: {fileID: 4528982038193926524}
-  activatedDuration: 45
 --- !u!1 &8764014620199161783
 GameObject:
   m_ObjectHideFlags: 0
@@ -813,7 +798,7 @@ GameObject:
   - component: {fileID: 277525237878111164}
   - component: {fileID: 4247217689219212706}
   - component: {fileID: 2126512678544543700}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Box003_Material #70_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -901,7 +886,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1257907575639001221}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: pc laboratorio
   m_TagString: Untagged
   m_Icon: {fileID: 0}

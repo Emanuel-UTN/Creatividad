@@ -5,6 +5,7 @@ using System.Collections;
 public class TerminalPuzzle : PuzzleBase
 {
     public GameObject terminalPrefab;
+    public GameObject terminalOutOfServicePrefab;
     public GameObject centralTerminalPrefab;
     public GameObject labLightPrefab;
 
@@ -41,6 +42,11 @@ public class TerminalPuzzle : PuzzleBase
                 node.Initialize(this, possibleCodes[terminalNodes.Count]);
                 terminalNodes.Add(node);
             }
+        });
+
+        spawnUtils.SpawnObjects(terminalOutOfServicePrefab, 1, room.cells).ForEach(obj =>
+        {
+            obj.transform.SetParent(transform);
         });
     }
 
