@@ -22,7 +22,12 @@ public class PauseMenuController : MonoBehaviour
     [Header("Sensibilidad")]
     public TextMeshProUGUI sensitivityValueText;
     public Slider sensitivitySlider;
-    private float mouseSensitivity = 0.1f;    
+    private float mouseSensitivity = 0.1f;
+
+    [Header("GameMode")]
+    public GameObject creativoToggle;
+    public TextMeshProUGUI creativoToggleText;
+    private int countToCreativoEnable = 20;
 
     private void Awake()
     {
@@ -64,6 +69,12 @@ public class PauseMenuController : MonoBehaviour
         PlayerPrefs.SetFloat("MouseSensitivity", mouseSensitivity);
     }
 
+    public void ToggleCreativo()
+    {
+        GameController.SetCreativoEnabled(!GameController.IsCreativoEnabled);
+        creativoToggleText.text = $"GameMode: {(GameController.IsCreativoEnabled ? "Creativo" : "Survival")}";
+    }
+
     public void OnSensitivityChanged()
     {
         mouseSensitivity = sensitivitySlider.value;
@@ -93,6 +104,8 @@ public class PauseMenuController : MonoBehaviour
         titleText.color = Color.white;
         mainButtons.SetActive(true);
         optionsMenu.SetActive(false);
+        creativoToggle.SetActive(false);
+        countToCreativoEnable = 20;
     }
 
     public void ResumeGame()
@@ -102,11 +115,6 @@ public class PauseMenuController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         gameObject.SetActive(false);
-    }
-
-    private void ToggleCreativo()
-    {
-        GameController.SetCreativoEnabled(!GameController.IsCreativoEnabled);
     }
 
     public void ReturnToMainMenu()
@@ -122,5 +130,9 @@ public class PauseMenuController : MonoBehaviour
 
         titleText.text = optionsMenu.activeSelf ? "Opciones" : "Pausa";
         titleText.color = optionsMenu.activeSelf ? Color.black : Color.white;
+
+        countToCreativoEnable--;
+        if (countToCreativoEnable <= 0)
+            creativoToggle.SetActive(true);
     }
 }
