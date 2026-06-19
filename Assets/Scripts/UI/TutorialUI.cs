@@ -124,6 +124,21 @@ public class TutorialUI : MonoBehaviour
             currentNextTutorial = null;
     }
 
+    public void ShowPlainMessage(string message, float duration = 4f)
+    {
+        currentMessage = message;
+        currentActionReference = null;
+        currentHideOnInput = false;
+
+        textUI.text = message;
+
+        canvasGroup.alpha = 1f;
+        canvasGroup.interactable = true;
+
+        CancelInvoke(nameof(HideTutorial));
+        Invoke(nameof(HideTutorial), duration);
+    }
+
     private string GetSpriteTag(string binding)
     {
         string key = binding.ToLower();
