@@ -33842,7 +33842,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d0bbd088f82704cb838d2862d535a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuUI
-  gameSceneName: LoadingScene
+  gameSceneName: RandomMaze
 --- !u!1 &1270705257
 GameObject:
   m_ObjectHideFlags: 0

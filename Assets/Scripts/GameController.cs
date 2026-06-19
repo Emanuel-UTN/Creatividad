@@ -13,6 +13,8 @@ public class GameController : MonoBehaviour
 
     [SerializeField]
     private PauseMenuController pauseMenu;
+    [SerializeField]
+    private StartUI startUI;
 
     [Header("GameObjects")]
     public GameObject player;
@@ -59,6 +61,8 @@ public class GameController : MonoBehaviour
         }
         enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], MazeController.Grid[mazeGenerator.width - 1, mazeGenerator.height - 1].transform.position, Quaternion.identity);
         audioManager.SetEnemy(enemy.transform);
+
+        startUI.Initialize();
     }
 
     void Update()

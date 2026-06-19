@@ -28,16 +28,17 @@ public class PauseMenuController : MonoBehaviour
     {
         globalVolume = PlayerPrefs.GetFloat("GlobalVolume", 0.75f);
         volumeSlider.value = globalVolume;
-        ApplyVolume(globalVolume);
 
         mouseSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", 0.1f);
         sensitivitySlider.value = mouseSensitivity;
-        ApplySensitivity();
     }
 
     private void Start()
     {
+        ApplyVolume(globalVolume);
         ApplySensitivity();
+
+        gameObject.SetActive(false);
     }
 
     private void ApplyVolume(float volume)
