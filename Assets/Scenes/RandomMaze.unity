@@ -423,11 +423,11 @@ RectTransform:
   - {fileID: 1822500017}
   m_Father: {fileID: 1380492870}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 43}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -377}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &56946252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1618,11 +1618,11 @@ RectTransform:
   - {fileID: 762478512}
   m_Father: {fileID: 433918178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 175}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -245}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &758151401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1888,11 +1888,11 @@ RectTransform:
   - {fileID: 9706595}
   m_Father: {fileID: 433918178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 100}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -320}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &798340878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2368,11 +2368,11 @@ RectTransform:
   - {fileID: 490004764}
   m_Father: {fileID: 1380492870}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 150, y: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 150, y: -175}
   m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1201291543
 GameObject:
   m_ObjectHideFlags: 0
@@ -3484,11 +3484,11 @@ RectTransform:
   - {fileID: 1436326492}
   m_Father: {fileID: 1380492870}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -150, y: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -150, y: -175}
   m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1354742822
 GameObject:
   m_ObjectHideFlags: 0
@@ -3859,11 +3859,11 @@ RectTransform:
   - {fileID: 533925806}
   m_Father: {fileID: 433918178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 250}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -170}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1546113243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5103,6 +5103,45 @@ MonoBehaviour:
     minAmount: 4
     maxAmount: 7
   - prefab: {fileID: 7693422668984988457, guid: 6d417376ab4980049aa15ac15ebd8ca7, type: 3}
+    minAmount: 1
+    maxAmount: 3
+  - prefab: {fileID: 4933338174074071826, guid: d4a6509ff93ee274ebeb1aedb245607b, type: 3}
+    minAmount: 0
+    maxAmount: 2
+  - prefab: {fileID: 7743054718942277939, guid: 7cec6d6f2644cd349821cb7be0610ee0, type: 3}
+    minAmount: 0
+    maxAmount: 3
+  - prefab: {fileID: 4788842082535824408, guid: 39a5606714dab3740a91b655c7175c63, type: 3}
+    minAmount: 0
+    maxAmount: 3
+  - prefab: {fileID: 3018620826552270424, guid: 55590c0925fe95a4d9b950dd0c27ea88, type: 3}
+    minAmount: 0
+    maxAmount: 1
+  - prefab: {fileID: 7587634899530561997, guid: 70856f66866a00146babee2d38c875d4, type: 3}
+    minAmount: 0
+    maxAmount: 4
+  - prefab: {fileID: 1706202998882864126, guid: de317d899e05be24694866897aace612, type: 3}
+    minAmount: 0
+    maxAmount: 4
+  - prefab: {fileID: 12202889728659205, guid: 337f89abaec88954882b984c14c643f5, type: 3}
+    minAmount: 0
+    maxAmount: 2
+  - prefab: {fileID: 5470299527347427187, guid: 3b9b61c1f4e9d9c44ad9b89e1c0ed7aa, type: 3}
+    minAmount: 0
+    maxAmount: 10
+  - prefab: {fileID: 2367150299292346214, guid: 54efc3d71b321a04dab1fb0947fa668d, type: 3}
+    minAmount: 0
+    maxAmount: 3
+  - prefab: {fileID: 6775409994338786562, guid: b87f67c927220714895dd334fe6a3883, type: 3}
+    minAmount: 0
+    maxAmount: 1
+  - prefab: {fileID: 1775731092193826904, guid: 64f51f10af19a554e97506dff31e63fc, type: 3}
+    minAmount: 0
+    maxAmount: 2
+  - prefab: {fileID: 9189863725960310069, guid: 6744747b155e89d47a40fb607f3099bd, type: 3}
+    minAmount: 1
+    maxAmount: 3
+  - prefab: {fileID: 6695976250828734008, guid: 6bdc73107e457e44a84608f5c65990f6, type: 3}
     minAmount: 1
     maxAmount: 3
   wallInset: 0.6
