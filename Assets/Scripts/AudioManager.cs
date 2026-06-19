@@ -220,11 +220,6 @@ public class AudioManager : MonoBehaviour
         dinamicMusicEnabled = false;
         activeSource.Stop();
 
-        Invoke(nameof(VictoryMusic), delay);
-    }
-
-    private void VictoryMusic()
-    {
-        ChangeMusic(MusicState.Victory, true);
+        Invoke(nameof(PlayerWon), delay);
     }
 }

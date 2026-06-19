@@ -503,6 +503,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858b7a14894a5da40bcd89774343c76b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  pauseMenu: {fileID: 0}
+  startUI: {fileID: 0}
   player: {fileID: 0}
   enemies: []
   enemy: {fileID: 0}
@@ -2168,7 +2170,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 6703662978248902987, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7908e3322cd82e947b0f0ce2f4ef7c65, type: 3}

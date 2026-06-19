@@ -118,7 +118,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (GameController.IsPaused)
+        if (GameController.IsPaused || GameController.IsDead)
             return;
 
         // Re-lock cursor on click in WebGL/Browser if it gets unlocked during gameplay

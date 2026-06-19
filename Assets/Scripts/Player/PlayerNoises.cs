@@ -48,6 +48,9 @@ public class PlayerNoises : MonoBehaviour
 
     void Update()
     {
+        if (GameController.IsPaused || GameController.IsDead)
+            return;
+        
         HandleFootsteps(Time.deltaTime);
     }
 

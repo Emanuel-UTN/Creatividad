@@ -172,9 +172,6 @@ public class PlayerUI : MonoBehaviour
 
     public void PlayScreamer(VideoClip clip)
     {
-#if UNITY_WEBGL
-        ShowDeathMenu();
-#else
         if (videoPlayer == null || clip == null)
         {
             ShowDeathMenu();
@@ -191,27 +188,20 @@ public class PlayerUI : MonoBehaviour
             float clipLength = 2f;
             try { clipLength = (float)clip.length; } catch {}
             
-            Invoke(nameof(ShowDeathMenu), clipLength);
+            DeathMenu.Instance?.InitializeRestart();
+            videoPlayer.loopPointReached += (vp) => {
+                ShowDeathMenu();
+            };
         } catch (System.Exception e) {
             Debug.LogWarning("Error playing screamer: " + e.Message);
             ShowDeathMenu();
         }
-#endif
     }
 
     public void ShowDeathMenu()
     {
         Time.timeScale = 0f;
-        if (videoPlayer != null)
-            videoPlayer.gameObject.SetActive(false);
-        
-        // Hide individual HUD components to keep PlayerUI active (in case deathMenu is a child)
-        if (staminaSlider != null) staminaSlider.gameObject.SetActive(false);
-        if (flashlightBatterySlider != null) flashlightBatterySlider.gameObject.SetActive(false);
-        if (keyCountText != null) keyCountText.gameObject.SetActive(false);
-        if (interactionPoint != null) interactionPoint.gameObject.SetActive(false);
-        if (sampleTypeText != null) sampleTypeText.gameObject.SetActive(false);
-        if (batteryCountText != null) batteryCountText.gameObject.SetActive(false);
+        gameObject.SetActive(false);
         
         if (DeathMenu.Instance != null)
             DeathMenu.Instance.ShowMenu();

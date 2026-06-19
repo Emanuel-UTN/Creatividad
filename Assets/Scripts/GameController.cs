@@ -84,10 +84,18 @@ public class GameController : MonoBehaviour
     }
 
     public void PlayerWin(){
+        if (IsDead) return;
+        IsDead = true;
+
+        SetPaused(true);
+        PlayerUI.playerUI?.gameObject.SetActive(false);
+        startUI?.gameObject.SetActive(false);
+
+        Destroy(enemy);
+
         Debug.Log("¡Has ganado!");
         audioManager.PlayerWon();
-        ResetRuntimeState();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reinicia la escena actual
+        WinController.Instance.InitWin();
     }
 
     public void OpenDoor(float timeToOpen) {

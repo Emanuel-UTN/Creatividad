@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class DeathMenu : MonoBehaviour
 {
     public static DeathMenu Instance;
+    private AsyncOperation restartOperation;
 
     void Awake()
     {
@@ -25,6 +26,12 @@ public class DeathMenu : MonoBehaviour
             gameObject.SetActive(false);
     }
 
+    public void InitializeRestart()
+    {
+        restartOperation = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+        restartOperation.allowSceneActivation = false;
+    }
+
     public void ShowMenu()
     {
         gameObject.SetActive(true);
@@ -32,7 +39,11 @@ public class DeathMenu : MonoBehaviour
 
     public void RestartGame()
     {
-        GameController.gameController.resetGame = true;
+        GameController.ResetRuntimeState();
+        if (restartOperation != null)
+            restartOperation.allowSceneActivation = true;
+        else
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void ExitToMainMenu()
