@@ -252,6 +252,16 @@ public class SpawnUtils : MonoBehaviour
 
     private bool IsTooCloseToOccupiedPosition(Vector3 spawnPosition, List<Vector3> occupiedSpawnPositions)
     {
+        Door[] doors = FindObjectsOfType<Door>();
+        for (int i = 0; i < doors.Length; i++)
+        {
+            if (doors[i] != null)
+            {
+                if (Vector3.Distance(spawnPosition, doors[i].transform.position) < 2.0f)
+                    return true;
+            }
+        }
+
         if (occupiedSpawnPositions == null || occupiedSpawnPositions.Count == 0)
             return false;
 
