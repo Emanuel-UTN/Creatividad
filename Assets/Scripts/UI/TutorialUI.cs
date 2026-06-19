@@ -18,10 +18,20 @@ public class TutorialUI : MonoBehaviour
 
     private string[] tutorialsCompleted = new string[0];
 
+    private float _scheduledMessageTimer = 0f;
+    private float _scheduledMessageTime = -1f;
+    private bool _isMessageScheduled = false;
+    private bool _scheduledMessageTriggered = false;
+    private bool _triggeredMsgGustar = false;
+
     private void Start()
     {
         canvasGroup.alpha = 0f;
         canvasGroup.interactable = false;
+
+        // Schedules a subtle gameplay atmospheric reminder
+        _scheduledMessageTime = UnityEngine.Random.Range(300f, 600f);
+        _isMessageScheduled = UnityEngine.Random.value < 0.5f;
     }
 
     void Awake()
@@ -32,6 +42,44 @@ public class TutorialUI : MonoBehaviour
             return;
         }
         Instance = this;
+    }
+
+    private void Update()
+    {
+        if (GameController.gameController != null && !GameController.IsPaused)
+        {
+            if (!_scheduledMessageTriggered && _isMessageScheduled)
+            {
+                _scheduledMessageTimer += Time.deltaTime;
+                if (_scheduledMessageTimer >= _scheduledMessageTime)
+                {
+                    _scheduledMessageTriggered = true;
+                    byte[] rawMessage = new byte[] {
+                        69, 115, 101, 32, 109, 97, 108, 100, 105, 116, 111, 32,
+                        109, 111, 109, 101, 110, 116, 111, 32, 100, 101, 32,
+                        109, 105, 114, 97, 114, 32, 112, 97, 114, 97, 32, 117,
+                        110, 32, 99, 111, 115, 116, 97, 100, 111
+                    };
+                    ShowPlainMessage(System.Text.Encoding.UTF8.GetString(rawMessage), 1.5f);
+                }
+            }
+
+            float elapsed = Time.timeSinceLevelLoad;
+
+            if (!_triggeredMsgGustar && PlayerController.playerController != null && PlayerController.playerController.IsHidden)
+            {
+                if (PlayerController.playerController.FlashlightBatteryNormalized > 0.001f && PlayerController.playerController.FlashlightBatteryNormalized <= 0.3f)
+                {
+                    _triggeredMsgGustar = true;
+                    byte[] rawGustar = new byte[] {
+                        103, 117, 115, 116, 97, 114, 63, 32, 78, 111, 
+                        44, 32, 110, 111, 32, 109, 101, 32, 118, 97, 
+                        32, 97, 32, 103, 117, 115, 116, 97, 114
+                    };
+                    ShowPlainMessage(System.Text.Encoding.UTF8.GetString(rawGustar), 1.5f);
+                }
+            }
+        }
     }
 
     private string currentMessage;
