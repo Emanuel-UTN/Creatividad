@@ -52,6 +52,7 @@ public class AudioManager : MonoBehaviour
     private AudioSource inactiveSource;
 
     private Coroutine fadeCoroutine;
+    private bool dinamicMusicEnabled = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -72,7 +73,7 @@ public class AudioManager : MonoBehaviour
 
     void UpdateMusicState()
     {
-        if (GameController.IsPaused)
+        if (GameController.IsPaused || !dinamicMusicEnabled)
             return;
 
         if (player == null || enemy == null)
@@ -212,5 +213,18 @@ public class AudioManager : MonoBehaviour
     public void SetEnemy(Transform enemyTransform)
     {
         enemy = enemyTransform;
+    }
+
+    public void PlayersDeath(float delay)
+    {
+        dinamicMusicEnabled = false;
+        activeSource.Stop();
+
+        Invoke(() => ChangeMusic(MusicState.Victory, true), delay);
+    }
+
+    private void Invoke(System.Action value, float delay)
+    {
+        throw new System.NotImplementedException();
     }
 }

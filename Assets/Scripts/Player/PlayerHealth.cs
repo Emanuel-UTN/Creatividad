@@ -48,7 +48,6 @@ public class PlayerHealth : MonoBehaviour
     {
         // Handle player death (e.g., play animation, reload scene, etc.)
         Debug.Log("Player has died.");
-        GameController.ResetRuntimeState();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload the current scene
+        GameController.gameController.PlayersDie();
     }
 }

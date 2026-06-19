@@ -97,7 +97,7 @@ public class PlayerController : MonoBehaviour
     {
         if (pauseAction != null && pauseAction.WasPressedThisFrame())
         {
-            GameController.gameController?.GetComponent<PauseMenuController>()?.TogglePause();
+            GameController.gameController.TogglePause();
             return;
         }
 

@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class PlayerUI : MonoBehaviour
 {
@@ -35,6 +36,10 @@ public class PlayerUI : MonoBehaviour
     [Header("Sample")]
     public TMP_Text sampleTypeText;
 
+    [Header("Screamer")]
+    public VideoPlayer videoPlayer;
+    public GameObject deathMenu;
+
     void Start()
     {
         if (playerUI == null)
@@ -59,6 +64,8 @@ public class PlayerUI : MonoBehaviour
         batteryCountText.text = "0";
 
         TryAssignPlayerController(true);
+
+        videoPlayer.gameObject.SetActive(false);
     }
 
     void Update()
@@ -161,5 +168,27 @@ public class PlayerUI : MonoBehaviour
     {
         if (batteryCountText != null)
             batteryCountText.text = $"{count}";
+    }
+
+    public void PlayScreamer(VideoClip clip)
+    {
+        if (videoPlayer == null || clip == null)
+            return;
+
+        videoPlayer.gameObject.SetActive(true);
+        videoPlayer.clip = clip;
+        videoPlayer.Play();
+        videoPlayer.isLooping = false;
+        Cursor.visible = false;
+
+        Invoke(nameof(ShowDeathMenu), (float) clip.length);
+    }
+
+    private void ShowDeathMenu()
+    {
+        transform.parent.gameObject.SetActive(false);
+        deathMenu.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }
